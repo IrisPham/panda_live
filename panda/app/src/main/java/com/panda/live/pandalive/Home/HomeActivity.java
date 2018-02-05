@@ -1,7 +1,9 @@
-package com.panda.live.pandalive;
+package com.panda.live.pandalive.Home;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.panda.live.pandalive.R;
 
 public class HomeActivity extends AppCompatActivity {
 
