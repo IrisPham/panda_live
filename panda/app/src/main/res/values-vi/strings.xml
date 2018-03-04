@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Panda live</string>
+
+    <string name="tvChat">Chat</string>
+    <string name="tvGift">Quà tặng</string>
+</resources>
