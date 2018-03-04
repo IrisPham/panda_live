@@ -198,7 +198,7 @@ public class LoginActivity extends AppCompatActivity {
             //getting application package name, as defined in manifest
             String packageName = context.getApplicationContext().getPackageName();
 
-            //Retriving package info
+            //Retriving package info...
             packageInfo = context.getPackageManager().getPackageInfo(packageName,
                     PackageManager.GET_SIGNATURES);
 
