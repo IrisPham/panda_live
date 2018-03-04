@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://F:\Panda project\panda_live\panda\app\app.iml" filepath="F:\Panda project\panda_live\panda\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/panda.iml" filepath="$PROJECT_DIR$/panda.iml" />
+      <module fileurl="file://F:\Panda project\panda_live\panda\panda.iml" filepath="F:\Panda project\panda_live\panda\panda.iml" />
     </modules>
   </component>
 </project>
