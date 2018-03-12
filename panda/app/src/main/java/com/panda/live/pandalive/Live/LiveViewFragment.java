@@ -1,24 +1,32 @@
 package com.panda.live.pandalive.Live;
 
+import android.app.Service;
 import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.panda.live.pandalive.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link LiveViewFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link LiveViewFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class LiveViewFragment extends Fragment {
+import java.io.IOException;
+
+import retrofit2.http.PATCH;
+
+public class LiveViewFragment extends Fragment implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener {
+
+    private SurfaceView mSurfaceView;
+    private MediaPlayer mMediaPlayer;
+    private SurfaceHolder mSurfaceHolder;
+    private Uri VIDEO_PATH;
+    //https://rotatory-religions.000webhostapp.com/android/videos_live.mp4
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -55,17 +63,18 @@ public class LiveViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_live_view, container, false);
+        View view =  inflater.inflate(R.layout.fragment_live_view, container, false);
+        mSurfaceView = view.findViewById(R.id.surface);
+        mSurfaceHolder = mSurfaceView.getHolder();
+        mSurfaceHolder.addCallback(this);
+        String path = "android.resource://" + this.getActivity().getPackageName() + "/" + R.raw.videos_live;
+        VIDEO_PATH = Uri.parse(path);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -90,6 +99,53 @@ public class LiveViewFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        releaseMediaPlayer();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releaseMediaPlayer();
+    }
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        mMediaPlayer.start();
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setDisplay(mSurfaceHolder);
+        try {
+            mMediaPlayer.setDataSource(this.getContext(),VIDEO_PATH);
+            mMediaPlayer.prepare();
+            mMediaPlayer.setOnPreparedListener(this);
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
+    }
+
+    private void releaseMediaPlayer() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 
     /**

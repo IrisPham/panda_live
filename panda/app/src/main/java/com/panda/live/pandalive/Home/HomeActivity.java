@@ -23,7 +23,7 @@ public class HomeActivity extends AppCompatActivity {
 
     //Tab
     private ArrayList<Fragment> mFragments = new ArrayList<>();
-    private String[] mTitles_3 = {"Channels","Cowo","Discovery"};
+    private String[] mTitles_3 = {"Kênh","Panda","Khám phá"};
     private View mDecorView;
     private SegmentTabLayout mTabLayout_3;
 
@@ -44,7 +44,11 @@ public class HomeActivity extends AppCompatActivity {
             if (i == 0){
                 mFragments.add(ChannelsFragment.newInstance("",""));
             }else {
-                mFragments.add(SimpleCardFragment.getInstance("Switch ViewPager " + mTitles_3[i].toString()));
+                if ( i == 1){
+                    mFragments.add(PandaFragment.newInstance("",""));
+                } else {
+                    mFragments.add(SimpleCardFragment.getInstance("Switch ViewPager " + mTitles_3[i].toString()));
+                }
             }
         }
 
