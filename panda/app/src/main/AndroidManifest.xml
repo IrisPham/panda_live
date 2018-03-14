@@ -21,11 +21,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity android:name=".Login.PhoneAuthActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".Home.HomeActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
@@ -33,11 +29,18 @@
         <activity android:name=".LogOut.LogOutActivity"/>
         <activity android:name=".MainActivity.MainActivity"/>
         <activity android:name=".Login.LoginActivity"
+
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".Live.LiveActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
+        </activity>
     </application>
 
 </manifest>

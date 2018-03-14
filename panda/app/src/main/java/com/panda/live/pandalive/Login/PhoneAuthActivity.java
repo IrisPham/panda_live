@@ -27,7 +27,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.panda.live.pandalive.MainActivity.MainActivity;
 import com.panda.live.pandalive.R;
 
 import java.util.concurrent.TimeUnit;

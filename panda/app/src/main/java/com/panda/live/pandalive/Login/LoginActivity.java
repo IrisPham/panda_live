@@ -9,10 +9,16 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -22,13 +28,12 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.panda.live.pandalive.MainActivity.MainActivity;
@@ -36,44 +41,78 @@ import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.data.model.Data;
 
 import org.json.JSONObject;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
-    private LoginButton loginButton;
     private CallbackManager mCallbackManager;
+    private LinearLayout mLoginButton, mPhone;
     private Intent intent;
     private Data data;
-
+    private BottomSheetBehavior mBottomSheetBehavior;
+    private BottomSheetDialog mBottomSheetDialog;
+    private View mBottomSheetView;
     private GoogleSignInClient mGoogleSignInClient;
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "SignInActivity";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
 
-        FacebookSdk.sdkInitialize(getApplicationContext());// tích hợp SDK vào app
+        FacebookSdk.sdkInitialize(getApplicationContext());;// tích hợp SDK vào app
         mCallbackManager = CallbackManager.Factory.create();//Lấy dữ liệu
         intent = new Intent(this,MainActivity.class);
 
-        loginButton = findViewById(R.id.button_facebook_login);
+        mLoginButton = findViewById(R.id.button_facebook_login);
         //https://developers.facebook.com/docs/facebook-login/permissions#reference-email
         //xem link rõ hơn
-        loginButton.setReadPermissions("email", "public_profile");
-
-        // Lớp Data chứa các thuộc tính static
+        //mLoginButton.setReadPermissions("email", "public_profile");
+        ConnectToFacebook();
+        // Lớp Data chứa các thuộc tín
+        //printKeyHash(this);h static
         data = new Data();
-        //printKeyHash(this);
-        loginButton.setOnClickListener(new View.OnClickListener() {
+        mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 data.value = 1;// nếu data.value = 1 là đăng nhập = face, = 2 là google
-                ConnectToFacebook();
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile"));
 
             }
         });
+
+        mBottomSheetView = getLayoutInflater().inflate(R.layout.testbo, null);
+        mBottomSheetDialog = new BottomSheetDialog(LoginActivity.this);
+        mBottomSheetDialog.setContentView(mBottomSheetView);
+        mBottomSheetBehavior = BottomSheetBehavior.from((View) mBottomSheetView.getParent());
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                // React to state change
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // React to dragging events
+            }
+        });
+
+
+
+        mPhone = findViewById(R.id.phone_button);
+        mPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                mBottomSheetDialog.show();
+            }
+        });
+
+
+
 
         //Sử dụng builder để tạo các tùy chọn yêu cầu quyền truy cập khi đăng nhập
         //DEFAULT_SIGN_IN chỉ bao gồm thông tin cơ bản (ID, tên, thông tin chung) và email
@@ -84,9 +123,9 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         //Đặt kích thước của nút đăng nhập.
-        final SignInButton signInButton = findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
+        final LinearLayout signInButton = findViewById(R.id.sign_in_button);
+        //signInButton.setSize(SignInButton.SIZE_STANDARD);
+        //signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
 
 
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +157,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //Kết nối đến Facebook và lấy thông tin
     public void ConnectToFacebook() {
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             //Khi đăng nhập thành công
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -138,6 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                                 data.ID = id;
                                 data.name = name;
                                 startActivity(intent);
+
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -154,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onError(FacebookException error) {
-
+                Log.e("Error", error.getMessage());
             }
         });
 
