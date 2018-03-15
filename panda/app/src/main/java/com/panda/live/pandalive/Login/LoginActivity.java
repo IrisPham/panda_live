@@ -47,8 +47,8 @@ import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
     private CallbackManager mCallbackManager;
-    private LinearLayout mLoginButton, mPhone;
-    private Intent intent;
+    private LinearLayout mLoginButton, mPhone, mRegistry, mPhoneLogin;
+    private Intent intentMain, intentRegistry, intentPhoneLogin;
     private Data data;
     private BottomSheetBehavior mBottomSheetBehavior;
     private BottomSheetDialog mBottomSheetDialog;
@@ -65,9 +65,13 @@ public class LoginActivity extends AppCompatActivity {
 
         FacebookSdk.sdkInitialize(getApplicationContext());;// tích hợp SDK vào app
         mCallbackManager = CallbackManager.Factory.create();//Lấy dữ liệu
-        intent = new Intent(this,MainActivity.class);
-
+        intentMain = new Intent(this,MainActivity.class);
+        intentRegistry = new Intent(this,PhoneAuthActivity.class);
+        intentPhoneLogin = new Intent(this,PhoneLogin.class);
         mLoginButton = findViewById(R.id.button_facebook_login);
+
+        mPhone = findViewById(R.id.phone_button);
+
         //https://developers.facebook.com/docs/facebook-login/permissions#reference-email
         //xem link rõ hơn
         //mLoginButton.setReadPermissions("email", "public_profile");
@@ -84,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mBottomSheetView = getLayoutInflater().inflate(R.layout.testbo, null);
+        mBottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_view_phone, null);
         mBottomSheetDialog = new BottomSheetDialog(LoginActivity.this);
         mBottomSheetDialog.setContentView(mBottomSheetView);
         mBottomSheetBehavior = BottomSheetBehavior.from((View) mBottomSheetView.getParent());
@@ -92,6 +96,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 // React to state change
+
+
             }
 
             @Override
@@ -99,19 +105,29 @@ public class LoginActivity extends AppCompatActivity {
                 // React to dragging events
             }
         });
-
-
-
-        mPhone = findViewById(R.id.phone_button);
         mPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 mBottomSheetDialog.show();
+                mRegistry = findViewById(R.id.registry_button);
             }
         });
 
-
+        mRegistry = mBottomSheetView.findViewById(R.id.registry_button);
+        mRegistry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(intentRegistry);
+            }
+        });
+        mPhoneLogin = mBottomSheetView.findViewById(R.id.phone_login_button);
+        mPhoneLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(intentPhoneLogin);
+            }
+        });
 
 
         //Sử dụng builder để tạo các tùy chọn yêu cầu quyền truy cập khi đăng nhập
@@ -171,12 +187,11 @@ public class LoginActivity extends AppCompatActivity {
                                                     GraphResponse response) {
                                 // Lấy ID
                                 String id = object.optString(getString(R.string.id));
-                                /*Chỗ này bị null*/
                                 // Lấy tên
                                 String name = object.optString(getString(R.string.name));
                                 data.ID = id;
                                 data.name = name;
-                                startActivity(intent);
+                                startActivity(intentMain);
 
                             }
                         });
@@ -207,7 +222,7 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             Toast.makeText(this,"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
             data.name = account.getDisplayName();
-            startActivity(intent);
+            startActivity(intentMain);
         } catch (ApiException e) {
             Log.e("TAG",e.getMessage());
             Log.e("TAG", "signInResult:failed code= " + e.getStatusCode());

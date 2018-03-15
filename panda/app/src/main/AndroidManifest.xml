@@ -28,6 +28,8 @@
         </activity>
         <activity android:name=".LogOut.LogOutActivity"/>
         <activity android:name=".MainActivity.MainActivity"/>
+        <activity android:name=".Login.SetPass"/>
+        <activity android:name=".Login.PhoneLogin"/>
         <activity android:name=".Login.LoginActivity"
 
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">

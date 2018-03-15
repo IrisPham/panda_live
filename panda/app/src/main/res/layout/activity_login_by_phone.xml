@@ -1,3 +1,4 @@
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:id="@+id/main_layout"
@@ -11,9 +12,9 @@
         android:id="@+id/button_facebook_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:background="@drawable/custom_background_button_color"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
 
         <ImageView
             android:id="@+id/img_back"
@@ -31,7 +32,7 @@
             android:layout_gravity="center_vertical"
             android:gravity="center"
             android:paddingRight="30dp"
-            android:text="@string/tv_registry"
+            android:text="@string/tv_login"
             android:textColor="#000000"
             android:textSize="18sp" />
     </LinearLayout>
@@ -39,18 +40,18 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Vui lòng nhập mật khẩu"
+        android:text="Vui lòng điền số điện thoại và mật khẩu"
         android:textColor="#000"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"/>
 
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
-        android:layout_weight="1"
+        android:layout_weight="1.5"
         android:background="@color/grey_300"
+        android:layout_marginTop="20dp"
         android:gravity="center_vertical">
 
         <LinearLayout
@@ -64,80 +65,51 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="2.0">
+                android:layout_marginTop="10dp">
 
                 <EditText
                     android:id="@+id/field_phone_number"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
                     android:hint="@string/hint_phone_number"
                     android:inputType="phone" />
-
-                <Button
-                    android:id="@+id/button_start_verification"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
-                    android:text="@string/start_phone_auth"
-                    android:theme="@style/ThemeOverlay.MyDarkButton" />
-
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3.0">
+                android:layout_marginTop="10dp">
 
                 <EditText
                     android:id="@+id/field_verification_code"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:hint="Mật khẩu"
                     android:layout_weight="1.0"
-                    android:hint="@string/hint_verification_code"
-                    android:inputType="number" />
+                    android:inputType="number"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <Button
+                    android:theme="@style/ThemeOverlay.MyDarkButton"
                     android:id="@+id/button_verify_phone"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
-                    android:text="@string/verify_phone_auth"
-                    android:theme="@style/ThemeOverlay.MyDarkButton" />
+                    android:text="Đăng nhập"/>
 
-                <Button
-                    android:id="@+id/button_resend"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.0"
-                    android:text="@string/resend_phone_auth"
-                    android:theme="@style/ThemeOverlay.MyDarkButton" />
             </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/signed_in_buttons"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="horizontal"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:visibility="gone"
-            android:weightSum="1.0">
-
-            <Button
-                android:id="@+id/sign_out_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.0"
-                android:text="@string/sign_out"
-                android:theme="@style/ThemeOverlay.MyDarkButton" />
 
         </LinearLayout>
+
+
 
     </RelativeLayout>
 
