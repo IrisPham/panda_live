@@ -37,7 +37,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.8.0'
-    compile 'com.squareup.okhttp3:okhttp:3.8.0'
+    compile 'com.squareup.okhttp3:okhttp:3.10.0'
     //Space navigation view
     compile 'com.github.armcha:SpaceNavigationView:1.6.0'
     //Tab layout
@@ -50,6 +50,6 @@ dependencies {
     compile 'com.google.firebase:firebase-database:11.8.0'
     //Facebook
     implementation 'com.facebook.android:facebook-login:[4,5)'
-
+    implementation project(':libbambuser-0.9.12')
 }
 apply plugin: 'com.google.gms.google-services'
