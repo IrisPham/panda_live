@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,6 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.data.model.Data;
 
 import java.util.concurrent.TimeUnit;
 
@@ -55,7 +57,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-
+    private Data mData;
     private ViewGroup mPhoneNumberViews;
     private ViewGroup mSignedInViews;
 
@@ -74,7 +76,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_phone_auth);
-
+        mData = new Data();
         // Restore instance state
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
@@ -262,6 +264,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                             FirebaseUser user = task.getResult().getUser();
                             // [START_EXCLUDE]
                             updateUI(STATE_SIGNIN_SUCCESS, user);
+
                             startActivity(mIntentSetPass);
                             // [END_EXCLUDE]
                         } else {
@@ -399,7 +402,8 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                 if (!validatePhoneNumber()) {
                     return;
                 }
-
+                mData.phoneNum =  mPhoneNumberField.getText().toString();
+                Toast.makeText(getApplicationContext(),mData.phoneNum,Toast.LENGTH_SHORT).show();
                 startPhoneNumberVerification(mPhoneNumberField.getText().toString());
                 break;
             case R.id.button_verify_phone:

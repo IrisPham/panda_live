@@ -7,5 +7,7 @@ package com.panda.live.pandalive.data.model;
 public class Data {
     public static String ID;
     public static String name;
+    public static String phoneNum;
     public static int value;
+
 }
