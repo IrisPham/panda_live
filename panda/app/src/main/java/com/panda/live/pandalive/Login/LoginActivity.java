@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -270,6 +271,20 @@ public class LoginActivity extends AppCompatActivity {
 
         return key;
     }
-
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//
+//        // [START on_start_sign_in]
+//        // Check for existing Google Sign In account, if the user is already signed in
+//        // the GoogleSignInAccount will be non-null.
+//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+//        updateUI(account);
+//        // [END on_start_sign_in]
+//    }
+//
+//    private void updateUI(@Nullable GoogleSignInAccount account) {
+//
+//    }
 }
 

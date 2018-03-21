@@ -82,7 +82,7 @@
                 android:layout_marginTop="10dp">
 
                 <EditText
-                    android:id="@+id/field_verification_code"
+                    android:id="@+id/field_pwd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Mật khẩu"
@@ -98,7 +98,7 @@
 
                 <Button
                     android:theme="@style/ThemeOverlay.MyDarkButton"
-                    android:id="@+id/button_verify_phone"
+                    android:id="@+id/button_login"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"

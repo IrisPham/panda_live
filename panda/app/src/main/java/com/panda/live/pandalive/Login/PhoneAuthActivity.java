@@ -211,7 +211,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-//        updateUI(currentUser);
+        updateUI(currentUser);
 
         // [START_EXCLUDE]
         if (mVerificationInProgress && validatePhoneNumber()) {
@@ -280,7 +280,6 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                             FirebaseUser user = task.getResult().getUser();
                             // [START_EXCLUDE]
                             updateUI(STATE_SIGNIN_SUCCESS, user);
-
                             startActivity(mIntentSetPass);
                             // [END_EXCLUDE]
                         } else {
@@ -308,14 +307,14 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     }
 
     private void updateUI(int uiState) {
-//        updateUI(uiState, mAuth.getCurrentUser(), null);
+        updateUI(uiState, mAuth.getCurrentUser(), null);
     }
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             updateUI(STATE_SIGNIN_SUCCESS, user);
         } else {
-//            updateUI(STATE_INITIALIZED);
+            updateUI(STATE_INITIALIZED);
         }
     }
 
@@ -374,14 +373,15 @@ public class PhoneAuthActivity extends AppCompatActivity implements
 
         if (user == null) {
             // Signed out
-           // mPhoneNumberViews.setVisibility(View.VISIBLE);
-           // mSignedInViews.setVisibility(View.GONE);
+            //mPhoneNumberViews.setVisibility(View.VISIBLE);
+            //mSignedInViews.setVisibility(View.GONE);
+            return;
 
 
         } else {
             // Signed in
-            mPhoneNumberViews.setVisibility(View.GONE);
-            mSignedInViews.setVisibility(View.VISIBLE);
+            //mPhoneNumberViews.setVisibility(View.GONE);
+            //mSignedInViews.setVisibility(View.VISIBLE);
 
             enableViews(mPhoneNumberField, mVerificationField);
             mPhoneNumberField.setText(null);
@@ -442,7 +442,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
-        //startActivity(mIntent);
+        startActivity(mIntent);
         return true;
     }
 }
