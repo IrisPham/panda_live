@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.panda.live.pandalive.MainActivity.MainActivity;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.Utils.Util;
 import com.panda.live.pandalive.data.model.Data;
 
 import org.json.JSONObject;
@@ -47,7 +49,8 @@ import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
     private CallbackManager mCallbackManager;
-    private LinearLayout mLoginButton, mPhone, mRegistry, mPhoneLogin;
+    private LinearLayout mLoginButton, mPhone;
+    private Button mBtnSignUp, mBtnSignIn;
     private Intent intentMain, intentRegistry, intentPhoneLogin;
     private Data data;
     private BottomSheetBehavior mBottomSheetBehavior;
@@ -110,19 +113,19 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 mBottomSheetDialog.show();
-                mRegistry = findViewById(R.id.registry_button);
+                mBtnSignUp = findViewById(R.id.btn_sign_up);
             }
         });
 
-        mRegistry = mBottomSheetView.findViewById(R.id.registry_button);
-        mRegistry.setOnClickListener(new View.OnClickListener() {
+        mBtnSignUp = mBottomSheetView.findViewById(R.id.btn_sign_up);
+        mBtnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(intentRegistry);
             }
         });
-        mPhoneLogin = mBottomSheetView.findViewById(R.id.phone_login_button);
-        mPhoneLogin.setOnClickListener(new View.OnClickListener() {
+        mBtnSignIn = mBottomSheetView.findViewById(R.id.btn_sign_in);
+        mBtnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(intentPhoneLogin);

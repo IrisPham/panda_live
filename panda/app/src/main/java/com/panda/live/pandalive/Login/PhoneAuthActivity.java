@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -105,12 +106,12 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         // [START initialize_auth]
         mIntent = new Intent(this,LoginActivity.class);
         mIntentSetPass = new Intent(this,SetPass.class);
-        mImageBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(mIntent);
-            }
-        });
+//        mImageBack.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
        mAuth = FirebaseAuth.getInstance();
 
         // [END initialize_auth]
@@ -187,6 +188,21 @@ public class PhoneAuthActivity extends AppCompatActivity implements
             }
         };
         // [END phone_auth_callbacks]
+
+        //Setup toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_sign_up);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSupportNavigateUp();
+            }
+        });
     }
 
     // [START on_start_check_user]
@@ -195,7 +211,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
+//        updateUI(currentUser);
 
         // [START_EXCLUDE]
         if (mVerificationInProgress && validatePhoneNumber()) {
@@ -292,14 +308,14 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     }
 
     private void updateUI(int uiState) {
-        updateUI(uiState, mAuth.getCurrentUser(), null);
+//        updateUI(uiState, mAuth.getCurrentUser(), null);
     }
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             updateUI(STATE_SIGNIN_SUCCESS, user);
         } else {
-            updateUI(STATE_INITIALIZED);
+//            updateUI(STATE_INITIALIZED);
         }
     }
 
@@ -358,8 +374,8 @@ public class PhoneAuthActivity extends AppCompatActivity implements
 
         if (user == null) {
             // Signed out
-            mPhoneNumberViews.setVisibility(View.VISIBLE);
-            mSignedInViews.setVisibility(View.GONE);
+           // mPhoneNumberViews.setVisibility(View.VISIBLE);
+           // mSignedInViews.setVisibility(View.GONE);
 
 
         } else {
@@ -422,5 +438,11 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                 signOut();
                 break;
         }
+    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        //startActivity(mIntent);
+        return true;
     }
 }
