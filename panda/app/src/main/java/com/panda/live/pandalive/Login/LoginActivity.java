@@ -37,13 +37,21 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.panda.live.pandalive.MainActivity.MainActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.Util;
 import com.panda.live.pandalive.data.model.Data;
 
 import org.json.JSONObject;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -58,24 +66,27 @@ public class LoginActivity extends AppCompatActivity {
     private BottomSheetDialog mBottomSheetDialog;
     private View mBottomSheetView;
     private GoogleSignInClient mGoogleSignInClient;
+    private FirebaseAuth mAuth;
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "SignInActivity";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
 
-        FacebookSdk.sdkInitialize(getApplicationContext());;// tích hợp SDK vào app
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        ;// tích hợp SDK vào app
         mCallbackManager = CallbackManager.Factory.create();//Lấy dữ liệu
-        intentMain = new Intent(this,MainActivity.class);
-        intentRegistry = new Intent(this,PhoneAuthActivity.class);
-        intentPhoneLogin = new Intent(this,PhoneLogin.class);
+        intentMain = new Intent(this, MainActivity.class);
+        intentRegistry = new Intent(this, PhoneAuthActivity.class);
+        intentPhoneLogin = new Intent(this, PhoneLogin.class);
         mLoginButton = findViewById(R.id.button_facebook_login);
 
         mPhone = findViewById(R.id.phone_button);
-
+        mAuth = FirebaseAuth.getInstance();
         //https://developers.facebook.com/docs/facebook-login/permissions#reference-email
         //xem link rõ hơn
         //mLoginButton.setReadPermissions("email", "public_profile");
@@ -137,6 +148,7 @@ public class LoginActivity extends AppCompatActivity {
         //Sử dụng builder để tạo các tùy chọn yêu cầu quyền truy cập khi đăng nhập
         //DEFAULT_SIGN_IN chỉ bao gồm thông tin cơ bản (ID, tên, thông tin chung) và email
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         //Xây dựng một người dùng với các tùy chọn được thiếp lập bởi gso.
@@ -159,7 +171,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
     //Lấy kết quả trả về từ Google Sign in và xử lý kết quả đó bằng hàm handleSignInResult
     //đối với gmail
     @Override
@@ -174,15 +185,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
     //Kết nối đến Facebook và lấy thông tin
     public void ConnectToFacebook() {
         LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             //Khi đăng nhập thành công
             @Override
-            public void onSuccess(LoginResult loginResult) {
+            public void onSuccess(final LoginResult loginResult) {
                 // Yêu câu gửi về các thông tin
-                GraphRequest request = GraphRequest.newMeRequest(
+                final GraphRequest request = GraphRequest.newMeRequest(
                         AccessToken.getCurrentAccessToken(),
                         new GraphRequest.GraphJSONObjectCallback() {
                             //Gửi về thành công
@@ -195,6 +205,7 @@ public class LoginActivity extends AppCompatActivity {
                                 String name = object.optString(getString(R.string.name));
                                 data.ID = id;
                                 data.name = name;
+                                saveFacebookCredentialsInFirebase(loginResult.getAccessToken());
                                 startActivity(intentMain);
 
                             }
@@ -220,15 +231,46 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    private void saveFacebookCredentialsInFirebase(AccessToken accessToken) {
+        AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Đăng nhập thất bại", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void saveGoogleCredentialsInFirebase(GoogleSignInAccount acct) {
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(), "Đăng nhập thật bại", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+    }
+
     //Hàm lưu lại thông tin sau khi đăng nhập thành công.
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            Toast.makeText(this,"Đăng nhập thành công",Toast.LENGTH_SHORT).show();
-            data.name = account.getDisplayName();
+            Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+            updateUI(account);
+            saveGoogleCredentialsInFirebase(account);
             startActivity(intentMain);
         } catch (ApiException e) {
-            Log.e("TAG",e.getMessage());
+            Log.e("TAG", e.getMessage());
             Log.e("TAG", "signInResult:failed code= " + e.getStatusCode());
 
         }
@@ -271,20 +313,25 @@ public class LoginActivity extends AppCompatActivity {
 
         return key;
     }
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//
-//        // [START on_start_sign_in]
-//        // Check for existing Google Sign In account, if the user is already signed in
-//        // the GoogleSignInAccount will be non-null.
-//        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-//        updateUI(account);
-//        // [END on_start_sign_in]
-//    }
-//
-//    private void updateUI(@Nullable GoogleSignInAccount account) {
-//
-//    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // [START on_start_sign_in]
+        // Check for existing Google Sign In account, if the user is already signed in
+        // the GoogleSignInAccount will be non-null.
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        updateUI(account);
+        // [END on_start_sign_in]
+    }
+
+    private void updateUI(@Nullable GoogleSignInAccount account) {
+        if (account != null) {
+            data.name = account.getDisplayName();
+            data.ID = account.getId();
+        }
+
+    }
 }
 
