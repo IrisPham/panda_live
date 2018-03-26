@@ -4,10 +4,12 @@ package com.panda.live.pandalive.Login;
  * Created by levan on 25/02/2018.
  */
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -45,6 +47,7 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.MainActivity.MainActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.Util;
@@ -80,9 +83,13 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         ;// tích hợp SDK vào app
         mCallbackManager = CallbackManager.Factory.create();//Lấy dữ liệu
-        intentMain = new Intent(this, MainActivity.class);
+
         intentRegistry = new Intent(this, PhoneAuthActivity.class);
         intentPhoneLogin = new Intent(this, PhoneLogin.class);
+
+        intentMain = new Intent(this,HomeActivity.class);
+        intentRegistry = new Intent(this,PhoneAuthActivity.class);
+        intentPhoneLogin = new Intent(this,PhoneLogin.class);
         mLoginButton = findViewById(R.id.button_facebook_login);
 
         mPhone = findViewById(R.id.phone_button);
@@ -282,6 +289,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    @TargetApi(Build.VERSION_CODES.FROYO)
     public static String printKeyHash(Activity context) {
         PackageInfo packageInfo;
         String key = null;

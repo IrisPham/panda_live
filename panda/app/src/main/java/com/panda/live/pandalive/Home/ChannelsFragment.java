@@ -75,22 +75,10 @@ public class ChannelsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
 
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
-        channelModels.add(new ChannelModel(12,""));
+        channelModels.add(new ChannelModel(R.drawable.ic_learning_channel));
+        channelModels.add(new ChannelModel(R.drawable.ic_music_channel));
+        channelModels.add(new ChannelModel(R.drawable.ic_moive_channel));
+        channelModels.add(new ChannelModel(R.drawable.ic_chat_channel));
         mAdapter.notifyDataSetChanged();
         return itemView;
     }

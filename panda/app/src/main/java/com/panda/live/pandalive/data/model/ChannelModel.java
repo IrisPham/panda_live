@@ -6,18 +6,11 @@ package com.panda.live.pandalive.data.model;
 
 public class ChannelModel {
     private int mIdIcon;
-    private String mName;
 
-    public ChannelModel(int mIdIcon, String mName) {
+    public ChannelModel(int mIdIcon) {
         this.mIdIcon = mIdIcon;
-        this.mName = mName;
     }
-
     public int getmIdIcon() {
         return mIdIcon;
-    }
-
-    public String getmName() {
-        return mName;
     }
 }

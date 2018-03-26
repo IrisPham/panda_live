@@ -56,5 +56,15 @@ dependencies {
 
     //RippleEffect
     compile 'com.github.traex.rippleeffect:library:1.3'
+
+    //library image
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    compile "me.henrytao:smooth-app-bar-layout:25.3.1.0"
+    compile 'de.hdodenhof:circleimageview:2.2.0'
+    compile 'com.makeramen:roundedimageview:2.3.0'
+
+
 }
 apply plugin: 'com.google.gms.google-services'
