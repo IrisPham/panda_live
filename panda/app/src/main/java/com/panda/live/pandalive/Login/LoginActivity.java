@@ -37,6 +37,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.MainActivity.MainActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.Util;
@@ -68,7 +69,8 @@ public class LoginActivity extends AppCompatActivity {
 
         FacebookSdk.sdkInitialize(getApplicationContext());;// tích hợp SDK vào app
         mCallbackManager = CallbackManager.Factory.create();//Lấy dữ liệu
-        intentMain = new Intent(this,MainActivity.class);
+        //intentMain = new Intent(this,MainActivity.class);
+        intentMain = new Intent(this,HomeActivity.class);
         intentRegistry = new Intent(this,PhoneAuthActivity.class);
         intentPhoneLogin = new Intent(this,PhoneLogin.class);
         mLoginButton = findViewById(R.id.button_facebook_login);

@@ -31,7 +31,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
+        holder.mImvIconChannel.setImageResource(channelModels.get(position).getmIdIcon());
     }
 
     @Override
@@ -39,11 +39,11 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.MyViewHo
         return channelModels.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         private ImageView mImvIconChannel;
-        private TextView mTvNameChannel;
         public MyViewHolder(View itemView) {
             super(itemView);
+            mImvIconChannel = itemView.findViewById(R.id.imv_item_channel);
         }
     }
 }

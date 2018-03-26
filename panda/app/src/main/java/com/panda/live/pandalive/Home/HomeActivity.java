@@ -1,12 +1,14 @@
 package com.panda.live.pandalive.Home;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
@@ -14,8 +16,10 @@ import com.flyco.tablayout.SegmentTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceNavigationView;
+import com.luseen.spacenavigation.SpaceOnClickListener;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.ViewFindUtils;
+import com.panda.live.pandalive.profile.ProfileActivity;
 
 import java.util.ArrayList;
 
@@ -23,7 +27,7 @@ public class HomeActivity extends AppCompatActivity {
 
     //Tab
     private ArrayList<Fragment> mFragments = new ArrayList<>();
-    private String[] mTitles_3 = {"Kênh","Panda","Khám phá"};
+    private String[] mTitles_3 = {"Kênh", "Panda", "Khám phá"};
     private View mDecorView;
     private SegmentTabLayout mTabLayout_3;
 
@@ -40,12 +44,12 @@ public class HomeActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        for( int i = 0; i < 3; i++){
-            if (i == 0){
-                mFragments.add(ChannelsFragment.newInstance("",""));
-            }else {
-                if ( i == 1){
-                    mFragments.add(PandaFragment.newInstance("",""));
+        for (int i = 0; i < 3; i++) {
+            if (i == 0) {
+                mFragments.add(ChannelsFragment.newInstance("", ""));
+            } else {
+                if (i == 1) {
+                    mFragments.add(PandaFragment.newInstance("", ""));
                 } else {
                     mFragments.add(SimpleCardFragment.getInstance("Switch ViewPager " + mTitles_3[i].toString()));
                 }
@@ -77,6 +81,28 @@ public class HomeActivity extends AppCompatActivity {
         mSpaceNavigationView.addSpaceItem(new SpaceItem("HOME", R.drawable.ic_live_tv_black_24dp));
         mSpaceNavigationView.addSpaceItem(new SpaceItem("SEARCH", R.drawable.ic_perm_identity_black_24dp));
         mSpaceNavigationView.setCentreButtonIconColorFilterEnabled(false);
+        mSpaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
+            @Override
+            public void onCentreButtonClick() {
+
+            }
+
+            @Override
+            public void onItemClick(int itemIndex, String itemName) {
+                switch (itemIndex) {
+                    case 0:
+                        break;
+                    case 1:
+                        startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
+                        finish();
+                        break;
+                }
+            }
+
+            @Override
+            public void onItemReselected(int itemIndex, String itemName) {
+            }
+        });
     }
 
     private void tl_3() {
@@ -116,9 +142,10 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_home,menu);
+        getMenuInflater().inflate(R.menu.menu_home, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
 
     private class MyPagerAdapter extends FragmentPagerAdapter {
         public MyPagerAdapter(FragmentManager fm) {
