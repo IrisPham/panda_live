@@ -5,6 +5,7 @@ package com.panda.live.pandalive.Utils;
  */
 
 public class Contanst {
+    public static final String SHARED_PREFERENCES_NAME = "Preferences";
     public static final String EXTRA_FULL_NAME = "FullName";
     public static final String EXTRA_ACCOUNT_TYPE = "AccountType";
     public static final String EXTRA_MOBILE = "Mobile";
@@ -18,5 +19,4 @@ public class Contanst {
 
     public static final String KEY_ACCESS_TOKEN = "AccessToken";
     public static final String KEY_ACCOUNT_TYPE = "AccountType";
-    public static final String SHARED_PREFERENCES_NAME = "Preferences";
 }
