@@ -89,19 +89,19 @@ public class PreferencesManager {
     public static User getUserInfo(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
-        User user = new User(
-                sharedPref.getString(EXTRA_USER_ID,""),
-                "",
-                sharedPref.getString(EXTRA_USER_NAME,""),
-                "",
-                sharedPref.getString(EXTRA_USER_ADDRESS,""),
-                sharedPref.getString(EXTRA_USER_EDUCATION,""),
-                sharedPref.getString(EXTRA_USER_JOB,""),
-                sharedPref.getString(EXTRA_USER_RANK,""),
-                Integer.parseInt(sharedPref.getString(EXTRA_USER_COIN,"")),
-                Integer.parseInt(sharedPref.getString(EXTRA_HOUR_ONLINE,"")),
-                Integer.parseInt(sharedPref.getString(EXTRA_USER_EXPERIENCE,"")));
-        return user;
+//        User user = new User(
+//                sharedPref.getString(EXTRA_USER_ID,""),
+//                "",
+//                sharedPref.getString(EXTRA_USER_NAME,""),
+//                "",
+//                sharedPref.getString(EXTRA_USER_ADDRESS,""),
+//                sharedPref.getString(EXTRA_USER_EDUCATION,""),
+//                sharedPref.getString(EXTRA_USER_JOB,""),
+//                sharedPref.getString(EXTRA_USER_RANK,""),
+//                Integer.parseInt(sharedPref.getString(EXTRA_USER_COIN,"")),
+//                Integer.parseInt(sharedPref.getString(EXTRA_HOUR_ONLINE,"")),
+//                Integer.parseInt(sharedPref.getString(EXTRA_USER_EXPERIENCE,"")));
+        return null;
     }
 
 
