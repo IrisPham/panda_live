@@ -6,6 +6,7 @@ package com.panda.live.pandalive.Login;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -45,12 +46,10 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.panda.live.pandalive.Home.HomeActivity;
-import com.panda.live.pandalive.MainActivity.MainActivity;
 import com.panda.live.pandalive.R;
-import com.panda.live.pandalive.Utils.Util;
+import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.model.Data;
 
 import org.json.JSONObject;
@@ -60,6 +59,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
+    private static final int RC_SIGN_IN = 9001;
+    private static final String TAG = "SignInActivity";
     private CallbackManager mCallbackManager;
     private LinearLayout mLoginButton, mPhone;
     private Button mBtnSignUp, mBtnSignIn;
@@ -70,8 +71,40 @@ public class LoginActivity extends AppCompatActivity {
     private View mBottomSheetView;
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
-    private static final int RC_SIGN_IN = 9001;
-    private static final String TAG = "SignInActivity";
+    private Context mContext;
+
+    @TargetApi(Build.VERSION_CODES.FROYO)
+    public static String printKeyHash(Activity context) {
+        PackageInfo packageInfo;
+        String key = null;
+        try {
+            //getting application package name, as defined in manifest
+            String packageName = context.getApplicationContext().getPackageName();
+
+            //Retriving package info...
+            packageInfo = context.getPackageManager().getPackageInfo(packageName,
+                    PackageManager.GET_SIGNATURES);
+
+            Log.e("Package Name=", context.getApplicationContext().getPackageName());
+
+            for (android.content.pm.Signature signature : packageInfo.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                key = new String(Base64.encode(md.digest(), 0));
+
+                // String key = new String(Base64.encodeBytes(md.digest()));
+                Log.e("Key Hash=", key);
+            }
+        } catch (PackageManager.NameNotFoundException e1) {
+            Log.e("Name not found", e1.toString());
+        } catch (NoSuchAlgorithmException e) {
+            Log.e("No such an algorithm", e.toString());
+        } catch (Exception e) {
+            Log.e("Exception", e.toString());
+        }
+
+        return key;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,6 +113,8 @@ public class LoginActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
 
+        mContext = this.getApplicationContext();
+
         FacebookSdk.sdkInitialize(getApplicationContext());
         ;// tích hợp SDK vào app
         mCallbackManager = CallbackManager.Factory.create();//Lấy dữ liệu
@@ -87,9 +122,9 @@ public class LoginActivity extends AppCompatActivity {
         intentRegistry = new Intent(this, PhoneAuthActivity.class);
         intentPhoneLogin = new Intent(this, PhoneLogin.class);
 
-        intentMain = new Intent(this,HomeActivity.class);
-        intentRegistry = new Intent(this,PhoneAuthActivity.class);
-        intentPhoneLogin = new Intent(this,PhoneLogin.class);
+        intentMain = new Intent(this, HomeActivity.class);
+        intentRegistry = new Intent(this, PhoneAuthActivity.class);
+        intentPhoneLogin = new Intent(this, PhoneLogin.class);
         mLoginButton = findViewById(R.id.button_facebook_login);
 
         mPhone = findViewById(R.id.phone_button);
@@ -177,7 +212,6 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-
     //Lấy kết quả trả về từ Google Sign in và xử lý kết quả đó bằng hàm handleSignInResult
     //đối với gmail
     @Override
@@ -190,7 +224,6 @@ public class LoginActivity extends AppCompatActivity {
             handleSignInResult(task);
         }
     }
-
 
     //Kết nối đến Facebook và lấy thông tin
     public void ConnectToFacebook() {
@@ -213,15 +246,12 @@ public class LoginActivity extends AppCompatActivity {
                                 data.ID = id;
                                 data.name = name;
                                 saveFacebookCredentialsInFirebase(loginResult.getAccessToken());
-                                startActivity(intentMain);
 
                             }
                         });
                 Bundle parameters = new Bundle();
                 request.setParameters(parameters);
                 request.executeAsync();
-
-
             }
 
             @Override
@@ -237,8 +267,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-
-    private void saveFacebookCredentialsInFirebase(AccessToken accessToken) {
+    private void saveFacebookCredentialsInFirebase(final AccessToken accessToken) {
         AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -246,7 +275,9 @@ public class LoginActivity extends AppCompatActivity {
                 if (!task.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), "Đăng nhập thất bại", Toast.LENGTH_LONG).show();
                 } else {
+                    PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
                     Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_LONG).show();
+                    startActivity(intentMain);
                 }
             }
         });
@@ -260,8 +291,10 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            //PreferencesManager.setStateLogin(mContext,2);
                             Toast.makeText(getApplicationContext(), "Đăng nhập thật bại", Toast.LENGTH_LONG).show();
                         } else {
+                            PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
                             Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -283,43 +316,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    @TargetApi(Build.VERSION_CODES.FROYO)
-    public static String printKeyHash(Activity context) {
-        PackageInfo packageInfo;
-        String key = null;
-        try {
-            //getting application package name, as defined in manifest
-            String packageName = context.getApplicationContext().getPackageName();
-
-            //Retriving package info...
-            packageInfo = context.getPackageManager().getPackageInfo(packageName,
-                    PackageManager.GET_SIGNATURES);
-
-            Log.e("Package Name=", context.getApplicationContext().getPackageName());
-
-            for (android.content.pm.Signature signature : packageInfo.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                key = new String(Base64.encode(md.digest(), 0));
-
-                // String key = new String(Base64.encodeBytes(md.digest()));
-                Log.e("Key Hash=", key);
-            }
-        } catch (PackageManager.NameNotFoundException e1) {
-            Log.e("Name not found", e1.toString());
-        } catch (NoSuchAlgorithmException e) {
-            Log.e("No such an algorithm", e.toString());
-        } catch (Exception e) {
-            Log.e("Exception", e.toString());
-        }
-
-        return key;
     }
 
     @Override

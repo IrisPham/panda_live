@@ -45,7 +45,7 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
-            <com.panda.live.pandalive.Live.CustomRoundView
+            <com.panda.live.pandalive.LiveViewer.CustomRoundView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@mipmap/ic_headpic"
@@ -53,7 +53,7 @@
                 app:border_width="1dp" />
         </RelativeLayout>
 
-        <com.panda.live.pandalive.Live.HorizontalListView
+        <com.panda.live.pandalive.LiveViewer.HorizontalListView
             android:id="@+id/hlvaudience"
             android:layout_width="match_parent"
             android:layout_height="45dp"

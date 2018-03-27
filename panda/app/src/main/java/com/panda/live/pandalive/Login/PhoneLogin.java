@@ -1,5 +1,6 @@
 package com.panda.live.pandalive.Login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.panda.live.pandalive.MainActivity.MainActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.User.User;
+import com.panda.live.pandalive.Utils.PreferencesManager;
 
 /**
  * Created by levan on 15/03/2018.
@@ -35,6 +37,7 @@ public class PhoneLogin extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference myRef;
     private User mUser;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +52,8 @@ public class PhoneLogin extends AppCompatActivity {
         myRef = mFirebaseDatabase.getReference("users");
         FirebaseUser user = mAuth.getCurrentUser();
         userID = user.getUid();
+
+        mContext = this.getApplicationContext();
         myRef.child(userID).addValueEventListener(new com.google.firebase.database.ValueEventListener() {
             @Override
             public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
@@ -69,8 +74,10 @@ public class PhoneLogin extends AppCompatActivity {
                 phonenum = mPhoneNum.getText().toString();
                 pass = mPass.getText().toString();
                 if(phonenum.equals(verifyphonenum) && pass.equals(verifypass)){
+                    //PreferencesManager.setStateLogin(mContext,1);
                     startActivity(mIntent);
                 }else{
+                    //PreferencesManager.setStateLogin(mContext,2);
                     toastMessage("Số điện thoại hoặc mật khẩu không đúng !");
                 }
 
