@@ -26,6 +26,7 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.User.Profile;
 import com.panda.live.pandalive.User.User;
 import com.panda.live.pandalive.data.model.Data;
 
@@ -47,11 +48,12 @@ public class SetPass extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference myRef;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_password);
-        mIntent = new Intent(this,PhoneAuthActivity.class);
+        mIntent = new Intent(this,PhoneLogin.class);
         mData = new Data();
         mPass = findViewById(R.id.edit_pass);
         mButtonComplete = findViewById(R.id.button_complete);
@@ -82,18 +84,6 @@ public class SetPass extends AppCompatActivity {
 
 
         // Read from the database
-        myRef.addValueEventListener(new com.google.firebase.database.ValueEventListener() {
-            @Override
-            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onDataChange: Added information to database: \n" +
-                        dataSnapshot.getValue());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "Failed to read value.", databaseError.toException());
-            }
-        });
 
 
         mButtonComplete.setOnClickListener(new View.OnClickListener() {
@@ -105,10 +95,13 @@ public class SetPass extends AppCompatActivity {
 
                 //handle the exception if the EditText fields are null
 
-                    User user = new User(mData.phoneNum,pass,"NO","NO","NO",
-                            "NO","NO","NO",1000,0,0);
+                    User user = new User(mData.phoneNum, pass, mData.name,
+                            "NO", "NO", 1000, 0, 0 );
+                    Profile profile = new Profile("NO","NO", "NO", "NO");
                     myRef.child("users").child(userID).setValue(user);
+                    myRef.child("users").child(userID).child("profile").setValue(profile);
                     toastMessage("Đăng kí thành công !");
+                    startActivity(mIntent);
             }
         });
     }

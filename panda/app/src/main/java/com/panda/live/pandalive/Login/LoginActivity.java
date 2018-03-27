@@ -6,13 +6,15 @@ package com.panda.live.pandalive.Login;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
+import com.facebook.login.widget.ProfilePictureView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -47,10 +51,12 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.panda.live.pandalive.Home.HomeActivity;
-import com.panda.live.pandalive.MainActivity.MainActivity;
 import com.panda.live.pandalive.R;
-import com.panda.live.pandalive.Utils.Util;
+import com.panda.live.pandalive.User.Profile;
+import com.panda.live.pandalive.User.User;
 import com.panda.live.pandalive.data.model.Data;
 
 import org.json.JSONObject;
@@ -64,14 +70,17 @@ public class LoginActivity extends AppCompatActivity {
     private LinearLayout mLoginButton, mPhone;
     private Button mBtnSignUp, mBtnSignIn;
     private Intent intentMain, intentRegistry, intentPhoneLogin;
-    private Data data;
+    private Data mData;
     private BottomSheetBehavior mBottomSheetBehavior;
     private BottomSheetDialog mBottomSheetDialog;
     private View mBottomSheetView;
     private GoogleSignInClient mGoogleSignInClient;
-    private FirebaseAuth mAuth;
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "SignInActivity";
+    private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseAuth mAuth;
+    private DatabaseReference myRef;
+    private String userID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,6 +92,8 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         ;// tích hợp SDK vào app
         mCallbackManager = CallbackManager.Factory.create();//Lấy dữ liệu
+
+
 
         intentRegistry = new Intent(this, PhoneAuthActivity.class);
         intentPhoneLogin = new Intent(this, PhoneLogin.class);
@@ -100,11 +111,11 @@ public class LoginActivity extends AppCompatActivity {
         ConnectToFacebook();
         // Lớp Data chứa các thuộc tín
         //printKeyHash(this);h static
-        data = new Data();
+        mData = new Data();
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                data.value = 1;// nếu data.value = 1 là đăng nhập = face, = 2 là google
+                mData.value = 1;// nếu data.value = 1 là đăng nhập = face, = 2 là google
                 LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile"));
 
             }
@@ -130,6 +141,7 @@ public class LoginActivity extends AppCompatActivity {
         mPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mData.value = 3;
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 mBottomSheetDialog.show();
                 mBtnSignUp = findViewById(R.id.btn_sign_up);
@@ -150,6 +162,10 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intentPhoneLogin);
             }
         });
+        mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = mFirebaseDatabase.getReference();
+
 
 
         //Sử dụng builder để tạo các tùy chọn yêu cầu quyền truy cập khi đăng nhập
@@ -170,7 +186,7 @@ public class LoginActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                data.value = 2;
+                mData.value = 2;
                 signIn();
             }
         });
@@ -210,11 +226,12 @@ public class LoginActivity extends AppCompatActivity {
                                 String id = object.optString(getString(R.string.id));
                                 // Lấy tên
                                 String name = object.optString(getString(R.string.name));
-                                data.ID = id;
-                                data.name = name;
+                                mData.ID = id;
+                                mData.name = name;
+                                mData.URI = "https://graph.facebook.com/"+ com.facebook.Profile.getCurrentProfile()+"/picture?type=small";
                                 saveFacebookCredentialsInFirebase(loginResult.getAccessToken());
+                                //loadData();
                                 startActivity(intentMain);
-
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -243,11 +260,7 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Đăng nhập thất bại", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_LONG).show();
-                }
+                loadData();
             }
         });
     }
@@ -259,11 +272,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Đăng nhập thật bại", Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_LONG).show();
-                        }
+                        loadData();
                     }
                 });
     }
@@ -273,7 +282,9 @@ public class LoginActivity extends AppCompatActivity {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
-            updateUI(account);
+            mData.name = account.getDisplayName();
+            mData.ID = account.getId();
+            mData.URI = account.getPhotoUrl().toString();
             saveGoogleCredentialsInFirebase(account);
             startActivity(intentMain);
         } catch (ApiException e) {
@@ -322,24 +333,21 @@ public class LoginActivity extends AppCompatActivity {
         return key;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
 
-        // [START on_start_sign_in]
-        // Check for existing Google Sign In account, if the user is already signed in
-        // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        updateUI(account);
-        // [END on_start_sign_in]
+    public void loadData(){
+        FirebaseUser users = mAuth.getCurrentUser();
+        userID = users.getUid();
+        User user = new User(mData.phoneNum, "NO", mData.name,
+                "NO", "NO", 1000, 0, 0 );
+        com.panda.live.pandalive.User.Profile profile =
+                new com.panda.live.pandalive.User.Profile("NO","NO",
+                        "NO", "NO");
+        myRef.child("users").child(userID).setValue(user);
+        myRef.child("users").child(userID).child("profile").setValue(profile);
     }
 
-    private void updateUI(@Nullable GoogleSignInAccount account) {
-        if (account != null) {
-            data.name = account.getDisplayName();
-            data.ID = account.getId();
-        }
 
-    }
+
+
 }
 
