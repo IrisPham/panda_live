@@ -1,6 +1,7 @@
 package com.panda.live.pandalive.data.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.panda.live.pandalive.Home.HomeActivity;
+import com.panda.live.pandalive.LiveViewer.LiveActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.data.model.ChannelModel;
 import com.panda.live.pandalive.data.model.PandaModel;
@@ -48,6 +51,14 @@ public class PandaAdapter extends RecyclerView.Adapter<PandaAdapter.MyViewHolder
         private TextView mTvNameChannel;
         public MyViewHolder(View itemView) {
             super(itemView);
+            mImvIconChannel = itemView.findViewById(R.id.imv_item_channel);
+            mImvIconChannel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, LiveActivity.class);
+                    mContext.startActivity(intent);
+                }
+            });
         }
     }
 }

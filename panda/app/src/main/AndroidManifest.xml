@@ -27,6 +27,7 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <activity android:name=".Login.PhoneAuthActivity" />
         <activity
             android:name=".Home.HomeActivity"
@@ -45,12 +46,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Live.LiveActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
-        <activity android:name=".profile.ProfileActivity"></activity>
+            android:name=".LiveViewer.LiveActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
+        <activity android:name=".profile.ProfileActivity" />
         <activity
             android:name=".profile.ProfileDetailActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".LiveStreamer.LiveStreamerActivity"></activity>
     </application>
 
 </manifest>

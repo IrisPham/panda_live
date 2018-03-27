@@ -2,6 +2,7 @@ package com.panda.live.pandalive.Home;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -11,16 +12,42 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
+import com.facebook.AccessToken;
 import com.flyco.tablayout.SegmentTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceNavigationView;
 import com.luseen.spacenavigation.SpaceOnClickListener;
+import com.panda.live.pandalive.LiveStreamer.LiveStreamerActivity;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.Utils.ViewFindUtils;
 import com.panda.live.pandalive.profile.ProfileActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity {
@@ -35,6 +62,10 @@ public class HomeActivity extends AppCompatActivity {
     private SpaceNavigationView mSpaceNavigationView;
 
     private Toolbar mToolbar;
+
+    // Fire base
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +102,12 @@ public class HomeActivity extends AppCompatActivity {
 //        }
 
         configBottomNavigation(savedInstanceState);
+        configFirebase();
+        //setDataProvincial();
+    }
+    private void configFirebase(){
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     private void configBottomNavigation(Bundle savedInstanceState) {
@@ -84,7 +121,7 @@ public class HomeActivity extends AppCompatActivity {
         mSpaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
             @Override
             public void onCentreButtonClick() {
-
+                startActivity(new Intent(HomeActivity.this, LiveStreamerActivity.class));
             }
 
             @Override
@@ -145,6 +182,217 @@ public class HomeActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_home, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
+    private void setDataProvincial() {
+        setDataPrefix();
+    }
+
+    private void setDataPrefix(){
+        try {
+            JSONArray jsonArray = new JSONArray(loadJSONFromAsset());
+
+            Room room = new Room();
+            Data data = new Data();
+            //AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
+            String[] reSourceUri = new String[5];
+            reSourceUri[0] = "https://cdn.bambuser.net/broadcasts/af8caee9-8ecf-4474-af53-40df7f8e3d12?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1522085601&da_static=1&da_ttl=0&da_signature=0450898cdbd805277a857839c772ef5e3b40576c3aa65a9211799da2c5eb67ad";
+            reSourceUri[1] = "https://cdn.bambuser.net/broadcasts/6229edf8-9d31-4c7e-b51c-bc3dbda67a0c?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1522085601&da_static=1&da_ttl=0&da_signature=1dfd48f78a680bdac3b46529e5701d7c2d6ff1249a500c264e164fd5a44d43b4";
+            reSourceUri[2] = "https://cdn.bambuser.net/broadcasts/fb014038-ed73-4a1b-b016-87b050cffeae?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1522085601&da_static=1&da_ttl=0&da_signature=3bc0d1f664ae0ab62815f41e96a464f741476ce59091e34f06543f4ab55db199";
+            reSourceUri[3] = "https://cdn.bambuser.net/broadcasts/3a9fdbca-3f5d-4652-88c2-a7eb672b4b22?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1522085601&da_static=1&da_ttl=0&da_signature=5fc4355f7129145b1468e617ef2f3d2852cb3c6225eb53e2b6a74ecd9d43c80e";
+            reSourceUri[4] = "https://cdn.bambuser.net/broadcasts/9fafeca5-d0cf-4a92-95bc-6628932c61e8?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1522085601&da_static=1&da_ttl=0&da_signature=6860dc02a1c05c064e5d550c61b2bf530019ad973a1b6cdd9cbbee668500e82d";
+
+            String[] avatarLink = new String[5];
+            avatarLink[0] = "https://preview.bambuser.io/live/eyJyZXNvdXJjZVVyaSI6Imh0dHBzOlwvXC9jZG4uYmFtYnVzZXIubmV0XC9icm9hZGNhc3RzXC9hZjhjYWVlOS04ZWNmLTQ0NzQtYWY1My00MGRmN2Y4ZTNkMTIifQ==/preview.jpg";
+            avatarLink[1] = "https://preview.bambuser.io/live/eyJyZXNvdXJjZVVyaSI6Imh0dHBzOlwvXC9jZG4uYmFtYnVzZXIubmV0XC9icm9hZGNhc3RzXC82MjI5ZWRmOC05ZDMxLTRjN2UtYjUxYy1iYzNkYmRhNjdhMGMifQ==/preview.jpg";
+            avatarLink[2] = "https://preview.bambuser.io/live/eyJyZXNvdXJjZVVyaSI6Imh0dHBzOlwvXC9jZG4uYmFtYnVzZXIubmV0XC9icm9hZGNhc3RzXC9mYjAxNDAzOC1lZDczLTRhMWItYjAxNi04N2IwNTBjZmZlYWUifQ==/preview.jpg";
+            avatarLink[3] = "https://preview.bambuser.io/live/eyJyZXNvdXJjZVVyaSI6Imh0dHBzOlwvXC9jZG4uYmFtYnVzZXIubmV0XC9icm9hZGNhc3RzXC8zYTlmZGJjYS0zZjVkLTQ2NTItODhjMi1hN2ViNjcyYjRiMjIifQ==/preview.jpg";
+            avatarLink[4] = "https://preview.bambuser.io/live/eyJyZXNvdXJjZVVyaSI6Imh0dHBzOlwvXC9jZG4uYmFtYnVzZXIubmV0XC9icm9hZGNhc3RzXC85ZmFmZWNhNS1kMGNmLTRhOTItOTViYy02NjI4OTMyYzYxZTgifQ==/preview.jpg";
+
+
+
+            for (int i = 0; i < 1; i++) {
+                room.setId(PreferencesManager.getAccessToken(this));
+                room.setPassword("12345");
+
+                data.setAvatarLink(avatarLink[i]);
+                data.setChannelId("1");
+                data.setReSourceUri(reSourceUri[i]);
+                mDatabase.child("Rooms").push().setValue(room);
+                Log.e("TAG", i + " ok ");
+            }
+
+        } catch (JSONException e) {
+            Log.i("LOGCAT", e.getMessage());
+        }
+    }
+
+    public class Room{
+        String id;
+        String password;
+        Data data;
+        public Room() {
+
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public Data getData() {
+            return data;
+        }
+
+        public void setData(Data data) {
+            this.data = data;
+        }
+    }
+    public class Data{
+        public String reSourceUri;
+        public String ChannelId;
+        public String avatarLink;
+
+        public Data() {
+
+        }
+
+        public String getReSourceUri() {
+            return reSourceUri;
+        }
+
+        public void setReSourceUri(String reSourceUri) {
+            this.reSourceUri = reSourceUri;
+        }
+
+        public String getChannelId() {
+            return ChannelId;
+        }
+
+        public void setChannelId(String channelId) {
+            ChannelId = channelId;
+        }
+
+        public String getAvatarLink() {
+            return avatarLink;
+        }
+
+        public void setAvatarLink(String avatarLink) {
+            this.avatarLink = avatarLink;
+        }
+    }
+
+    class provincial{
+        String name;
+        String slug;
+        String type;
+        String name_with_type;
+        String code;
+
+        public provincial() {
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getSlug() {
+            return slug;
+        }
+
+        public void setSlug(String slug) {
+            this.slug = slug;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getName_with_type() {
+            return name_with_type;
+        }
+
+        public void setName_with_type(String name_with_type) {
+            this.name_with_type = name_with_type;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+    }
+
+    private String loadJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = getAssets().open("tree.json");
+
+            int size = is.available();
+
+            byte[] buffer = new byte[size];
+
+            is.read(buffer);
+
+            is.close();
+
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            Log.e("TAG", ex.getMessage());
+            return null;
+        }
+        return json;
+    }
+
+//    private void saveFacebookCredentialsInFirebase(AccessToken accessToken) {
+//        AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
+//        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//            @Override
+//            public void onComplete(@NonNull Task<AuthResult> task) {
+//                if (!task.isSuccessful()) {
+//                    Toast.makeText(getApplicationContext(), "Đăng nhập thất bại", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        });
+//    }
+//
+//    private void saveGoogleCredentialsInFirebase(GoogleSignInAccount acct) {
+//
+//        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+//        mAuth.signInWithCredential(credential)
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            Toast.makeText(getApplicationContext(), "Đăng nhập thật bại", Toast.LENGTH_LONG).show();
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_LONG).show();
+//                        }
+//                    }
+//                });
+//    }
 
 
     private class MyPagerAdapter extends FragmentPagerAdapter {

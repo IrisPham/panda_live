@@ -1,4 +1,4 @@
-package com.panda.live.pandalive.Live;
+package com.panda.live.pandalive.LiveViewer;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
