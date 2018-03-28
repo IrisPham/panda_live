@@ -1,4 +1,4 @@
-package com.panda.live.pandalive.LiveViewer;
+package com.panda.live.pandalive.Utils;
 
 import android.content.Context;
 import android.database.DataSetObserver;
