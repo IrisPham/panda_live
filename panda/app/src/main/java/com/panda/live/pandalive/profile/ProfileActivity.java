@@ -2,20 +2,19 @@ package com.panda.live.pandalive.profile;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.facebook.login.LoginManager;
+import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,12 +41,12 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.makeramen.roundedimageview.RoundedImageView;
+import com.panda.live.pandalive.Login.LoginActivity;
 import com.panda.live.pandalive.R;
-import com.panda.live.pandalive.User.User;
+import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.model.Data;
 
-import java.io.File;
-import java.io.IOException;
+import java.net.URL;
 import java.util.UUID;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -51,26 +56,36 @@ public class ProfileActivity extends AppCompatActivity {
 
     private Data mData;
     private RoundedImageView mAvatar;
-    private TextView mFullName;
-
+    private TextView mFullName, mLogout;
+    private GoogleSignInClient mGoogleSignInClient;
     private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth mAuth;
     private DatabaseReference myRef;
-    private User mUser;
     private String userID;
     private Uri filePath;
     private StorageReference ref;
     private CharSequence colors[] = new CharSequence[]{"Thư viện", "Camera"};
+    private Intent mIntentMain;
+    private Context mContext;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        mContext = this.getApplicationContext();
         mData = new Data();
+        mIntentMain = new Intent(this, LoginActivity.class);
+
+        mLogout = findViewById(R.id.tv_logout);
+
         mAvatar = findViewById(R.id.imgAvatar);
+        mAvatar.setImageURI(Uri.parse(mData.URI));
+
         mFullName = findViewById(R.id.tv_full_name);
         mFullName.setText(mData.name);
-        Glide.with(this).load(mData.URI).into(mAvatar);
+
+
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
@@ -80,7 +95,18 @@ public class ProfileActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-        //getImage();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        mLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            showDialog();
+            }
+        });
 
         mAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,22 +185,15 @@ public class ProfileActivity extends AppCompatActivity {
                         chooseImage();
                         break;
                     case 1:
-                         ActivityCompat.requestPermissions(ProfileActivity.this,
+                        ActivityCompat.requestPermissions(ProfileActivity.this,
                                 new String[]{Manifest.permission.CAMERA}, 2);
-                         takePicture();
-//                        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        startActivityForResult(takePicture, 0);//zero can be replaced with any action code
-//                        //takePicture();
+                        takePicture();
                         break;
                 }
             }
         });
         builder.show();
     }
-
-
-
-
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
@@ -202,7 +221,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void toastMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     private void uploadImage() {
@@ -243,9 +262,9 @@ public class ProfileActivity extends AppCompatActivity {
     public void getImage() {
 
 
-        if(storageReference == null){
+        if (storageReference == null) {
             Glide.with(ProfileActivity.this).load(mData.URI).into(mAvatar);
-        }else{
+        } else {
             ref = storageReference.child("images").child(userID + "/" + UUID.randomUUID().toString());
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -278,4 +297,79 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
     }
+
+    private void signOutFaceBook() {
+        Toast.makeText(this, "Đăng xuất", Toast.LENGTH_SHORT).show();
+        LoginManager.getInstance().logOut();
+        startActivity(mIntentMain);
+    }
+
+
+    private void signOutGoogle() {
+        Toast.makeText(this, "Đăng xuất", Toast.LENGTH_SHORT).show();
+        mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+                Toast.makeText(ProfileActivity.this, "Đăng xuất", Toast.LENGTH_SHORT).show();
+            }
+        });
+        startActivity(mIntentMain);
+
+    }
+
+    private void signOutPhone() {
+        Toast.makeText(this, "Đăng xuất", Toast.LENGTH_SHORT).show();
+        startActivity(mIntentMain);
+    }
+
+
+    private void showDialog(){
+
+        final NiftyDialogBuilder dialogBuilder=NiftyDialogBuilder.getInstance(this);
+
+        dialogBuilder
+                .withTitle("Xác nhận")
+                .withTitleColor("#FFFFFF")
+                .withMessageColor("#FFFFFFFF")
+                .withMessage("Bạn có muốn đăng xuất không ?")
+                .withButton1Text("Đồng ý")
+                .withButton2Text("Hủy")
+                .withDialogColor("#4169E1")
+                .withIcon(getResources().getDrawable(R.drawable.ic_like))
+                .setButton1Click(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int value = PreferencesManager.getValueStateLogin(mContext);
+
+                        switch (value) {
+                            case 1: //Login with Facebook
+                                signOutFaceBook();
+                                break;
+
+                            case 2: //Login with Google
+                                signOutGoogle();
+                                break;
+
+                            case 3: //Login with Phone
+                                signOutPhone();
+
+                                break;
+                            default:
+                                return;
+                        }
+                        finish();
+                    }
+                })
+                .setButton2Click(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialogBuilder.dismiss();
+                    }
+                })
+                .show();
+
+    }
+
+
+
 }

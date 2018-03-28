@@ -51,9 +51,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.R;
-import com.panda.live.pandalive.User.User;
+import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.model.Data;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONObject;
 
@@ -78,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     private String userID;
     private FirebaseAuth mAuth;
     private Context mContext;
-
+    private AVLoadingIndicatorView mAvi;
     @TargetApi(Build.VERSION_CODES.FROYO)
     public static String printKeyHash(Activity context) {
         PackageInfo packageInfo;
@@ -113,18 +114,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
-
         mContext = this.getApplicationContext();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         ;// tích hợp SDK vào app
+        mAvi = findViewById(R.id.avi);
         mCallbackManager = CallbackManager.Factory.create();//Lấy dữ liệu
 
 
@@ -148,7 +148,8 @@ public class LoginActivity extends AppCompatActivity {
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mData.value = 1;// nếu data.value = 1 là đăng nhập = face, = 2 là google
+                startAnim();
+                PreferencesManager.setStateLogin(mContext, 1);;// nếu data.value = 1 là đăng nhập = face, = 2 là google
                 LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile"));
 
             }
@@ -163,7 +164,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 // React to state change
 
-
             }
 
             @Override
@@ -174,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
         mPhone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mData.value = 3;
+                PreferencesManager.setStateLogin(mContext, 3);
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 mBottomSheetDialog.show();
                 mBtnSignUp = findViewById(R.id.btn_sign_up);
@@ -218,7 +218,7 @@ public class LoginActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mData.value = 2;
+                PreferencesManager.setStateLogin(mContext, 2);
                 signIn();
             }
         });
@@ -252,15 +252,13 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onCompleted(JSONObject object,
                                                     GraphResponse response) {
-                                // Lấy ID
+
                                 String id = object.optString(getString(R.string.id));
-                                // Lấy tên
                                 String name = object.optString(getString(R.string.name));
                                 mData.ID = id;
                                 mData.name = name;
-                                mData.URI = "https://graph.facebook.com/" + com.facebook.Profile.getCurrentProfile() + "/picture?type=small";
+                                mData.URI = "http://graph.facebook.com/" + id + "/picture?type=large";
                                 saveFacebookCredentialsInFirebase(loginResult.getAccessToken());
-                                startActivity(intentMain);
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -276,7 +274,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onError(FacebookException error) {
                 Log.e("Error", error.getMessage());
+                Toast.makeText(LoginActivity.this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show();
             }
+
         });
 
     }
@@ -286,13 +286,15 @@ public class LoginActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                loadData();
+
                 if (!task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Đăng nhập thất bại", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                 } else {
+                    //loadData();
                     PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
-                    Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                     startActivity(intentMain);
+                    finish();
                 }
             }
         });
@@ -306,12 +308,14 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         loadData();
-                        if (task.isSuccessful()) {
-                            //PreferencesManager.setStateLogin(mContext,2);
-                            Toast.makeText(getApplicationContext(), "Đăng nhập thật bại", Toast.LENGTH_LONG).show();
+                        if (!task.isSuccessful()) {
+                            Toast.makeText(LoginActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                         } else {
+                            //loadData();
                             PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
-                            Toast.makeText(getApplicationContext(), "Đăng nhập thành công", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+                            startActivity(intentMain);
+                            finish();
                         }
                     }
                 });
@@ -320,16 +324,15 @@ public class LoginActivity extends AppCompatActivity {
     //Hàm lưu lại thông tin sau khi đăng nhập thành công.
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
+            startAnim();
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
             mData.name = account.getDisplayName();
             mData.ID = account.getId();
             mData.URI = account.getPhotoUrl().toString();
             saveGoogleCredentialsInFirebase(account);
-            startActivity(intentMain);
         } catch (ApiException e) {
             Log.e("TAG", e.getMessage());
-            Log.e("TAG", "signInResult:failed code= " + e.getStatusCode());
+            Toast.makeText(LoginActivity.this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -337,6 +340,7 @@ public class LoginActivity extends AppCompatActivity {
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+
     }
 
     public void loadData() {
@@ -344,11 +348,22 @@ public class LoginActivity extends AppCompatActivity {
         userID = users.getUid();
         User user = new User(mData.phoneNum, "NO", mData.name,
                 "NO", "NO", 1000, 0, 0);
-        com.panda.live.pandalive.User.Profile profile =
-                new com.panda.live.pandalive.User.Profile("NO", "NO",
+        com.panda.live.pandalive.data.model.Profile profile =
+                new com.panda.live.pandalive.data.model.Profile("NO", "NO",
                         "NO", "NO");
         myRef.child("users").child(userID).setValue(user);
         myRef.child("users").child(userID).child("profile").setValue(profile);
     }
+
+    void startAnim(){
+        mAvi.show();
+        // or avi.smoothToShow();
+    }
+
+    void stopAnim(){
+        mAvi.hide();
+        // or avi.smoothToHide();
+    }
+
 }
 

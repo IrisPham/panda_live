@@ -3,7 +3,7 @@ package com.panda.live.pandalive.Utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.panda.live.pandalive.User.User;
+import com.panda.live.pandalive.data.model.User;
 
 public class PreferencesManager {
 
@@ -20,6 +20,9 @@ public class PreferencesManager {
     public static final String EXTRA_USER_EXPERIENCE = "experience";
     public static final String EXTRA_USER_EDUCATION = "education";
     public static final String EXTRA_USER_COIN = "coin";
+
+
+    public static final String EXTRA_STATE_LOGIN = "stateLogin";
 
     public static final String EXTRA_ACCESS_TOKEN = "accessToken";
     public static final String APPLICATION_ID = "s2pycOnPUVt59AyitWjSKw";
@@ -46,6 +49,33 @@ public class PreferencesManager {
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         return sharedPref.getString(EXTRA_ACCESS_TOKEN,"");
     }
+
+
+    /**
+     *
+     * Facebook value = 1
+     * Google value = 2
+     * Phone value = 3
+     *
+     * */
+    public static void setStateLogin(Context context, int stateLogin){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(EXTRA_STATE_LOGIN, stateLogin);
+        editor.apply();
+    }
+
+    /**
+     * The function is called to get StateLogin
+     * @param context Transfers the current context.
+     *
+     */
+    public static int getValueStateLogin(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getInt(EXTRA_STATE_LOGIN,0);
+    }
+
+
 
     /*
     *

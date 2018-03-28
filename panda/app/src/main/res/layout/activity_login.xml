@@ -10,11 +10,16 @@
     tools:context=".Login.LoginActivity"
     android:background="@drawable/background_login">
 
-    <TextView
-        android:id="@+id/tv_info"
+
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/avi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp" />
+        style="@style/AVLoadingIndicatorView"
+        android:visibility="invisible"
+        app:indicatorName="BallClipRotatePulseIndicator"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -22,7 +27,7 @@
         android:text="Tham gia Panda Live qua"
         android:textColor="#ffffff"
         android:textSize="15sp"
-        android:layout_marginTop="60dp"/>
+        android:layout_marginTop="10dp"/>
 
 
 
@@ -33,6 +38,8 @@
         android:background="@drawable/custom_selector_button"
         android:orientation="horizontal"
         android:layout_marginTop="10dp">
+
+
 
         <ImageView
             android:layout_width="24dp"

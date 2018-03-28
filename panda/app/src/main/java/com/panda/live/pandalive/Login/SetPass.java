@@ -6,7 +6,6 @@ package com.panda.live.pandalive.Login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,23 +14,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.ValueEventListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.IgnoreExtraProperties;
 import com.panda.live.pandalive.R;
-import com.panda.live.pandalive.User.Profile;
-import com.panda.live.pandalive.User.User;
+import com.panda.live.pandalive.data.model.Profile;
+import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.data.model.Data;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class SetPass extends AppCompatActivity {
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,11 +12,12 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.R;
-import com.panda.live.pandalive.User.User;
+import com.panda.live.pandalive.data.model.User;
 
 /**
  * Created by levan on 15/03/2018.
@@ -50,6 +52,20 @@ public class PhoneLogin extends AppCompatActivity {
         myRef = mFirebaseDatabase.getReference("users");
         FirebaseUser user = mAuth.getCurrentUser();
         userID = user.getUid();
+
+        myRef.child(userID).addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            @Override
+            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                mUser = dataSnapshot.getValue(User.class);
+                verifyphonenum = mUser.id;
+                verifypass = mUser.pwd;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "Failed to read value.", databaseError.toException());
+            }
+        });
 
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override

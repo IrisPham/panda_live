@@ -754,12 +754,12 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/tv_like_facebook"
+                        android:id="@+id/tv_logout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_marginTop="5dp"
-                        android:text="Thích"
+                        android:text="Đăng xuất"
                         android:textColor="#000000"
                         android:textSize="15sp" />
 
