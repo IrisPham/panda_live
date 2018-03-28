@@ -1,4 +1,4 @@
-package com.panda.live.pandalive.LiveViewer;
+package com.panda.live.pandalive.Utils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -46,7 +46,7 @@ public class MagicTextView extends TextView {
 
     private float strokeWidth;
     private Integer strokeColor;
-    private Paint.Join strokeJoin;
+    private Join strokeJoin;
     private float strokeMiter;
 
     private int[] lockedCompoundPadding;

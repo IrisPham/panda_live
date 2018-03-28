@@ -2,7 +2,6 @@ package com.panda.live.pandalive.Home;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,25 +11,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Toast;
 
-import com.facebook.AccessToken;
 import com.flyco.tablayout.SegmentTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceNavigationView;
 import com.luseen.spacenavigation.SpaceOnClickListener;
-import com.panda.live.pandalive.LiveStreamer.LiveStreamerActivity;
+import com.panda.live.pandalive.StreamManager.LiveManagerActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.Utils.ViewFindUtils;
@@ -38,16 +28,9 @@ import com.panda.live.pandalive.profile.ProfileActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity {
@@ -121,7 +104,7 @@ public class HomeActivity extends AppCompatActivity {
         mSpaceNavigationView.setSpaceOnClickListener(new SpaceOnClickListener() {
             @Override
             public void onCentreButtonClick() {
-                startActivity(new Intent(HomeActivity.this, LiveStreamerActivity.class));
+                startActivity(new Intent(HomeActivity.this, LiveManagerActivity.class));
             }
 
             @Override

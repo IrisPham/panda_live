@@ -1,10 +1,9 @@
-package com.panda.live.pandalive.LiveViewer;
+package com.panda.live.pandalive.LiveSingle;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -32,12 +31,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by Android Studio on 2/6/2018.
- */
+public class LiveSingleInteractionFragment extends Fragment implements View.OnClickListener {
 
-public class InteractionFragment extends Fragment implements View.OnClickListener {
-
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     private LinearLayout llpicimage;
     private RelativeLayout rlsentimenttime;
     private HorizontalListView hlvaudience;
@@ -53,7 +52,6 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private TextView tvChat;
     private TextView sendInput;
     private LinearLayout llInputParent;
-
     /**
      * Khai báo các hiệu ứng
      */
@@ -62,28 +60,18 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private TranslateAnimation outAnim;
     private AnimatorSet animatorSetHide = new AnimatorSet();
     private AnimatorSet animatorSetShow = new AnimatorSet();
-
     /**
      * Khai báo các data liên quan đến quà, bình luận,...
      */
     private List<View> giftViewCollection = new ArrayList<View>();
-    private List<String> messageData=new LinkedList<>();
+    private List<String> messageData = new LinkedList<>();
     private MessageAdapter messageAdapter;
-
     private Timer timer;
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
-
-    public InteractionFragment() {
+    public LiveSingleInteractionFragment() {
         // Required empty public constructor
     }
 
@@ -96,12 +84,8 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
      * @return A new instance of fragment InteractionFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static InteractionFragment newInstance(String param1, String param2) {
-        InteractionFragment fragment = new InteractionFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+    public static LiveSingleInteractionFragment newInstance(String param1, String param2) {
+        LiveSingleInteractionFragment fragment = new LiveSingleInteractionFragment();
         return fragment;
     }
 
@@ -118,10 +102,10 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_interaction, container, false);
+        View view = inflater.inflate(R.layout.fragment_live_single_interaction, container, false);
         llpicimage = (LinearLayout) view.findViewById(R.id.llpicimage);
         rlsentimenttime = (RelativeLayout) view.findViewById(R.id.rlsentimenttime);
-        hlvaudience = (HorizontalListView) view.findViewById(R.id.hlvaudience);
+        //hlvaudience = (HorizontalListView) view.findViewById(R.id.hlvaudience);
         tvtime = (TextView) view.findViewById(R.id.tvtime);
         tvdate = (TextView) view.findViewById(R.id.tvdate);
         llgiftcontent = (LinearLayout) view.findViewById(R.id.llgiftcontent);
@@ -150,7 +134,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tvChat: // Bình luận
                 showChat();
                 break;
@@ -182,17 +166,18 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         llInputParent.requestFocus();
         //showKeyboard();
     }
+
     /**
      * Gửi bình luận
      */
     private void sendText() {
-        if(!etInput.getText().toString().trim().isEmpty()){
-            messageData.add("Johnny: "+etInput.getText().toString().trim());
+        if (!etInput.getText().toString().trim().isEmpty()) {
+            messageData.add("Johnny: " + etInput.getText().toString().trim());
             etInput.setText("");
             messageAdapter.NotifyAdapter(messageData);
             lvmessage.setSelection(messageData.size());
             hideKeyboard();
-        }else
+        } else
             hideKeyboard();
     }
 
@@ -235,7 +220,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             giftView = addGiftView();/*Chế độ xem bố cục của quà tặng*/
             giftView.setTag(tag);/*Đặt ID chế độ xem*/
 
-            CustomRoundView crvheadimage = (CustomRoundView) giftView.findViewById(R.id.crvheadimage);
+            CustomRoundView crvheadimage = giftView.findViewById(R.id.crvheadimage);
             final MagicTextView giftNum = (MagicTextView) giftView.findViewById(R.id.giftNum);/*Tìm số điều khiển*/
             giftNum.setText("x1");/*Đặt số lượng quà tặng*/
             crvheadimage.setTag(System.currentTimeMillis());/*Đặt tem thời gian*/
@@ -246,19 +231,23 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             giftView.startAnimation(inAnim);/*Bắt đầu thực hiện hoạt hình hiển thị món quà*/
             inAnim.setAnimationListener(new Animation.AnimationListener() {/*Hiển thị màn hình hoạt ảnh*/
                 @Override
-                public void onAnimationStart(Animation animation) { }
+                public void onAnimationStart(Animation animation) {
+                }
+
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     giftNumAnim.start(giftNum);
                 }
+
                 @Override
-                public void onAnimationRepeat(Animation animation) { }
+                public void onAnimationRepeat(Animation animation) {
+                }
             });
         } else {/*Người dùng nằm trong danh sách hiển thị quà tặng*/
             CustomRoundView crvheadimage = (CustomRoundView) giftView.findViewById(R.id.crvheadimage);/*Tìm các điều khiển hình đại diện*/
             MagicTextView giftNum = (MagicTextView) giftView.findViewById(R.id.giftNum);/*Tìm số điều khiển*/
             int showNum = (Integer) giftNum.getTag() + 1;
-            giftNum.setText("x"+showNum);
+            giftNum.setText("x" + showNum);
             giftNum.setTag(showNum);
             crvheadimage.setTag(System.currentTimeMillis());
             giftNumAnim.start(giftNum);
@@ -278,7 +267,9 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             view.setLayoutParams(lp);
             llgiftcontent.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
                 @Override
-                public void onViewAttachedToWindow(View view) { }
+                public void onViewAttachedToWindow(View view) {
+                }
+
                 @Override
                 public void onViewDetachedFromWindow(View view) {
                     giftViewCollection.add(view);
@@ -299,13 +290,17 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         final View removeView = llgiftcontent.getChildAt(index);
         outAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) { }
+            public void onAnimationStart(Animation animation) {
+            }
+
             @Override
             public void onAnimationEnd(Animation animation) {
                 llgiftcontent.removeViewAt(index);
             }
+
             @Override
-            public void onAnimationRepeat(Animation animation) { }
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -339,35 +334,11 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         timer.schedule(task, 0, 3000);
     }
 
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     /**
      * Ẩn bàn phím và bố cục ban đầu
      */
     public void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etInput.getWindowToken(), 0);
     }
 
@@ -377,14 +348,15 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     * */
     public class NumAnim {
         private Animator lastAnimator = null;
+
         public void start(View view) {
             if (lastAnimator != null) {
                 lastAnimator.removeAllListeners();
                 lastAnimator.end();
                 lastAnimator.cancel();
             }
-            ObjectAnimator anim1 = ObjectAnimator.ofFloat(view, "scaleX",1.3f, 1.0f);
-            ObjectAnimator anim2 = ObjectAnimator.ofFloat(view, "scaleY",1.3f, 1.0f);
+            ObjectAnimator anim1 = ObjectAnimator.ofFloat(view, "scaleX", 1.3f, 1.0f);
+            ObjectAnimator anim2 = ObjectAnimator.ofFloat(view, "scaleY", 1.3f, 1.0f);
             AnimatorSet animSet = new AnimatorSet();
             lastAnimator = animSet;
             animSet.setDuration(200);
@@ -393,20 +365,5 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             animSet.start();
         }
     }
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }
+

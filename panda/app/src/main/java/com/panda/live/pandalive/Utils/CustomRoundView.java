@@ -1,4 +1,4 @@
-package com.panda.live.pandalive.LiveViewer;
+package com.panda.live.pandalive.Utils;
 
 
 import android.annotation.SuppressLint;
@@ -283,7 +283,7 @@ public class CustomRoundView extends ImageView {
         }
 
         mShaderMatrix.setScale(scale, scale);
-        mShaderMatrix.postTranslate((int) (dx + 0.5f) + mBorderWidth,(int) (dy + 0.5f) + mBorderWidth);
+        mShaderMatrix.postTranslate((int) (dx + 0.5f) + mBorderWidth, (int) (dy + 0.5f) + mBorderWidth);
         mBitmapShader.setLocalMatrix(mShaderMatrix);
     }
 
