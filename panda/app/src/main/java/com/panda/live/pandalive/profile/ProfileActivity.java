@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -80,10 +81,12 @@ public class ProfileActivity extends AppCompatActivity {
         mLogout = findViewById(R.id.tv_logout);
 
         mAvatar = findViewById(R.id.imgAvatar);
-        mAvatar.setImageURI(Uri.parse(mData.URI));
+        String uri = PreferencesManager.getPhotoUri(mContext);
+        Glide.with(ProfileActivity.this).load(uri).into(mAvatar);
 
         mFullName = findViewById(R.id.tv_full_name);
-        mFullName.setText(mData.name);
+        String name = PreferencesManager.getName(mContext);
+        mFullName.setText(name);
 
 
         mAuth = FirebaseAuth.getInstance();

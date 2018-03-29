@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -123,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
         mContext = this.getApplicationContext();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
-        ;// tích hợp SDK vào app
+
         mAvi = findViewById(R.id.avi);
         mCallbackManager = CallbackManager.Factory.create();//Lấy dữ liệu
 
@@ -141,7 +142,7 @@ public class LoginActivity extends AppCompatActivity {
         //https://developers.facebook.com/docs/facebook-login/permissions#reference-email
         //xem link rõ hơn
         //mLoginButton.setReadPermissions("email", "public_profile");
-        ConnectToFacebook();
+
         // Lớp Data chứa các thuộc tín
         //printKeyHash(this);h static
         mData = new Data();
@@ -149,6 +150,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startAnim();
+                ConnectToFacebook();
                 PreferencesManager.setStateLogin(mContext, 1);;// nếu data.value = 1 là đăng nhập = face, = 2 là google
                 LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile"));
 
@@ -252,12 +254,15 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onCompleted(JSONObject object,
                                                     GraphResponse response) {
-
+//                                mData.ID = id;
+//                                mData.name = name;
                                 String id = object.optString(getString(R.string.id));
                                 String name = object.optString(getString(R.string.name));
-                                mData.ID = id;
-                                mData.name = name;
-                                mData.URI = "http://graph.facebook.com/" + id + "/picture?type=large";
+                                String uri = "http://graph.facebook.com/" + id + "/picture?type=large";
+                                PreferencesManager.saveUserInfo(mContext,name,
+                                        id, "","","",
+                                        Uri.parse(uri),"", "","","",1000);
+
                                 saveFacebookCredentialsInFirebase(loginResult.getAccessToken());
                             }
                         });
@@ -290,7 +295,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (!task.isSuccessful()) {
                     Toast.makeText(LoginActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                 } else {
-                    //loadData();
+                    loadData();
                     PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
                     Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                     startActivity(intentMain);
@@ -307,11 +312,11 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        loadData();
+                        //loadData();
                         if (!task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                         } else {
-                            //loadData();
+                            loadData();
                             PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
                             Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                             startActivity(intentMain);
@@ -326,9 +331,13 @@ public class LoginActivity extends AppCompatActivity {
         try {
             startAnim();
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            mData.name = account.getDisplayName();
-            mData.ID = account.getId();
-            mData.URI = account.getPhotoUrl().toString();
+//            mData.name = account.getDisplayName();
+//            mData.ID = account.getId();
+//            mData.URI = account.getPhotoUrl().toString();
+            PreferencesManager.saveUserInfo(mContext,account.getDisplayName(),
+                    account.getId(), "","","",
+                        account.getPhotoUrl(),"",
+                            "","","",1000);
             saveGoogleCredentialsInFirebase(account);
         } catch (ApiException e) {
             Log.e("TAG", e.getMessage());

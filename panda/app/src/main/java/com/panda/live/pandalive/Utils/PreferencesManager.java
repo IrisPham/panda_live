@@ -2,6 +2,7 @@ package com.panda.live.pandalive.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 
 import com.panda.live.pandalive.data.model.User;
 
@@ -23,6 +24,7 @@ public class PreferencesManager {
 
 
     public static final String EXTRA_STATE_LOGIN = "stateLogin";
+
 
     public static final String EXTRA_ACCESS_TOKEN = "accessToken";
     public static final String APPLICATION_ID = "s2pycOnPUVt59AyitWjSKw";
@@ -76,7 +78,6 @@ public class PreferencesManager {
     }
 
 
-
     /*
     *
     * Save user information
@@ -88,12 +89,12 @@ public class PreferencesManager {
                                     String job,
                                     String gender,
                                     String address,
-                                    String avatarLink,
+                                    Uri avatarLink,
                                     String hourOnline,
                                     String rank,
                                     String experience,
                                     String education,
-                                    String coin) {
+                                    int coin) {
         SharedPreferences sharedPref = ctx.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
 
@@ -102,15 +103,29 @@ public class PreferencesManager {
         editor.putString(EXTRA_USER_JOB, job);
         editor.putString(EXTRA_USER_GENDER, gender);
         editor.putString(EXTRA_USER_ADDRESS, address);
-        editor.putString(EXTRA_USER_AVATAR_LINK, avatarLink);
+        editor.putString(EXTRA_USER_AVATAR_LINK, avatarLink.toString());
         editor.putString(EXTRA_HOUR_ONLINE, hourOnline);
         editor.putString(EXTRA_USER_RANK, rank);
         editor.putString(EXTRA_USER_EXPERIENCE, experience);
         editor.putString(EXTRA_USER_EDUCATION, education);
-        editor.putString(EXTRA_USER_COIN, coin);
+        editor.putInt(EXTRA_USER_COIN, coin);
         editor.apply();
     }
 
+    public static String getName(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getString(EXTRA_USER_NAME,"none");
+    }
+
+    public static String getID(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getString(EXTRA_USER_ID,"none");
+    }
+
+    public static String getPhotoUri(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getString(EXTRA_USER_AVATAR_LINK,"none");
+    }
     /*
    *
    * Get user information
