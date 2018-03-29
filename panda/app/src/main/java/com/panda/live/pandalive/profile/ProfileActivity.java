@@ -57,7 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private Data mData;
     private RoundedImageView mAvatar;
-    private TextView mFullName, mLogout;
+    private TextView mFullName, mLogout, mID;
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth mAuth;
@@ -79,6 +79,10 @@ public class ProfileActivity extends AppCompatActivity {
         mIntentMain = new Intent(this, LoginActivity.class);
 
         mLogout = findViewById(R.id.tv_logout);
+        mID = findViewById(R.id.tv_panda_id);
+
+        String id = PreferencesManager.getID(mContext);
+        mID.setText(id);
 
         mAvatar = findViewById(R.id.imgAvatar);
         String uri = PreferencesManager.getPhotoUri(mContext);

@@ -4,6 +4,7 @@ package com.panda.live.pandalive.Login;
  * Created by levan on 15/03/2018.
  */
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.Utils.PreferencesManager;
+import com.panda.live.pandalive.data.model.ConfirmLogin;
+import com.panda.live.pandalive.data.model.Pass;
 import com.panda.live.pandalive.data.model.Profile;
 import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.data.model.Data;
@@ -38,11 +42,16 @@ public class SetPass extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference myRef;
 
+    private Context mContext;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_password);
+
+        mContext = this.getApplicationContext();
+
         mIntent = new Intent(this,PhoneLogin.class);
         mData = new Data();
         mPass = findViewById(R.id.edit_pass);
@@ -85,11 +94,13 @@ public class SetPass extends AppCompatActivity {
 
                 //handle the exception if the EditText fields are null
 
-                    User user = new User(mData.phoneNum, pass, mData.name,
+                    User user = new User(PreferencesManager.getPhoneNum(mContext), pass, "none",
                             "NO", "NO", 1000, 0, 0 );
                     Profile profile = new Profile("NO","NO", "NO", "NO");
                     myRef.child("users").child(userID).setValue(user);
                     myRef.child("users").child(userID).child("profile").setValue(profile);
+                    Pass pwd = new Pass(pass);
+                    myRef.child("account").child(PreferencesManager.getPhoneNum(mContext)).setValue(pwd);
                     toastMessage("Đăng kí thành công !");
                     startActivity(mIntent);
             }

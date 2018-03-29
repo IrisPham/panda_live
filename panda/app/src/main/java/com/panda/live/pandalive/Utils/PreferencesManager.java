@@ -21,6 +21,7 @@ public class PreferencesManager {
     public static final String EXTRA_USER_EXPERIENCE = "experience";
     public static final String EXTRA_USER_EDUCATION = "education";
     public static final String EXTRA_USER_COIN = "coin";
+    public static final String EXTRA_PHONE_NUM ="phone";
 
 
     public static final String EXTRA_STATE_LOGIN = "stateLogin";
@@ -125,6 +126,19 @@ public class PreferencesManager {
     public static String getPhotoUri(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         return sharedPref.getString(EXTRA_USER_AVATAR_LINK,"none");
+    }
+
+    public static void setPhoneNum(Context context, String phoneNum){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(EXTRA_PHONE_NUM, phoneNum);
+        editor.apply();
+    }
+
+
+    public static String getPhoneNum(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getString(EXTRA_PHONE_NUM,"");
     }
     /*
    *

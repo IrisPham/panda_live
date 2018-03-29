@@ -50,6 +50,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.panda.live.pandalive.Chat.RoomChat;
 import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.data.model.User;
@@ -132,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         intentRegistry = new Intent(this, PhoneAuthActivity.class);
         intentPhoneLogin = new Intent(this, PhoneLogin.class);
 
-        intentMain = new Intent(this, HomeActivity.class);
+        intentMain = new Intent(this, RoomChat.class);
         intentRegistry = new Intent(this, PhoneAuthActivity.class);
         intentPhoneLogin = new Intent(this, PhoneLogin.class);
         mLoginButton = findViewById(R.id.button_facebook_login);
@@ -197,7 +198,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intentPhoneLogin);
             }
         });
-        mAuth = FirebaseAuth.getInstance();
+
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
 
@@ -355,7 +356,7 @@ public class LoginActivity extends AppCompatActivity {
     public void loadData() {
         FirebaseUser users = mAuth.getCurrentUser();
         userID = users.getUid();
-        User user = new User(mData.phoneNum, "NO", mData.name,
+        User user = new User(PreferencesManager.getID(mContext), "NO", PreferencesManager.getName(mContext),
                 "NO", "NO", 1000, 0, 0);
         com.panda.live.pandalive.data.model.Profile profile =
                 new com.panda.live.pandalive.data.model.Profile("NO", "NO",

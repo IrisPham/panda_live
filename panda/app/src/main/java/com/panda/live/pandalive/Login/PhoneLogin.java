@@ -12,12 +12,18 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.panda.live.pandalive.Chat.ChatActivity;
 import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.data.model.Pass;
 import com.panda.live.pandalive.data.model.User;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by levan on 15/03/2018.
@@ -37,7 +43,9 @@ public class PhoneLogin extends AppCompatActivity {
     private User mUser;
     private Context mContext;
 
+    private boolean bool;
     private Intent intentMain;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,40 +55,43 @@ public class PhoneLogin extends AppCompatActivity {
         mPass = findViewById(R.id.field_pwd);
         mLogin = findViewById(R.id.button_login);
         intentMain = new Intent(this, HomeActivity.class);
-        mAuth = FirebaseAuth.getInstance();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        myRef = mFirebaseDatabase.getReference("users");
-        FirebaseUser user = mAuth.getCurrentUser();
-        userID = user.getUid();
 
-        myRef.child(userID).addValueEventListener(new com.google.firebase.database.ValueEventListener() {
-            @Override
-            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                mUser = dataSnapshot.getValue(User.class);
-                verifyphonenum = mUser.id;
-                verifypass = mUser.pwd;
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "Failed to read value.", databaseError.toException());
-            }
-        });
 
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 phonenum = mPhoneNum.getText().toString();
                 pass = mPass.getText().toString();
-                if (phonenum.equals(verifyphonenum) && pass.equals(verifypass)) {
-                    startActivity(mIntent);
-                } else {
-                    if (phonenum.equals(verifyphonenum) && pass.equals(verifypass)) {
-                        startActivity(intentMain);
-                    } else {
-                        toastMessage("Số điện thoại hoặc mật khẩu không đúng !");
+                mFirebaseDatabase = FirebaseDatabase.getInstance();
+                myRef = mFirebaseDatabase.getReference();
+
+                myRef.child("users").addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+                    @Override
+                    public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                        for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                            mUser = postSnapshot.getValue(User.class);
+                            if(mUser.id.equals(phonenum)&& mUser.pwd.equals(pass)){
+                                bool = true;
+                                startActivity(intentMain);
+                                toastMessage("Đăng nhập thành công !");
+                                finish();
+                                break;
+                            }
+                            else{
+                                toastMessage("Sai tài khoản hoặc mật khẩu !");
+                                break;
+                            }
+                        }
+
                     }
-                }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e(TAG, "Failed to read value.", databaseError.toException());
+                    }
+                });
+
+
+
             }
         });
     }
@@ -88,4 +99,6 @@ public class PhoneLogin extends AppCompatActivity {
     private void toastMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
+
+
 }

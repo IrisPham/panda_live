@@ -97,7 +97,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
                     android:gravity="center_horizontal"
-                    android:hint="12345678"
                     android:textColor="#f10000"
                     android:textSize="20sp" />
 
