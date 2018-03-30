@@ -1,14 +1,11 @@
-package com.panda.live.pandalive.Live;
+package com.panda.live.pandalive.LiveViewer;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 
 import com.panda.live.pandalive.R;
 
-/*
-* Đầu tiên thêm một Fragment khởi tạo live stream "chứa nội dung videos"
-* InteractionDialogFragment dùng để hiển thị các tương tác của người dùng
-* */
 public class LiveActivity extends AppCompatActivity {
 
     @Override
@@ -20,4 +17,5 @@ public class LiveActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.frame_stream_video, liveViewFragment).commit();
         new InteractionDialogFragment().show(getSupportFragmentManager(),"InteractionDialogFragment");
     }
+
 }

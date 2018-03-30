@@ -9,6 +9,13 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -23,6 +30,7 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
         <activity android:name=".Login.PhoneAuthActivity" />
         <activity
             android:name=".Home.HomeActivity"
@@ -41,12 +49,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Live.LiveActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
-        <activity android:name=".profile.ProfileActivity"></activity>
+            android:name=".LiveViewer.LiveActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".profile.ProfileActivity" />
         <activity
             android:name=".profile.ProfileDetailActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".StreamManager.LiveStreamerActivity" />
+        <activity android:name=".StreamManager.LiveManagerActivity" />
+        <activity android:name=".LiveSingle.LiveSingleActivity"/>
+        <activity android:name=".Chat.RoomChat" />
+        <activity android:name=".Chat.ChatActivity" />
     </application>
 
 </manifest>

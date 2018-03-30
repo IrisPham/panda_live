@@ -1,10 +1,10 @@
-package com.panda.live.pandalive.Live;
+package com.panda.live.pandalive.LiveSingle;
 
 import android.app.Dialog;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -15,18 +15,14 @@ import android.view.WindowManager;
 
 import com.panda.live.pandalive.R;
 
-/**
- * Created by Android Studio on 2/6/2018.
- */
-
-public class InteractionDialogFragment extends DialogFragment {
+public class LiveSingleInteractionDialogFragment extends DialogFragment {
     private ViewPager mViewpager;
-    private InteractionFragment mInteractionFragment;
+    private LiveSingleInteractionFragment mInteractionFragment;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_interaction_dialog, container, false);
+        return inflater.inflate(R.layout.fragment_live_single_interaction_dialog, container, false);
     }
 
     @Override
@@ -41,7 +37,7 @@ public class InteractionDialogFragment extends DialogFragment {
                     case 0:
                         return new NonInteractionFragment(); //Phần giao diện rỗng, không xem sự tương tác người dùng
                     case 1:
-                        return mInteractionFragment = new InteractionFragment(); /*Quay lại phần giao diện tương tác*/
+                        return mInteractionFragment = new LiveSingleInteractionFragment(); /*Quay lại phần giao diện tương tác*/
                 }
                 return null;
             }
@@ -65,7 +61,7 @@ public class InteractionDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = new Dialog(getActivity(), R.style.MainDialog){
+        Dialog dialog = new Dialog(getActivity(), R.style.MainDialog) {
             @Override
             public void onBackPressed() {
                 super.onBackPressed();
@@ -80,7 +76,7 @@ public class InteractionDialogFragment extends DialogFragment {
         * cần xem các tương tác của người dùng khác
         * Hoặc ngược lại.
         * */
-    private class InteractionOnPageChangeListener implements ViewPager.OnPageChangeListener{
+    private class InteractionOnPageChangeListener implements ViewPager.OnPageChangeListener {
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -89,7 +85,7 @@ public class InteractionDialogFragment extends DialogFragment {
 
         @Override
         public void onPageSelected(int position) {
-            if(position==0){
+            if (position == 0) {
                 mInteractionFragment.hideKeyboard();
             }
         }

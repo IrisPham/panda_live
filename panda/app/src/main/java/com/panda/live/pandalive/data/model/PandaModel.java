@@ -5,19 +5,60 @@ package com.panda.live.pandalive.data.model;
  */
 
 public class PandaModel {
-    private int mIdIcon;
-    private String mName;
+    private String idRoom;
+    private boolean isLock;
+    private String pwdRoom;
+    private String title;
+    private DataRoom data;
 
-    public PandaModel(int mIdIcon, String mName) {
-        this.mIdIcon = mIdIcon;
-        this.mName = mName;
+    public PandaModel() {
     }
 
-    public int getmIdIcon() {
-        return mIdIcon;
+    public PandaModel(String idRoom, boolean isLock, String pwdRoom, String title, DataRoom data) {
+        this.idRoom = idRoom;
+        this.isLock = isLock;
+        this.pwdRoom = pwdRoom;
+        this.title = title;
+        this.data = data;
     }
 
-    public String getmName() {
-        return mName;
+    public String getIdRoom() {
+        return idRoom;
+    }
+
+    public void setIdRoom(String idRoom) {
+        this.idRoom = idRoom;
+    }
+
+    public boolean isLock() {
+        return isLock;
+    }
+
+    public void setLock(boolean lock) {
+        isLock = lock;
+    }
+
+    public String getPwdRoom() {
+        return pwdRoom;
+    }
+
+    public void setPwdRoom(String pwdRoom) {
+        this.pwdRoom = pwdRoom;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public DataRoom getData() {
+        return data;
+    }
+
+    public void setData(DataRoom data) {
+        this.data = data;
     }
 }

@@ -4,6 +4,7 @@ package com.panda.live.pandalive.Login;
  * Created by levan on 05/03/2018.
  */
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,6 +32,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.model.Data;
 
 import java.util.concurrent.TimeUnit;
@@ -73,11 +75,14 @@ public class PhoneAuthActivity extends AppCompatActivity implements
 
     private ImageView mImageBack;
     private Intent mIntent, mIntentSetPass;
+
+    private Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_phone_auth);
         mData = new Data();
+        mContext = this.getApplicationContext();
         // Restore instance state
         if (savedInstanceState != null) {
             onRestoreInstanceState(savedInstanceState);
@@ -418,8 +423,8 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                 if (!validatePhoneNumber()) {
                     return;
                 }
-                mData.phoneNum =  mPhoneNumberField.getText().toString();
-                Toast.makeText(getApplicationContext(),mData.phoneNum,Toast.LENGTH_SHORT).show();
+                PreferencesManager.setPhoneNum(mContext, mPhoneNumberField.getText().toString());
+                Toast.makeText(mContext,PreferencesManager.getPhoneNum(mContext),Toast.LENGTH_SHORT).show();
                 startPhoneNumberVerification(mPhoneNumberField.getText().toString());
                 break;
             case R.id.button_verify_phone:

@@ -8,6 +8,7 @@ public class Data {
     public static String ID;
     public static String name;
     public static String phoneNum;
+    public static String URI;
     public static int value;
 
 }

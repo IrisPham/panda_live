@@ -1,0 +1,49 @@
+[{
+"name": "Lào Cai",
+"slug": "lao-cai",
+"type": "tinh",
+"name_with_type": "Tỉnh Lào Cai",
+"code": "10"
+},{
+"name": "Điện Biên",
+"slug": "dien-bien",
+"type": "tinh",
+"name_with_type": "Tỉnh Điện Biên",
+"code": "11"
+},{
+"name": "Lai Châu",
+"slug": "lai-chau",
+"type": "tinh",
+"name_with_type": "Tỉnh Lai Châu",
+"code": "12"
+},{
+"name": "Sơn La",
+"slug": "son-la",
+"type": "tinh",
+"name_with_type": "Tỉnh Sơn La",
+"code": "14"
+},{
+"name": "Yên Bái",
+"slug": "yen-bai",
+"type": "tinh",
+"name_with_type": "Tỉnh Yên Bái",
+"code": "15"
+},{
+"name": "Hoà Bình",
+"slug": "hoa-binh",
+"type": "tinh",
+"name_with_type": "Tỉnh Hoà Bình",
+"code": "17"
+},{
+"name": "Thái Nguyên",
+"slug": "thai-nguyen",
+"type": "tinh",
+"name_with_type": "Tỉnh Thái Nguyên",
+"code": "19"
+},{
+"name": "Lạng Sơn",
+"slug": "lang-son",
+"type": "tinh",
+"name_with_type": "Tỉnh Lạng Sơn",
+"code": "20"
+}]
