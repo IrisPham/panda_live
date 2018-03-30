@@ -45,7 +45,7 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
-            <com.panda.live.pandalive.LiveViewer.CustomRoundView
+            <com.panda.live.pandalive.Utils.CustomRoundView
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@mipmap/ic_headpic"
@@ -119,8 +119,7 @@
         android:gravity="top"
         android:orientation="vertical" />
 
-    <ListView
-        android:id="@+id/lvmessage"
+    <android.support.v7.widget.RecyclerView
         android:layout_width="300dp"
         android:layout_height="150dp"
         android:layout_above="@+id/layout_bottom"
@@ -132,7 +131,6 @@
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="none"
         android:transcriptMode="normal" />
-
     <FrameLayout
         android:id="@+id/layout_bottom"
         android:layout_width="match_parent"
