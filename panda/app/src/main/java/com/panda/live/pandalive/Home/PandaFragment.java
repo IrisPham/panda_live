@@ -10,13 +10,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.client.Firebase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.Util;
 import com.panda.live.pandalive.data.adapter.ChannelAdapter;
 import com.panda.live.pandalive.data.adapter.PandaAdapter;
+import com.panda.live.pandalive.data.model.DataRoom;
 import com.panda.live.pandalive.data.model.PandaModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Android Studio
@@ -27,6 +36,7 @@ public class PandaFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ArrayList<PandaModel> mPandaModels;
     private PandaAdapter mAdapter;
+    private DatabaseReference mDatabase;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -35,8 +45,6 @@ public class PandaFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
 
     public PandaFragment() {
         // Required empty public constructor
@@ -63,10 +71,8 @@ public class PandaFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -80,48 +86,30 @@ public class PandaFragment extends Fragment {
         mRecyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
-
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mPandaModels.add(new PandaModel(12,""));
-        mAdapter.notifyDataSetChanged();
-        Log.e("TAG","pxToDp: " + Util.convertPixelsToDp(528,this.getContext()));
         return itemView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    @Override
+    public void onResume() {
+        super.onResume();
+        bindData();
     }
 
+    public void bindData(){
+        mDatabase.child("RoomsOnline").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot idRoomSnapshot: dataSnapshot.getChildren()) {
+                    PandaModel pandaModel = idRoomSnapshot.getValue(PandaModel.class);
+                    mPandaModels.add(pandaModel);
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

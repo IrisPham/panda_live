@@ -1,4 +1,4 @@
-package com.panda.live.pandalive.StreamManager;
+package com.panda.live.pandalive.Utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 import com.bambuser.broadcaster.Broadcaster.AudioSetting;
 import com.panda.live.pandalive.BuildConfig;
 
-final class Settings {
+public class Settings {
     static final String KEY_AUDIO_HIGH = "audio";
     static final String KEY_AUTHOR = "author";
     static final String KEY_CAPSOUND = "capsound";
@@ -24,7 +24,7 @@ final class Settings {
     private static Settings sInstance;
     private final SharedPreferences mPrefs;
 
-    static Settings getInstance(Context ctx) {
+    public static Settings getInstance(Context ctx) {
         if (sInstance == null) {
             sInstance = new Settings(ctx.getApplicationContext());
         }
@@ -35,91 +35,91 @@ final class Settings {
         this.mPrefs = PreferenceManager.getDefaultSharedPreferences(ctx);
     }
 
-    String getAuthor() {
+    public String getAuthor() {
         return this.mPrefs.getString(KEY_AUTHOR, BuildConfig.FLAVOR);
     }
 
-    void setAuthor(String author) {
+    public void setAuthor(String author) {
         this.mPrefs.edit().putString(KEY_AUTHOR, author).apply();
     }
 
-    String getLiveTitle() {
+    public String getLiveTitle() {
         return this.mPrefs.getString(KEY_LIVE_TITLE, BuildConfig.FLAVOR);
     }
 
-    void setLiveTitle(String title) {
+    public void setLiveTitle(String title) {
         this.mPrefs.edit().putString(KEY_LIVE_TITLE, title).apply();
     }
 
-    boolean getVideoQuality() {
+    public boolean getVideoQuality() {
         return this.mPrefs.getBoolean(KEY_VIDEO_HIGH, false);
     }
 
-    AudioSetting getAudioQuality() {
+    public AudioSetting getAudioQuality() {
         return this.mPrefs.getBoolean(KEY_AUDIO_HIGH, true) ? AudioSetting.HIGH_QUALITY : AudioSetting.NORMAL_QUALITY;
     }
 
-    void setTalkbackCapability(boolean capable) {
+    public void setTalkbackCapability(boolean capable) {
         this.mPrefs.edit().putBoolean(KEY_TALKBACK_SUPPORTED, capable).apply();
     }
 
-    boolean getTalkbackCapability() {
+    public boolean getTalkbackCapability() {
         return this.mPrefs.getBoolean(KEY_TALKBACK_SUPPORTED, false);
     }
 
-    void setRecordLocalCapability(boolean capable) {
+    public void setRecordLocalCapability(boolean capable) {
         this.mPrefs.edit().putBoolean(KEY_RECORD_SUPPORTED, capable).apply();
     }
 
-    boolean getRecordLocalCapability() {
+    public boolean getRecordLocalCapability() {
         return this.mPrefs.getBoolean(KEY_RECORD_SUPPORTED, false);
     }
 
-    boolean getRecordLocalCopy() {
+    public boolean getRecordLocalCopy() {
         return this.mPrefs.getBoolean(KEY_RECORD, false);
     }
 
-    void setRecordLocalCopy(boolean record) {
+    public void setRecordLocalCopy(boolean record) {
         this.mPrefs.edit().putBoolean(KEY_RECORD, record).apply();
     }
 
-    boolean getGeotag() {
+    public boolean getGeotag() {
         return this.mPrefs.getBoolean(KEY_GEOTAG, false);
     }
 
-    void setGeotag(boolean geotag) {
+    public void setGeotag(boolean geotag) {
         this.mPrefs.edit().putBoolean(KEY_GEOTAG, geotag).apply();
     }
 
-    boolean getCapSound() {
+    public boolean getCapSound() {
         return this.mPrefs.getBoolean(KEY_CAPSOUND, true);
     }
 
-    void setCapSound(boolean capsound) {
+    public void setCapSound(boolean capsound) {
         this.mPrefs.edit().putBoolean(KEY_CAPSOUND, capsound).apply();
     }
 
-    void setCapSoundCapability(boolean capsound_supp) {
+    public void setCapSoundCapability(boolean capsound_supp) {
         this.mPrefs.edit().putBoolean(KEY_CAPSOUND_SUPPORTED, capsound_supp).apply();
     }
 
-    boolean getCaptureSoundCapability() {
+    public boolean getCaptureSoundCapability() {
         return this.mPrefs.getBoolean(KEY_CAPSOUND_SUPPORTED, false);
     }
 
-    String getIrisLogin() {
+    public String getIrisLogin() {
         return this.mPrefs.getString(KEY_IRIS_LOGIN, BuildConfig.FLAVOR);
     }
 
-    String getIrisToken() {
+    public String getIrisToken() {
         return this.mPrefs.getString(KEY_IRIS_TOKEN, BuildConfig.FLAVOR);
     }
 
-    void storeIrisCredentials(String login, String token) {
+    public void storeIrisCredentials(String login, String token) {
         this.mPrefs.edit().putString(KEY_IRIS_LOGIN, login).putString(KEY_IRIS_TOKEN, token).apply();
     }
 
-    boolean getTalkbackMixin() {
+    public boolean getTalkbackMixin() {
         return this.mPrefs.getBoolean(KEY_TALKBACK_MIXIN, false);
     }
 }
