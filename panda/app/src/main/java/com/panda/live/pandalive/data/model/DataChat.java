@@ -7,13 +7,25 @@ package com.panda.live.pandalive.data.model;
 public class DataChat {
 
 
-    public String idSender;
+    public String name;
     public String message;
 
-    public DataChat(String idSender, String message){
+    public  DataChat(){
 
-        this.idSender = idSender;
+    }
+
+    public DataChat(String name, String message){
+
+        this.name = name;
         this.message = message;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
 }

@@ -21,8 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.PreferencesManager;
-import com.panda.live.pandalive.data.model.ConfirmLogin;
-import com.panda.live.pandalive.data.model.Pass;
 import com.panda.live.pandalive.data.model.Profile;
 import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.data.model.Data;
@@ -99,8 +97,6 @@ public class SetPass extends AppCompatActivity {
                     Profile profile = new Profile("NO","NO", "NO", "NO");
                     myRef.child("users").child(userID).setValue(user);
                     myRef.child("users").child(userID).child("profile").setValue(profile);
-                    Pass pwd = new Pass(pass);
-                    myRef.child("account").child(PreferencesManager.getPhoneNum(mContext)).setValue(pwd);
                     toastMessage("Đăng kí thành công !");
                     startActivity(mIntent);
             }

@@ -11,19 +11,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.panda.live.pandalive.Chat.ChatActivity;
 import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.R;
-import com.panda.live.pandalive.data.model.Pass;
 import com.panda.live.pandalive.data.model.User;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Created by levan on 15/03/2018.
