@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         intentRegistry = new Intent(this, PhoneAuthActivity.class);
         intentPhoneLogin = new Intent(this, PhoneLogin.class);
 
-        intentMain = new Intent(this, RoomChat.class);
+        intentMain = new Intent(this, HomeActivity.class);
         intentRegistry = new Intent(this, PhoneAuthActivity.class);
         intentPhoneLogin = new Intent(this, PhoneLogin.class);
         mLoginButton = findViewById(R.id.button_facebook_login);
