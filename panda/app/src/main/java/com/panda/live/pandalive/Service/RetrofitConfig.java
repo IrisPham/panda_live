@@ -1,4 +1,4 @@
-package com.panda.live.pandalive.Utils;
+package com.panda.live.pandalive.Service;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitConfig {
-    private static final String BASE_URI = "http://mobisci-lab.com:8090/";
+    private static final String BASE_URI = "https://api.irisplatform.io/";
 
     public static <T> T createLinkBuilder(Class<T> t) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();

@@ -18,6 +18,7 @@ import com.bambuser.broadcaster.ConnectionError;
 import com.bambuser.broadcaster.SurfaceViewWithAutoAR;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.PreferencesManager;
+import com.panda.live.pandalive.Utils.Settings;
 
 
 public class LiveManagerFragment extends Fragment {

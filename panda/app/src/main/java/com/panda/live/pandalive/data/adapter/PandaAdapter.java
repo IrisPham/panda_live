@@ -3,12 +3,14 @@ package com.panda.live.pandalive.data.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.LiveViewer.LiveActivity;
 import com.panda.live.pandalive.R;
@@ -38,7 +40,7 @@ public class PandaAdapter extends RecyclerView.Adapter<PandaAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
+        Glide.with(mContext).load(pandaModels.get(position).getData().getAvatarLink()).into(holder.mImvIconChannel);
     }
 
     @Override
