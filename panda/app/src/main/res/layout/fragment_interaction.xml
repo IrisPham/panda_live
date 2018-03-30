@@ -119,7 +119,11 @@
         android:gravity="top"
         android:orientation="vertical" />
 
+
+
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:background="@color/colorDark"
         android:layout_width="300dp"
         android:layout_height="150dp"
         android:layout_above="@+id/layout_bottom"
@@ -129,7 +133,7 @@
         android:dividerHeight="5dp"
         android:listSelector="#00000000"
         android:scrollbarStyle="outsideOverlay"
-        android:scrollbars="none"
+        android:scrollbars="vertical"
         android:transcriptMode="normal" />
     <FrameLayout
         android:id="@+id/layout_bottom"
@@ -220,7 +224,7 @@
             android:background="@android:color/white"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -234,7 +238,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@android:color/white"
-                    android:hint="在此输入你要说的话!"
+                    android:hint="Nhập nội dung"
                     android:maxLength="30"
                     android:paddingBottom="10dp"
                     android:paddingTop="10dp"
@@ -252,7 +256,7 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingTop="5dp"
-                    android:text="发送"
+                    android:text="Gửi"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </LinearLayout>

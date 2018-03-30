@@ -6,6 +6,10 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +24,18 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.CustomRoundView;
 import com.panda.live.pandalive.Utils.HorizontalListView;
 import com.panda.live.pandalive.Utils.MagicTextView;
+import com.panda.live.pandalive.Utils.PreferencesManager;
+import com.panda.live.pandalive.data.adapter.ChatAdapter;
+import com.panda.live.pandalive.data.model.DataChat;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -52,6 +64,15 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private TextView tvChat;
     private TextView sendInput;
     private LinearLayout llInputParent;
+    private EditText mMessage;
+
+
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mRef;
+    private static RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ArrayList<DataChat> mData;
+    private ChatAdapter mAdapter;
     /**
      * Khai báo các hiệu ứng
      */
@@ -96,6 +117,9 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mRef = mFirebaseDatabase.getReference();
+        retrieveMessage();
     }
 
     @Override
@@ -118,6 +142,18 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
+
+        mMessage = view.findViewById(R.id.etInput);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mLayoutManager = new LinearLayoutManager(this.getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mData = new ArrayList<>();
+        mAdapter = new ChatAdapter(mData);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+        mRecyclerView.setHasFixedSize(true);
+
         giftNumAnim = new NumAnim();
         inAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_in);
         outAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_out);
@@ -151,7 +187,8 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
                 showGift("Nguyễn Văn Lộc");
                 break;
             case R.id.sendInput:/*Gửi bình luận*/
-                sendText();
+                sendMessage(mMessage.getText().toString());
+                mMessage.setText("");
                 break;
         }
 
@@ -171,14 +208,14 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
      * Gửi bình luận
      */
     private void sendText() {
-        if (!etInput.getText().toString().trim().isEmpty()) {
-            messageData.add("Johnny: " + etInput.getText().toString().trim());
-            etInput.setText("");
-            messageAdapter.NotifyAdapter(messageData);
-            lvmessage.setSelection(messageData.size());
-            hideKeyboard();
-        } else
-            hideKeyboard();
+//        if (!etInput.getText().toString().trim().isEmpty()) {
+//            messageData.add("Johnny: " + etInput.getText().toString().trim());
+//            etInput.setText("");
+//            messageAdapter.NotifyAdapter(messageData);
+//            lvmessage.setSelection(messageData.size());
+//            hideKeyboard();
+//        } else
+//            hideKeyboard();
     }
 
 //    /**
@@ -364,6 +401,30 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             animSet.playTogether(anim1, anim2);
             animSet.start();
         }
+    }
+
+    public void sendMessage(String s) {
+        DataChat datachat = new DataChat(PreferencesManager.getName(this.getContext()), s);
+        mRef.child("chat").child("123").setValue(datachat);
+    }
+
+    public void retrieveMessage() {
+        mRef.child("chat").child("123").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DataChat datachat = dataSnapshot.getValue(DataChat.class);
+                String name = datachat.name;
+                String message = datachat.message;
+                mData.add(new DataChat(name + ": ", message));
+                mAdapter.notifyDataSetChanged();
+                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Error", databaseError.getMessage());
+            }
+        });
     }
 }
 

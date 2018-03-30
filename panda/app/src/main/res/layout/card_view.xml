@@ -18,6 +18,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:background="#DB000000"
             android:orientation="horizontal">
 
             <ImageView
@@ -43,6 +44,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="10dp"
                     android:text="Nam: "
+                    android:textColor="@color/colorWhite"
                     android:textSize="15sp"
                     android:textAppearance="?android:attr/textAppearanceLarge"/>
                 <TextView
@@ -52,6 +54,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="10dp"
                     android:text="Hello"
+                    android:textColor="@color/colorWhite"
                     android:textSize="15sp"
                     android:textAppearance="?android:attr/textAppearanceLarge"/>
 

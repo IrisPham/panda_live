@@ -6,7 +6,13 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +27,18 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.CustomRoundView;
 import com.panda.live.pandalive.Utils.HorizontalListView;
 import com.panda.live.pandalive.Utils.MagicTextView;
+import com.panda.live.pandalive.Utils.PreferencesManager;
+import com.panda.live.pandalive.data.adapter.ChatAdapter;
+import com.panda.live.pandalive.data.model.DataChat;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -53,6 +67,16 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private TextView tvChat;
     private TextView sendInput;
     private LinearLayout llInputParent;
+    private EditText mMessage;
+
+
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mRef;
+    private static RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ArrayList<DataChat> mData;
+    private ChatAdapter mAdapter;
+
 
     /**
      * Khai báo các hiệu ứng
@@ -67,7 +91,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
      * Khai báo các data liên quan đến quà, bình luận,...
      */
     private List<View> giftViewCollection = new ArrayList<View>();
-    private List<String> messageData=new LinkedList<>();
+    private List<String> messageData = new LinkedList<>();
     private MessageAdapter messageAdapter;
 
     private Timer timer;
@@ -112,7 +136,11 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mRef = mFirebaseDatabase.getReference();
+        retrieveMessage();
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -134,6 +162,18 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
+
+        mMessage = view.findViewById(R.id.etInput);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mLayoutManager = new LinearLayoutManager(this.getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mData = new ArrayList<>();
+        mAdapter = new ChatAdapter(mData);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+        mRecyclerView.setHasFixedSize(true);
+
         giftNumAnim = new NumAnim();
         inAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_in);
         outAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_out);
@@ -150,7 +190,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.tvChat: // Bình luận
                 showChat();
                 break;
@@ -182,18 +222,21 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         llInputParent.requestFocus();
         //showKeyboard();
     }
+
     /**
      * Gửi bình luận
      */
     private void sendText() {
-        if(!etInput.getText().toString().trim().isEmpty()){
-            messageData.add("Johnny: "+etInput.getText().toString().trim());
-            etInput.setText("");
-            messageAdapter.NotifyAdapter(messageData);
-            lvmessage.setSelection(messageData.size());
-            hideKeyboard();
-        }else
-            hideKeyboard();
+//        if(!etInput.getText().toString().trim().isEmpty()){
+//            messageData.add("Johnny: "+etInput.getText().toString().trim());
+//            etInput.setText("");
+//            messageAdapter.NotifyAdapter(messageData);
+//            lvmessage.setSelection(messageData.size());
+//            hideKeyboard();
+//        }else
+//            hideKeyboard();
+        sendMessage(mMessage.getText().toString());
+        mMessage.setText("");
     }
 
 //    /**
@@ -246,19 +289,23 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             giftView.startAnimation(inAnim);/*Bắt đầu thực hiện hoạt hình hiển thị món quà*/
             inAnim.setAnimationListener(new Animation.AnimationListener() {/*Hiển thị màn hình hoạt ảnh*/
                 @Override
-                public void onAnimationStart(Animation animation) { }
+                public void onAnimationStart(Animation animation) {
+                }
+
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     giftNumAnim.start(giftNum);
                 }
+
                 @Override
-                public void onAnimationRepeat(Animation animation) { }
+                public void onAnimationRepeat(Animation animation) {
+                }
             });
         } else {/*Người dùng nằm trong danh sách hiển thị quà tặng*/
             CustomRoundView crvheadimage = (CustomRoundView) giftView.findViewById(R.id.crvheadimage);/*Tìm các điều khiển hình đại diện*/
             MagicTextView giftNum = (MagicTextView) giftView.findViewById(R.id.giftNum);/*Tìm số điều khiển*/
             int showNum = (Integer) giftNum.getTag() + 1;
-            giftNum.setText("x"+showNum);
+            giftNum.setText("x" + showNum);
             giftNum.setTag(showNum);
             crvheadimage.setTag(System.currentTimeMillis());
             giftNumAnim.start(giftNum);
@@ -278,7 +325,9 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             view.setLayoutParams(lp);
             llgiftcontent.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
                 @Override
-                public void onViewAttachedToWindow(View view) { }
+                public void onViewAttachedToWindow(View view) {
+                }
+
                 @Override
                 public void onViewDetachedFromWindow(View view) {
                     giftViewCollection.add(view);
@@ -299,13 +348,17 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         final View removeView = llgiftcontent.getChildAt(index);
         outAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) { }
+            public void onAnimationStart(Animation animation) {
+            }
+
             @Override
             public void onAnimationEnd(Animation animation) {
                 llgiftcontent.removeViewAt(index);
             }
+
             @Override
-            public void onAnimationRepeat(Animation animation) { }
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -367,7 +420,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
      * Ẩn bàn phím và bố cục ban đầu
      */
     public void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etInput.getWindowToken(), 0);
     }
 
@@ -377,14 +430,15 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     * */
     public class NumAnim {
         private Animator lastAnimator = null;
+
         public void start(View view) {
             if (lastAnimator != null) {
                 lastAnimator.removeAllListeners();
                 lastAnimator.end();
                 lastAnimator.cancel();
             }
-            ObjectAnimator anim1 = ObjectAnimator.ofFloat(view, "scaleX",1.3f, 1.0f);
-            ObjectAnimator anim2 = ObjectAnimator.ofFloat(view, "scaleY",1.3f, 1.0f);
+            ObjectAnimator anim1 = ObjectAnimator.ofFloat(view, "scaleX", 1.3f, 1.0f);
+            ObjectAnimator anim2 = ObjectAnimator.ofFloat(view, "scaleY", 1.3f, 1.0f);
             AnimatorSet animSet = new AnimatorSet();
             lastAnimator = animSet;
             animSet.setDuration(200);
@@ -408,5 +462,32 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    public void sendMessage(String s) {
+        DataChat datachat = new DataChat(PreferencesManager.getName(this.getContext()), s);
+        mRef.child("chat").child("123").setValue(datachat);
+    }
+
+    public void retrieveMessage() {
+        mRef.child("chat").child("123").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                DataChat datachat = dataSnapshot.getValue(DataChat.class);
+                String name = datachat.name;
+                String message = datachat.message;
+                mData.add(new DataChat(name + ": ", message));
+                mAdapter.notifyDataSetChanged();
+                mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("Error", databaseError.getMessage());
+            }
+        });
+
+
     }
 }

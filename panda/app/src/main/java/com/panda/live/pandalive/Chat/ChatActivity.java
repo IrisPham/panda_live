@@ -29,16 +29,13 @@ import java.util.ArrayList;
 
 public class ChatActivity extends AppCompatActivity {
     private FloatingActionButton mSend;
-    private EditText msg;
     private EditText mMessage;
-    private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference myRef;
-    private ArrayList<String> arrayList;
+    private DatabaseReference mRef;
     private static RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<DataChat> data;
-    private ChatAdapter adapter;
+    private ArrayList<DataChat> mData;
+    private ChatAdapter mAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,21 +43,21 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
 
-        mSend = findViewById(R.id.fab);
-        mMessage = findViewById(R.id.input);
+        //mSend = findViewById(R.id.textMessage);
+        mMessage = findViewById(R.id.etInput);
         mRecyclerView = findViewById(R.id.recycler_view);
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        data = new ArrayList<>();
-        adapter = new ChatAdapter(data);
-        mRecyclerView.setAdapter(adapter);
+        mData = new ArrayList<>();
+        mAdapter = new ChatAdapter(mData);
+        mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
 
-        mAuth = FirebaseAuth.getInstance();
+
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        myRef = mFirebaseDatabase.getReference();
+        mRef = mFirebaseDatabase.getReference();
 
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,18 +72,18 @@ public class ChatActivity extends AppCompatActivity {
 
     public void sendMessage(String s) {
         DataChat datachat = new DataChat(PreferencesManager.getName(this.getApplicationContext()), s);
-        myRef.child("chat").child("123").setValue(datachat);
+        mRef.child("chat").child("123").setValue(datachat);
     }
 
     public void retrieveMessage(){
-        myRef.child("chat").child("123").addValueEventListener(new ValueEventListener() {
+        mRef.child("chat").child("123").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DataChat datachat = dataSnapshot.getValue(DataChat.class);
                 String name = datachat.name;
                 String message = datachat.message;
-                data.add(new DataChat(name + ": ", message));
-                adapter.notifyDataSetChanged();
+                mData.add(new DataChat(name + ": ", message));
+                mAdapter.notifyDataSetChanged();
             }
 
             @Override
