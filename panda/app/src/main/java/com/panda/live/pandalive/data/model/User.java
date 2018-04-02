@@ -21,7 +21,7 @@ public class User {
     public int xu;
     public int hourOnl;
     public int exp;
-    public Map<String, Boolean> stars = new HashMap<>();
+
 
 
     public User(){
@@ -41,18 +41,6 @@ public class User {
 
     }
 
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("id", id);
-        result.put("pwd", pwd);
-        result.put("username", username);
-        result.put("rank", rank);
-        result.put("uri", uri);
-        result.put("stars", stars);
-
-        return result;
-    }
 
 }
 

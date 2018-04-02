@@ -15,6 +15,7 @@ import android.view.View;
 import com.flyco.tablayout.SegmentTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.luseen.spacenavigation.SpaceItem;
@@ -40,6 +41,7 @@ public class HomeActivity extends AppCompatActivity {
     private String[] mTitles_3 = {"Kênh", "Panda", "Khám phá"};
     private View mDecorView;
     private SegmentTabLayout mTabLayout_3;
+    private String userID;
 
     //Bottom Navigation
     private SpaceNavigationView mSpaceNavigationView;
@@ -91,6 +93,9 @@ public class HomeActivity extends AppCompatActivity {
     private void configFirebase(){
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser user = mAuth.getCurrentUser();
+        userID = user.getUid();
+        PreferencesManager.setUserIdFirebase(getApplicationContext(),userID);
     }
 
     private void configBottomNavigation(Bundle savedInstanceState) {

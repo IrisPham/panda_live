@@ -4,8 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,11 +28,16 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.CustomRoundView;
 import com.panda.live.pandalive.Utils.HorizontalListView;
@@ -65,10 +74,16 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private TextView sendInput;
     private LinearLayout llInputParent;
     private EditText mMessage;
-
+    private TextView mID;
+    private TextView mName;
+    private CustomRoundView mAvatar;
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
+
+    FirebaseStorage mStorage;
+    StorageReference mStorageReference;
+
     private static RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<DataChat> mData;
@@ -119,6 +134,10 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         }
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRef = mFirebaseDatabase.getReference();
+        mStorage = FirebaseStorage.getInstance();
+        mStorageReference = mStorage.getReference();
+        downloadImage();
+        sendMessage("bắt đầu live stream");
         retrieveMessage();
     }
 
@@ -142,6 +161,13 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
+        mID = view.findViewById(R.id.tv_id);
+        mID.setText(PreferencesManager.getID(this.getContext()));
+
+        mName= view.findViewById(R.id.tv_name);
+        mName.setText(PreferencesManager.getName(this.getContext()));
+
+        mAvatar = view.findViewById(R.id.imgAvatar);
 
         mMessage = view.findViewById(R.id.etInput);
         mRecyclerView = view.findViewById(R.id.recycler_view);
@@ -405,11 +431,11 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
 
     public void sendMessage(String s) {
         DataChat datachat = new DataChat(PreferencesManager.getName(this.getContext()), s);
-        mRef.child("chat").child("123").setValue(datachat);
+        mRef.child("chat").child(PreferencesManager.getID(this.getContext())).setValue(datachat);
     }
 
     public void retrieveMessage() {
-        mRef.child("chat").child("123").addValueEventListener(new ValueEventListener() {
+        mRef.child("chat").child(PreferencesManager.getID(this.getContext())).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DataChat datachat = dataSnapshot.getValue(DataChat.class);
@@ -426,5 +452,24 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             }
         });
     }
+
+    public void downloadImage(){
+        mStorageReference.child("images/"+PreferencesManager
+                .getUserIdFirebase(getContext())+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                Glide.with(getActivity()).load(uri).into(mAvatar);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
+
+
+
 }
 

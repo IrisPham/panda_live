@@ -6,6 +6,7 @@ package com.panda.live.pandalive.Login;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -41,6 +42,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -50,12 +53,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.panda.live.pandalive.Chat.RoomChat;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.model.Data;
+import com.panda.live.pandalive.profile.ProfileActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONObject;
@@ -77,11 +84,17 @@ public class LoginActivity extends AppCompatActivity {
     private View mBottomSheetView;
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference myRef;
+    private DatabaseReference mRef;
     private String userID;
     private FirebaseAuth mAuth;
     private Context mContext;
     private AVLoadingIndicatorView mAvi;
+
+    private FirebaseStorage mStorage;
+    private StorageReference mStorageReference;
+    private StorageReference mRefStorage;
+    private Uri mFilePath;
+
     @TargetApi(Build.VERSION_CODES.FROYO)
     public static String printKeyHash(Activity context) {
         PackageInfo packageInfo;
@@ -123,6 +136,9 @@ public class LoginActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
         mContext = this.getApplicationContext();
+        mStorage = FirebaseStorage.getInstance();
+        mStorageReference = mStorage.getReference();
+
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
@@ -200,7 +216,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
-        myRef = mFirebaseDatabase.getReference();
+        mRef = mFirebaseDatabase.getReference();
 
 
         //Sử dụng builder để tạo các tùy chọn yêu cầu quyền truy cập khi đăng nhập
@@ -260,10 +276,11 @@ public class LoginActivity extends AppCompatActivity {
                                 String id = object.optString(getString(R.string.id));
                                 String name = object.optString(getString(R.string.name));
                                 String uri = "http://graph.facebook.com/" + id + "/picture?type=large";
-                                PreferencesManager.saveUserInfo(mContext,name,
-                                        id, "","","",
-                                        Uri.parse(uri),"", "","","",1000);
+                                mFilePath = Uri.parse(uri);
 
+                                PreferencesManager.saveUserInfo(mContext,name,
+                                        id, "none","none","none",
+                                        Uri.parse(uri),"none", "none","none","none",1000);
                                 saveFacebookCredentialsInFirebase(loginResult.getAccessToken());
                             }
                         });
@@ -296,7 +313,10 @@ public class LoginActivity extends AppCompatActivity {
                 if (!task.isSuccessful()) {
                     Toast.makeText(LoginActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                 } else {
-                    loadData();
+
+                    if(PreferencesManager.getValueLoginFace(mContext) + 1 == 1){
+                        loadData();
+                    }
                     PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
                     Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                     startActivity(intentMain);
@@ -317,7 +337,9 @@ public class LoginActivity extends AppCompatActivity {
                         if (!task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                         } else {
-                            loadData();
+                            if(PreferencesManager.getValueLoginGoogle(mContext) + 1 == 1){
+                                loadData();
+                            }
                             PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
                             Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                             startActivity(intentMain);
@@ -339,6 +361,7 @@ public class LoginActivity extends AppCompatActivity {
                     account.getId(), "","","",
                         account.getPhotoUrl(),"",
                             "","","",1000);
+            mFilePath = account.getPhotoUrl();
             saveGoogleCredentialsInFirebase(account);
         } catch (ApiException e) {
             Log.e("TAG", e.getMessage());
@@ -361,8 +384,8 @@ public class LoginActivity extends AppCompatActivity {
         com.panda.live.pandalive.data.model.Profile profile =
                 new com.panda.live.pandalive.data.model.Profile("NO", "NO",
                         "NO", "NO");
-        myRef.child("users").child(userID).setValue(user);
-        myRef.child("users").child(userID).child("profile").setValue(profile);
+        mRef.child("users").child(userID).setValue(user);
+        mRef.child("users").child(userID).child("profile").setValue(profile);
     }
 
     void startAnim(){
@@ -370,9 +393,37 @@ public class LoginActivity extends AppCompatActivity {
         // or avi.smoothToShow();
     }
 
-    void stopAnim(){
-        mAvi.hide();
-        // or avi.smoothToHide();
+    private void uploadImage() {
+
+        if (mFilePath != null) {
+            final ProgressDialog progressDialog = new ProgressDialog(mContext);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+            mRefStorage = mStorageReference.child("images").child(userID + "/avatarLive");
+            mRefStorage.putFile(mFilePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.dismiss();
+                            Toast.makeText(mContext, "Uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(mContext, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                        }
+                    });
+        }
     }
 
 }

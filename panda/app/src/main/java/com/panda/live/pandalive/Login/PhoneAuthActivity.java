@@ -285,6 +285,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                             FirebaseUser user = task.getResult().getUser();
                             // [START_EXCLUDE]
                             updateUI(STATE_SIGNIN_SUCCESS, user);
+                            PreferencesManager.setID(mContext, mPhoneNumberField.getText().toString());
                             startActivity(mIntentSetPass);
                             // [END_EXCLUDE]
                         } else {

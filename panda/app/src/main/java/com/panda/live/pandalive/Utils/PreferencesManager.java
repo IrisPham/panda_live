@@ -22,9 +22,15 @@ public class PreferencesManager {
     public static final String EXTRA_USER_EDUCATION = "education";
     public static final String EXTRA_USER_COIN = "coin";
     public static final String EXTRA_PHONE_NUM ="phone";
-
-
+    public static final String EXTRA_USER_ID_FIREBASE = "userid";
     public static final String EXTRA_STATE_LOGIN = "stateLogin";
+    public static final String EXTRA_CHECK_LOGIN_FACE = "checkLoginFace";
+    public static final String EXTRA_CHECK_LOGIN_GOOGLE = "checkLoginGoogle";
+    public static final String EXTRA_CHECK_LOGIN_PHONE= "checkLoginPhone";
+
+    public static final String EXTRA_CHECK_UPDATE_AVATAR_FACE = "checkUpdateAvatarFace";
+    public static final String EXTRA_CHECK_UPDATE_AVATAR_GOOGLE = "checkUpdateAvatarGoogle";
+    public static final String EXTRA_CHECK_UPDATE_AVATAR_PHONE = "checkUpdateAvatarPhone";
 
 
     public static final String EXTRA_ACCESS_TOKEN = "accessToken";
@@ -113,9 +119,24 @@ public class PreferencesManager {
         editor.apply();
     }
 
+    public static void setName(Context context, String name){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(EXTRA_USER_NAME, name);
+        editor.apply();
+    }
+
     public static String getName(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         return sharedPref.getString(EXTRA_USER_NAME,"none");
+    }
+
+
+    public static void setID(Context context, String id){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(EXTRA_USER_ID, id);
+        editor.apply();
     }
 
     public static String getID(Context context){
@@ -140,6 +161,92 @@ public class PreferencesManager {
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         return sharedPref.getString(EXTRA_PHONE_NUM,"");
     }
+
+    public static void setUserIdFirebase(Context context, String userid){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(EXTRA_USER_ID_FIREBASE, userid);
+        editor.apply();
+    }
+
+    public static String getUserIdFirebase(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getString(EXTRA_USER_ID_FIREBASE,"");
+    }
+
+    public static void setValueLoginFace(Context context, int value){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(EXTRA_CHECK_LOGIN_FACE, value);
+        editor.apply();
+    }
+
+    public static int getValueLoginFace(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getInt(EXTRA_CHECK_LOGIN_FACE,0);
+    }
+
+    public static void setValueLoginGoogle(Context context, int value){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(EXTRA_CHECK_LOGIN_GOOGLE, value);
+        editor.apply();
+    }
+
+    public static int getValueLoginGoogle(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getInt(EXTRA_CHECK_LOGIN_GOOGLE,0);
+    }
+
+    public static void setValueLoginPhone(Context context, int value){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(EXTRA_CHECK_LOGIN_PHONE, value);
+        editor.apply();
+    }
+
+    public static int getValueLoginPhone(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getInt(EXTRA_CHECK_LOGIN_PHONE,0);
+    }
+
+
+    public static void setCheckUpdateAvatarFace(Context context, int value){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(EXTRA_CHECK_UPDATE_AVATAR_FACE, value);
+        editor.apply();
+    }
+
+    public static int getCheckUpdateAvatarFace(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getInt(EXTRA_CHECK_UPDATE_AVATAR_FACE,0);
+    }
+
+    public static void setCheckUpdateAvatarGoogle(Context context, int value){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(EXTRA_CHECK_UPDATE_AVATAR_GOOGLE, value);
+        editor.apply();
+    }
+
+    public static int getCheckUpdateAvatarGoogle(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getInt(EXTRA_CHECK_UPDATE_AVATAR_GOOGLE,0);
+    }
+
+    public static void setCheckUpdateAvatarPhone(Context context, int value){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(EXTRA_CHECK_UPDATE_AVATAR_PHONE, value);
+        editor.apply();
+    }
+
+    public static int getCheckUpdateAvatarPhone(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getInt(EXTRA_CHECK_UPDATE_AVATAR_PHONE,0);
+    }
+
     /*
    *
    * Get user information

@@ -88,17 +88,7 @@ public class SetPass extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "onClick: Submit pressed.");
                 pass = mPass.getText().toString();
-
-
-                //handle the exception if the EditText fields are null
-
-                    User user = new User(PreferencesManager.getPhoneNum(mContext), pass, "none",
-                            "NO", "NO", 1000, 0, 0 );
-                    Profile profile = new Profile("NO","NO", "NO", "NO");
-                    myRef.child("users").child(userID).setValue(user);
-                    myRef.child("users").child(userID).child("profile").setValue(profile);
-                    toastMessage("Đăng kí thành công !");
-                    startActivity(mIntent);
+                loadData();
             }
         });
     }
@@ -116,5 +106,15 @@ public class SetPass extends AppCompatActivity {
         onBackPressed();
         startActivity(mIntent);
         return true;
+    }
+
+    public void loadData(){
+        User user = new User(PreferencesManager.getPhoneNum(mContext), pass, "none",
+                "none", "none", 1000, 0, 0 );
+        Profile profile = new Profile("none","none", "none", "none");
+        myRef.child("users").child(userID).setValue(user);
+        myRef.child("users").child(userID).child("profile").setValue(profile);
+        toastMessage("Đăng kí thành công !");
+        startActivity(mIntent);
     }
 }

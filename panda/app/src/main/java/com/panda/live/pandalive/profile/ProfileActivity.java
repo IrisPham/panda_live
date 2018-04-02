@@ -51,18 +51,13 @@ import java.net.URL;
 import java.util.UUID;
 
 public class ProfileActivity extends AppCompatActivity {
-    FirebaseStorage storage;
-    StorageReference storageReference;
-    private static final String TAG = "Profil";
+    FirebaseStorage mStorage;
+    StorageReference mStorageReference;
+    private static final String TAG = "Profile";
 
-    private Data mData;
     private RoundedImageView mAvatar;
     private TextView mFullName, mLogout, mID;
     private GoogleSignInClient mGoogleSignInClient;
-    private FirebaseDatabase mFirebaseDatabase;
-    private FirebaseAuth mAuth;
-    private DatabaseReference myRef;
-    private String userID;
     private Uri filePath;
     private StorageReference ref;
     private CharSequence colors[] = new CharSequence[]{"Thư viện", "Camera"};
@@ -75,32 +70,22 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         mContext = this.getApplicationContext();
-        mData = new Data();
         mIntentMain = new Intent(this, LoginActivity.class);
-
         mLogout = findViewById(R.id.tv_logout);
         mID = findViewById(R.id.tv_panda_id);
-
         String id = PreferencesManager.getID(mContext);
         mID.setText(id);
-
         mAvatar = findViewById(R.id.imgAvatar);
-        String uri = PreferencesManager.getPhotoUri(mContext);
-        Glide.with(ProfileActivity.this).load(uri).into(mAvatar);
+        filePath = Uri.parse(PreferencesManager.getPhotoUri(mContext));
+
 
         mFullName = findViewById(R.id.tv_full_name);
         String name = PreferencesManager.getName(mContext);
         mFullName.setText(name);
 
 
-        mAuth = FirebaseAuth.getInstance();
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        myRef = mFirebaseDatabase.getReference();
-        FirebaseUser user = mAuth.getCurrentUser();
-        userID = user.getUid();
-
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
+        mStorage = FirebaseStorage.getInstance();
+        mStorageReference = mStorage.getReference();
 
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -137,6 +122,39 @@ public class ProfileActivity extends AppCompatActivity {
                 onSupportNavigateUp();
             }
         });
+
+        int value = PreferencesManager.getValueStateLogin(mContext);
+
+        switch (value) {
+            case 1: //Login with Facebook
+                if(PreferencesManager.getCheckUpdateAvatarFace(mContext) + 1 == 1){
+                    Glide.with(mContext).load(filePath).into(mAvatar);
+                }
+                else{
+                    downloadImage();
+                }
+                break;
+
+            case 2: //Login with Google
+                if(PreferencesManager.getCheckUpdateAvatarGoogle(mContext) + 1 == 1){
+                    Glide.with(mContext).load(filePath).into(mAvatar);
+                }
+                else{
+                    downloadImage();
+                }
+                break;
+
+            case 3: //Login with Phone
+                if(PreferencesManager.getCheckUpdateAvatarPhone(mContext) + 1 == 1){
+                    return;
+                }
+                else{
+                    downloadImage();
+                }
+                break;
+            default:
+                return;
+        }
     }
 
     @Override
@@ -211,6 +229,7 @@ public class ProfileActivity extends AppCompatActivity {
                     filePath = imageReturnedIntent.getData();
                     Glide.with(this).load(filePath).into(mAvatar);
                     uploadImage();
+                    updateValueCheckAvatar();
                     break;
                 }
                 break;
@@ -219,6 +238,7 @@ public class ProfileActivity extends AppCompatActivity {
                     filePath = imageReturnedIntent.getData();
                     Glide.with(this).load(filePath).into(mAvatar);
                     uploadImage();
+                    updateValueCheckAvatar();
                     break;
                 }
             case 2:
@@ -238,7 +258,8 @@ public class ProfileActivity extends AppCompatActivity {
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            ref = storageReference.child("images").child(userID + "/" + UUID.randomUUID().toString());
+            ref = mStorageReference.child("images").child(PreferencesManager
+                    .getUserIdFirebase(getApplicationContext()) + "/avatarProfile");
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -266,44 +287,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    public void getImage() {
-
-
-        if (storageReference == null) {
-            Glide.with(ProfileActivity.this).load(mData.URI).into(mAvatar);
-        } else {
-            ref = storageReference.child("images").child(userID + "/" + UUID.randomUUID().toString());
-            ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                            if (downloadUrl != null) {
-                                mAvatar.setImageURI(downloadUrl);
-                            } else {
-
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-
-                            Toast.makeText(ProfileActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-
-                        }
-                    });
-
-        }
-
-    }
 
     private void signOutFaceBook() {
         Toast.makeText(this, "Đăng xuất", Toast.LENGTH_SHORT).show();
@@ -374,9 +357,44 @@ public class ProfileActivity extends AppCompatActivity {
                     }
                 })
                 .show();
-
     }
 
+    public void downloadImage(){
+        mStorageReference.child("images/"+PreferencesManager
+                .getUserIdFirebase(mContext)+"/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                Glide.with(mContext).load(uri).into(mAvatar);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
 
+    public void updateValueCheckAvatar(){
+        int value = PreferencesManager.getValueStateLogin(mContext);
 
+        switch (value) {
+            case 1: //Login with Facebook
+                PreferencesManager.setCheckUpdateAvatarFace(mContext,
+                        PreferencesManager.getCheckUpdateAvatarFace(mContext)+1);
+                break;
+
+            case 2: //Login with Google
+                PreferencesManager.setCheckUpdateAvatarGoogle(mContext,
+                        PreferencesManager.getCheckUpdateAvatarGoogle(mContext)+1);
+                break;
+
+            case 3: //Login with Phone
+                PreferencesManager.setCheckUpdateAvatarPhone(mContext,
+                        PreferencesManager.getCheckUpdateAvatarPhone(mContext)+1);
+                break;
+            default:
+                return;
+        }
+    }
 }
