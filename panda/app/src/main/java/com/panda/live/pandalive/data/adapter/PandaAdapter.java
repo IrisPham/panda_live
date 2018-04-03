@@ -58,6 +58,8 @@ public class PandaAdapter extends RecyclerView.Adapter<PandaAdapter.MyViewHolder
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(mContext, LiveActivity.class);
+                    intent.putExtra("URL",pandaModels.get(getAdapterPosition()).getData().getResourceUri());
+                    intent.putExtra("idRoom",pandaModels.get(getAdapterPosition()).getIdRoom());
                     mContext.startActivity(intent);
                 }
             });

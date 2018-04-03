@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -27,11 +28,16 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.CustomRoundView;
 import com.panda.live.pandalive.Utils.HorizontalListView;
@@ -39,6 +45,7 @@ import com.panda.live.pandalive.Utils.MagicTextView;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
+import com.panda.live.pandalive.data.model.User;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -51,6 +58,9 @@ import java.util.TimerTask;
  */
 
 public class InteractionFragment extends Fragment implements View.OnClickListener {
+
+    private String mUrl ="";
+    private String mIdRoom = "";
 
     private LinearLayout llpicimage;
     private RelativeLayout rlsentimenttime;
@@ -66,10 +76,12 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private EditText etInput;
     private TextView tvChat;
     private TextView sendInput;
+    private TextView tvName;
     private LinearLayout llInputParent;
     private EditText mMessage;
-
-
+    private FirebaseStorage mStorage;
+    private StorageReference mStorageReference;
+    private CustomRoundView mAvatar;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
     private static RecyclerView mRecyclerView;
@@ -138,7 +150,9 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         }
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRef = mFirebaseDatabase.getReference();
-        retrieveMessage();
+
+        mStorage = FirebaseStorage.getInstance();
+        mStorageReference = mStorage.getReference();
     }
 
 
@@ -159,10 +173,11 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);
         tvSendthree = (TextView) view.findViewById(R.id.tvSendthree);
         tvSendfor = (TextView) view.findViewById(R.id.tvSendfor);
+        tvName = view.findViewById(R.id.tv_name);
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
-
+        mAvatar = view.findViewById(R.id.imgAvatar);
         mMessage = view.findViewById(R.id.etInput);
         mRecyclerView = view.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(this.getContext());
@@ -185,8 +200,10 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         tvSendfor.setOnClickListener(this);
         sendInput.setOnClickListener(this);
         clearTiming();
+        binData();
         return view;
     }
+
 
     @Override
     public void onClick(View v) {
@@ -467,11 +484,11 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
 
     public void sendMessage(String s) {
         DataChat datachat = new DataChat(PreferencesManager.getName(this.getContext()), s);
-        mRef.child("chat").child(PreferencesManager.getID(getContext())).setValue(datachat);
+        if(!mIdRoom.equals("")){ mRef.child("chat").child(mIdRoom).setValue(datachat);};
     }
 
     public void retrieveMessage() {
-        mRef.child("chat").child(PreferencesManager.getID(getContext())).addValueEventListener(new ValueEventListener() {
+        mRef.child("chat").child(mIdRoom).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DataChat datachat = dataSnapshot.getValue(DataChat.class);
@@ -487,7 +504,49 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
                 Log.e("Error", databaseError.getMessage());
             }
         });
+        mRef.child("users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot idRoomSnapshot: dataSnapshot.getChildren()) {
+                    User user = idRoomSnapshot.getValue(User.class);
+                    if(user.id.equals(mIdRoom)){
+                        tvName.setText(user.username);
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
+
+
+    private void binData() {
+        mUrl = getActivity().getIntent().getStringExtra("URL");
+        mIdRoom = getActivity().getIntent().getStringExtra("idRoom");
+
+        if (!mUrl.equals("") && !mIdRoom.equals("")){
+            retrieveMessage();
+            downloadImage();
+        }
+    }
+
+    public void downloadImage(){
+        mStorageReference.child("images/"+mIdRoom+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                Glide.with(getActivity()).load(uri).into(mAvatar);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
+
 }

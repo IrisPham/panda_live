@@ -208,7 +208,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
             final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-            mRefStorage = mStorageReference.child("images").child(userID + "/avatarLive");
+            mRefStorage = mStorageReference.child("images").child(PreferencesManager.getID(getContext()) + "/avatarLive");
             mRefStorage.putFile(mFilePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override

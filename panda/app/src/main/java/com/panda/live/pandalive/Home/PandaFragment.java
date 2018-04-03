@@ -86,19 +86,15 @@ public class PandaFragment extends Fragment {
         mRecyclerView.setLayoutManager(new GridLayoutManager(this.getContext(), 2));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
-        return itemView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         bindData();
+        return itemView;
     }
 
     public void bindData(){
         mDatabase.child("RoomsOnline").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!mPandaModels.isEmpty()){mPandaModels.clear();}
                 for (DataSnapshot idRoomSnapshot: dataSnapshot.getChildren()) {
                     PandaModel pandaModel = idRoomSnapshot.getValue(PandaModel.class);
                     mPandaModels.add(pandaModel);
