@@ -81,8 +81,8 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
 
-    FirebaseStorage mStorage;
-    StorageReference mStorageReference;
+    private FirebaseStorage mStorage;
+    private StorageReference mStorageReference;
 
     private static RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;

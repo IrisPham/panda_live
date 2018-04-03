@@ -131,7 +131,6 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
                 break;
             case R.id.layout_live_group:
                 showAlertDialogWithListview();
-                //isGroup = true;
                 break;
             case R.id.imgAvatar:
                 onClickBtnCaptureImage(v);
@@ -277,7 +276,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
         dialogBuilder.setItems(Topics, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 String selectedText = Topics[item].toString();  //Selected item in listview
-                Toast.makeText(getContext(),selectedText,Toast.LENGTH_SHORT).show();
+                isGroup = true;
             }
         });
         AlertDialog alertDialogObject = dialogBuilder.create();

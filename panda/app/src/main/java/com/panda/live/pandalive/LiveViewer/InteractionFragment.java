@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -27,11 +28,16 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.CustomRoundView;
 import com.panda.live.pandalive.Utils.HorizontalListView;
@@ -68,7 +74,9 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private TextView sendInput;
     private LinearLayout llInputParent;
     private EditText mMessage;
-
+    private CustomRoundView mAvatar;
+    private FirebaseStorage mStorage;
+    private StorageReference mStorageReference;
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
@@ -467,11 +475,11 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
 
     public void sendMessage(String s) {
         DataChat datachat = new DataChat(PreferencesManager.getName(this.getContext()), s);
-        mRef.child("chat").child("123").setValue(datachat);
+        mRef.child("chat").child(PreferencesManager.getID(getContext())).setValue(datachat);
     }
 
     public void retrieveMessage() {
-        mRef.child("chat").child("123").addValueEventListener(new ValueEventListener() {
+        mRef.child("chat").child(PreferencesManager.getID(getContext())).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DataChat datachat = dataSnapshot.getValue(DataChat.class);
@@ -489,5 +497,21 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         });
 
 
+    }
+
+    public void downloadImage(){
+        mStorageReference.child("images/"+PreferencesManager
+                .getUserIdFirebase(getContext())+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                Glide.with(getActivity()).load(uri).into(mAvatar);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
     }
 }
