@@ -64,9 +64,10 @@ public class HomeActivity extends AppCompatActivity {
             } else {
                 if (i == 1) {
                     mFragments.add(PandaFragment.newInstance("", ""));
-                } else {
-                    mFragments.add(SimpleCardFragment.getInstance("Switch ViewPager " + mTitles_3[i].toString()));
                 }
+//                } else {
+//                    mFragments.add(SimpleCardFragment.getInstance("Switch ViewPager " + mTitles_3[i].toString()));
+//                }
             }
         }
 
@@ -77,7 +78,7 @@ public class HomeActivity extends AppCompatActivity {
         tl_3();
 
         //Hiển thị chấm đỏ chưa đọc
-        mTabLayout_3.showDot(1);
+        //mTabLayout_3.showDot(1);
 
 //        MsgView rtv_3_2 = mTabLayout_3.getMsgView(2);
 //        if (rtv_3_2 != null) {
@@ -114,7 +115,6 @@ public class HomeActivity extends AppCompatActivity {
                         break;
                     case 1:
                         startActivity(new Intent(HomeActivity.this, ProfileActivity.class));
-                        finish();
                         break;
                 }
             }

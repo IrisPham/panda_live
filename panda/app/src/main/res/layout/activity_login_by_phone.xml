@@ -8,34 +8,20 @@
     android:orientation="vertical"
     android:weightSum="4">
 
-    <LinearLayout
-        android:id="@+id/button_facebook_login"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_sign_in"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/custom_background_button_color"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp">
-
-        <ImageView
-            android:id="@+id/img_back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20dp"
-            android:adjustViewBounds="true"
-            android:src="@drawable/ic_back" />
-
+        android:background="#ffffff">
         <TextView
             android:id="@+id/tv_facebook"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:gravity="center"
-            android:paddingRight="30dp"
-            android:text="@string/tv_login"
+            android:text="Đăng nhập"
             android:textColor="#000000"
             android:textSize="18sp" />
-    </LinearLayout>
+    </android.support.v7.widget.Toolbar>
 
     <TextView
         android:layout_width="wrap_content"
