@@ -467,11 +467,11 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
 
     public void sendMessage(String s) {
         DataChat datachat = new DataChat(PreferencesManager.getName(this.getContext()), s);
-        mRef.child("chat").child("123").setValue(datachat);
+        mRef.child("chat").child(PreferencesManager.getID(getContext())).setValue(datachat);
     }
 
     public void retrieveMessage() {
-        mRef.child("chat").child("123").addValueEventListener(new ValueEventListener() {
+        mRef.child("chat").child(PreferencesManager.getID(getContext())).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DataChat datachat = dataSnapshot.getValue(DataChat.class);

@@ -23,18 +23,18 @@
                 android:layout_height="90dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/item_avatar_live" />
-
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_avatar" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="9dp"
                 android:background="@drawable/bg_radius_top_black"
                 android:text="Thay đổi avatar"
                 android:textColor="#FFFFFF"
-                android:textSize="10sp"
+                android:textSize="7sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
@@ -44,6 +44,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:hint="Tiêu đề live stream"
+            android:textColorHint="#FFFFFF"
             android:textColor="#FFFFFF"
             android:textStyle="bold" />
 
@@ -51,7 +52,7 @@
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_setting" />
+            android:src="@drawable/ic_exit" />
     </LinearLayout>
 
     <Button
@@ -69,7 +70,7 @@
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="30dp"
         android:layout_marginTop="10dp"
         android:gravity="center">
 
@@ -80,15 +81,16 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
-                android:background="@drawable/ic_level" />
+                android:background="@drawable/ic_live_single" />
 
             <TextView
                 android:layout_width="75dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/bg_radius_top_black"
                 android:gravity="center"
                 android:text="Live đơn"
@@ -100,14 +102,14 @@
             android:id="@+id/layout_live_group"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="10dp"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
-                android:background="@drawable/ic_level" />
+                android:background="@drawable/ic_live_group" />
 
             <TextView
                 android:layout_width="75dp"
@@ -115,6 +117,7 @@
                 android:layout_gravity="center"
                 android:background="@drawable/bg_radius_top_black"
                 android:gravity="center"
+                android:layout_marginTop="5dp"
                 android:text="Live nhóm"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold" />
