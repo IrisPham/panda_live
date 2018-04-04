@@ -455,7 +455,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
 
     public void downloadImage(){
         mStorageReference.child("images/"+PreferencesManager
-                .getUserIdFirebase(getContext())+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                .getID(getContext())+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 // Got the download URL for 'users/me/profile.png'

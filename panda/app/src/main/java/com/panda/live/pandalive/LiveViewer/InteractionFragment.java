@@ -77,6 +77,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private TextView tvChat;
     private TextView sendInput;
     private TextView tvName;
+    private TextView mID;
     private LinearLayout llInputParent;
     private EditText mMessage;
     private FirebaseStorage mStorage;
@@ -179,6 +180,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         sendInput = (TextView) view.findViewById(R.id.sendInput);
         mAvatar = view.findViewById(R.id.imgAvatar);
         mMessage = view.findViewById(R.id.etInput);
+        mID = view.findViewById(R.id.tv_id);
         mRecyclerView = view.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -511,6 +513,8 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
                     User user = idRoomSnapshot.getValue(User.class);
                     if(user.id.equals(mIdRoom)){
                         tvName.setText(user.username);
+                        mID.setText(mIdRoom);
+                        break;
                     }
                 }
             }
