@@ -4,41 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background_login"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="90sp"
-    tools:context=".Login.LoginActivity"
-    android:background="@drawable/background_login">
-
+    tools:context=".Login.LoginActivity">
 
 
     <com.wang.avi.AVLoadingIndicatorView
         android:id="@+id/avi"
+        style="@style/AVLoadingIndicatorView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/AVLoadingIndicatorView"
         android:visibility="invisible"
-        app:indicatorName="BallClipRotatePulseIndicator"
-        />
+        app:indicatorName="BallClipRotatePulseIndicator" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="Tham gia Panda Live qua"
         android:textColor="#ffffff"
-        android:textSize="15sp"
-        android:layout_marginTop="10dp"/>
-
+        android:textSize="15sp" />
 
 
     <LinearLayout
         android:id="@+id/button_facebook_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:background="@drawable/custom_selector_button"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp">
-
+        android:orientation="horizontal">
 
 
         <ImageView
@@ -88,9 +84,6 @@
             android:text="Google"
             android:textColor="#000000"
             android:textSize="18sp" />
-
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -98,6 +91,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="50dp"
         android:background="@drawable/custom_selector_button"
         android:orientation="horizontal">
 
@@ -121,11 +115,5 @@
             android:text="@string/phone"
             android:textColor="#000000"
             android:textSize="18sp" />
-
-
-
     </LinearLayout>
-
-
-
 </LinearLayout>

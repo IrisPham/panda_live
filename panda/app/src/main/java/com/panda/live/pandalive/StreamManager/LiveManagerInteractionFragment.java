@@ -127,7 +127,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
                 handleStartBroadCast();
                 break;
             case R.id.layout_live_single:
-                isGroup = false;
+                isGroup = true;
                 break;
             case R.id.layout_live_group:
                 showAlertDialogWithListview();
@@ -278,7 +278,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
             public void onClick(DialogInterface dialog, int item) {
                 String selectedText = Topics[item].toString();  //Selected item in listview
                 Toast.makeText(getContext(),selectedText,Toast.LENGTH_SHORT).show();
-                isGroup = true;
+                isGroup = false;
             }
         });
         AlertDialog alertDialogObject = dialogBuilder.create();

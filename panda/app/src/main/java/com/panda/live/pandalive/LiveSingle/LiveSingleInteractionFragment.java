@@ -23,6 +23,7 @@ import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -77,6 +78,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private TextView mID;
     private TextView mName;
     private CustomRoundView mAvatar;
+    private ImageView mImvSwitchCamera;
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
@@ -163,6 +165,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         sendInput = (TextView) view.findViewById(R.id.sendInput);
         mID = view.findViewById(R.id.tv_id);
         mID.setText(PreferencesManager.getID(this.getContext()));
+        mImvSwitchCamera = view.findViewById(R.id.imv_switch_camera);
 
         mName= view.findViewById(R.id.tv_name);
         mName.setText(PreferencesManager.getName(this.getContext()));
@@ -190,6 +193,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         tvSendthree.setOnClickListener(this);
         tvSendfor.setOnClickListener(this);
         sendInput.setOnClickListener(this);
+        mImvSwitchCamera.setOnClickListener(this);
         clearTiming();
         return view;
     }
@@ -215,6 +219,9 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             case R.id.sendInput:/*Gửi bình luận*/
                 sendMessage(mMessage.getText().toString());
                 mMessage.setText("");
+                break;
+            case R.id.imv_switch_camera:
+                LiveSingleViewFragment.switchCamera();
                 break;
         }
 

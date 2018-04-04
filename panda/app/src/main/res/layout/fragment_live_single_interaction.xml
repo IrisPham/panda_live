@@ -104,8 +104,18 @@
                 android:text="00/00/00"
                 android:textColor="@android:color/white"
                 android:textSize="12sp" />
+
         </LinearLayout>
     </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imv_switch_camera"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/rlsentimenttime"
+        android:layout_margin="10dp"
+        android:src="@drawable/ic_switch_camera"/>
 
     <LinearLayout
         android:id="@+id/llgiftcontent"
@@ -226,7 +236,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="visible">
 
                 <EditText
                     android:id="@+id/etInput"
