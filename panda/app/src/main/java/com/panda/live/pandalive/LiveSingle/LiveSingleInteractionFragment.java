@@ -77,6 +77,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private TextView mID;
     private TextView mName;
     private CustomRoundView mAvatar;
+    private RelativeLayout mRelativeLayout;
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
@@ -161,6 +162,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
+        mRelativeLayout = view.findViewById(R.id.relative_layout);
         mID = view.findViewById(R.id.tv_id);
         mID.setText(PreferencesManager.getID(this.getContext()));
 
@@ -216,6 +218,8 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
                 sendMessage(mMessage.getText().toString());
                 mMessage.setText("");
                 break;
+            case R.id.relative_layout:
+                etInput.setVisibility(View.GONE);
         }
 
     }
