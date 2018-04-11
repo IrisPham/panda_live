@@ -4,24 +4,22 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.panda.live.pandalive.R;
-
+/**
+ * @author Pham Hoai An
+ * */
 public class ProfileDetailActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener {
-
-//    @BindView(R.id.toolbar_header_view)
-//    protected HeaderView toolbarHeaderView;
-//
-//    @BindView(R.id.appbar)
-//    protected AppBarLayout appBarLayout;
-
     private static final float PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f;
     private static final float PERCENTAGE_TO_HIDE_TITLE_DETAILS = 0.3f;
     private static final int ALPHA_ANIMATIONS_DURATION = 200;
@@ -33,6 +31,9 @@ public class ProfileDetailActivity extends AppCompatActivity implements AppBarLa
     private TextView mTitle;
     private AppBarLayout mAppBarLayout;
     private Toolbar mToolbar;
+    private EditText mEdtHomeTown;
+
+    private boolean isEdited = false;
 
     public static void startAlphaAnimation(View v, long duration, int visibility) {
         AlphaAnimation alphaAnimation = (visibility == View.VISIBLE)
@@ -55,23 +56,70 @@ public class ProfileDetailActivity extends AppCompatActivity implements AppBarLa
 
         mAppBarLayout.addOnOffsetChangedListener(this);
 
-        mToolbar.inflateMenu(R.menu.menu_profile);
+        mToolbar.inflateMenu(R.menu.menu_profile_details);
         startAlphaAnimation(mTitle, 0, View.INVISIBLE);
 
-        //  initUi();
+        //Set event when the user onclick item edit on menu.
+        mToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_edit_profile:
+                        Log.e("TAG","ủa có");
+                        if (isEdited) {
+                            isEdited = false;
+                            setStateProfile();
+                            //Lưu lên firebase
+                            //get dữ liệu
+                        } else {
+                            isEdited = true;
+                            setStateProfile();
+                        }
+                        return false;
+                }
+                return false;
+            }
+        });
+
+        //Đọc thông tin người dùng
+        readData();
     }
 
     private void bindActivity() {
-        mToolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        mTitle = (TextView) findViewById(R.id.main_textview_title);
-        mTitleContainer = (LinearLayout) findViewById(R.id.main_linearlayout_title);
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.main_appbar);
+        mToolbar = findViewById(R.id.main_toolbar);
+        mTitle =  findViewById(R.id.main_textview_title);
+        mTitleContainer = findViewById(R.id.main_linearlayout_title);
+        mAppBarLayout = findViewById(R.id.main_appbar);
+        mEdtHomeTown = findViewById(R.id.edt_hometown);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        getMenuInflater().inflate(R.menu.menu_profile_details, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit_profile:
+                Log.e("TAG","ủa có");
+                if (isEdited) {
+                    isEdited = false;
+                    setStateProfile();
+                    saveData();
+                } else {
+                    isEdited = true;
+                    setStateProfile();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void setStateProfile() {
+        mEdtHomeTown.setEnabled(isEdited);
     }
 
     @Override
@@ -116,23 +164,12 @@ public class ProfileDetailActivity extends AppCompatActivity implements AppBarLa
         }
     }
 
-//    private void initUi() {
-//        appBarLayout.addOnOffsetChangedListener(this);
-//        toolbarHeaderView.bindTo("Phạm Hoài An");
-//    }
-//
-//    @Override
-//    public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
-//        int maxScroll = appBarLayout.getTotalScrollRange();
-//        float percentage = (float) Math.abs(offset) / (float) maxScroll;
-//
-//        if (percentage == 1f && isHideToolbarView) {
-//            toolbarHeaderView.setVisibility(View.VISIBLE);
-//            isHideToolbarView = !isHideToolbarView;
-//
-//        } else if (percentage < 1f && !isHideToolbarView) {
-//            toolbarHeaderView.setVisibility(View.GONE);
-//            isHideToolbarView = !isHideToolbarView;
-//        }
-//    }
+    private void saveData(){
+
+    }
+
+    private void readData(){
+
+    }
+
 }
