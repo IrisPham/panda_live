@@ -42,7 +42,7 @@ import retrofit2.Response;
 
 public class LiveSingleViewFragment extends Fragment implements Broadcaster.ViewerCountObserver {
     private SurfaceViewWithAutoAR mPreviewSurfaceView;
-    private Broadcaster mBroadcaster;
+    private static Broadcaster mBroadcaster;
     private Display mDefaultDisplay;
     private Settings mSetting;
     private Command mCommand;
@@ -250,5 +250,11 @@ public class LiveSingleViewFragment extends Fragment implements Broadcaster.View
     @Override
     public void onTotalViewersUpdated(long l) {
         Log.e("TAG", " Total Viewer " + String.valueOf(l));
+    }
+
+    public static void switchCamera(){
+        if(mBroadcaster.canSwitchCameraWithoutResolutionChange()){
+            mBroadcaster.switchCamera();
+        }
     }
 }

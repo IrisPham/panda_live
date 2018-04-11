@@ -5,5 +5,4 @@ package com.panda.live.pandalive.Utils;
  */
 
 public class Constant {
-
 }

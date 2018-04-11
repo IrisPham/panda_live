@@ -37,8 +37,8 @@ public class LiveViewFragment extends Fragment{
         @Override
         public void onStateChange(PlayerState playerState) {
             Log.e("TAG", "Status " + playerState);
-            if (mPlayerStatusTextView != null)
-                mPlayerStatusTextView.setText("Status: " + playerState);
+//            if (mPlayerStatusTextView != null)
+//                //mPlayerStatusTextView.setText("Status: " + playerState);
             if (playerState == PlayerState.PLAYING || playerState == PlayerState.PAUSED || playerState == PlayerState.COMPLETED) {
                 if (mMediaController == null && mBroadcastPlayer != null && !mBroadcastPlayer.isTypeLive()) {
                     mMediaController = new MediaController(mContext);
@@ -85,7 +85,7 @@ public class LiveViewFragment extends Fragment{
         View view =  inflater.inflate(R.layout.fragment_live_view, container, false);
         mView = view;
         mVideoSurface = view.findViewById(R.id.VideoSurfaceView);
-        mPlayerStatusTextView = view.findViewById(R.id.PlayerStatusTextView);
+       // mPlayerStatusTextView = view.findViewById(R.id.PlayerStatusTextView);
 
         return view;
     }
@@ -107,15 +107,15 @@ public class LiveViewFragment extends Fragment{
         super.onResume();
         Log.e("TAG", "Loading latest broadcast");
         mVideoSurface = mView.findViewById(R.id.VideoSurfaceView);
-        mPlayerStatusTextView.setText("Loading latest broadcast");
-        initPlayer("https://cdn.bambuser.net/broadcasts/d64d44f6-b824-4ace-b33c-621df4ff3932?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1522156364&da_static=1&da_ttl=0&da_signature=f28a3100db67eeda7616010927011334a3d1741a04094236ccf089cad4a44c87");
+//        mPlayerStatusTextView.setText("Loading latest broadcast");
+        initPlayer(getActivity().getIntent().getStringExtra("URL"));
     }
 
     void initPlayer(String resourceUri) {
         Log.e("TAG","uri " + resourceUri);
         if (resourceUri == null) {
-            if (mPlayerStatusTextView != null)
-                mPlayerStatusTextView.setText("Could not get info about latest broadcast");
+//            if (mPlayerStatusTextView != null)
+//                mPlayerStatusTextView.setText("Could not get info about latest broadcast");
             return;
         }
         if (mVideoSurface == null) {

@@ -73,7 +73,6 @@ public class PhoneAuthActivity extends AppCompatActivity implements
     private Button mResendButton;
     private Button mSignOutButton;
 
-    private ImageView mImageBack;
     private Intent mIntent, mIntentSetPass;
 
     private Context mContext;
@@ -88,7 +87,6 @@ public class PhoneAuthActivity extends AppCompatActivity implements
             onRestoreInstanceState(savedInstanceState);
         }
 
-        mImageBack = findViewById(R.id.img_back);
         // Assign views
         mPhoneNumberViews = findViewById(R.id.phone_auth_fields);
         mSignedInViews = findViewById(R.id.signed_in_buttons);

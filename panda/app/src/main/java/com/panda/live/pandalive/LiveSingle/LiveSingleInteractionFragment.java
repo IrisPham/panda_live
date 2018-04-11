@@ -3,17 +3,20 @@ package com.panda.live.pandalive.LiveSingle;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.Application;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +26,7 @@ import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -52,6 +56,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 public class LiveSingleInteractionFragment extends Fragment implements View.OnClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
@@ -64,6 +69,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private TextView tvtime;
     private TextView tvdate;
     private LinearLayout llgiftcontent;
+    private RelativeLayout rlMain;
     private ListView lvmessage;
     private TextView tvSendone;
     private TextView tvSendtwo;
@@ -77,7 +83,8 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private TextView mID;
     private TextView mName;
     private CustomRoundView mAvatar;
-    private RelativeLayout mRelativeLayout;
+    private ImageView mImvSwitchCamera;
+
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
@@ -162,9 +169,11 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
-        mRelativeLayout = view.findViewById(R.id.relative_layout);
+        rlMain = view.findViewById(R.id.rlmain);
+
         mID = view.findViewById(R.id.tv_id);
         mID.setText(PreferencesManager.getID(this.getContext()));
+        mImvSwitchCamera = view.findViewById(R.id.imv_switch_camera);
 
         mName= view.findViewById(R.id.tv_name);
         mName.setText(PreferencesManager.getName(this.getContext()));
@@ -192,7 +201,10 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         tvSendthree.setOnClickListener(this);
         tvSendfor.setOnClickListener(this);
         sendInput.setOnClickListener(this);
+        mImvSwitchCamera.setOnClickListener(this);
+        rlMain.setOnClickListener(this);
         clearTiming();
+
         return view;
     }
 
@@ -218,11 +230,17 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
                 sendMessage(mMessage.getText().toString());
                 mMessage.setText("");
                 break;
-            case R.id.relative_layout:
-                etInput.setVisibility(View.GONE);
+            case R.id.rlmain:
+                hideKeyboard();
+                break;
+            case R.id.imv_switch_camera:
+                LiveSingleViewFragment.switchCamera();
+                break;
+
         }
 
     }
+
 
     /**
      * Hiển thị khung bình luận
@@ -232,6 +250,12 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         llInputParent.setVisibility(View.VISIBLE);
         llInputParent.requestFocus();
         //showKeyboard();
+    }
+
+    private void hideChat(){
+        tvChat.setVisibility(View.VISIBLE);
+        llInputParent.setVisibility(View.GONE);
+        llInputParent.requestFocus();
     }
 
     /**
@@ -405,10 +429,10 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
      * Ẩn bàn phím và bố cục ban đầu
      */
     public void hideKeyboard() {
+        hideChat();
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etInput.getWindowToken(), 0);
     }
-
 
     /*
     * Inner class này dùng để tạo hiệu ứng số lần tặng quà từ người dùng
@@ -459,7 +483,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
 
     public void downloadImage(){
         mStorageReference.child("images/"+PreferencesManager
-                .getUserIdFirebase(getContext())+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                .getID(getContext())+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 // Got the download URL for 'users/me/profile.png'
@@ -472,7 +496,6 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             }
         });
     }
-
 
 
 }

@@ -1,19 +1,7 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.bambuser.broadcaster.SurfaceViewWithAutoAR xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/VideoSurfaceView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    tools:context="com.panda.live.pandalive.LiveViewer.LiveViewFragment">
-
-    <com.bambuser.broadcaster.SurfaceViewWithAutoAR android:id="@+id/VideoSurfaceView"
-        android:layout_height="500dp"
-        android:layout_width="match_parent"
-        android:layout_centerInParent="true" />
-
-    <TextView android:id="@+id/PlayerStatusTextView"
-        android:textColor="@color/colorAccent"
-        android:layout_width="wrap_content"
-        android:layout_height="40sp"
-        android:textSize="20sp" />
-</LinearLayout>
+    android:layout_centerInParent="true"
+    android:onClick="onClick"
+    android:soundEffectsEnabled="false" />

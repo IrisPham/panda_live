@@ -127,7 +127,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
                 handleStartBroadCast();
                 break;
             case R.id.layout_live_single:
-                isGroup = false;
+                isGroup = true;
                 break;
             case R.id.layout_live_group:
                 showAlertDialogWithListview();
@@ -207,7 +207,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
             final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-            mRefStorage = mStorageReference.child("images").child(userID + "/avatarLive");
+            mRefStorage = mStorageReference.child("images").child(PreferencesManager.getID(getContext()) + "/avatarLive");
             mRefStorage.putFile(mFilePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -277,6 +277,9 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
             public void onClick(DialogInterface dialog, int item) {
                 String selectedText = Topics[item].toString();  //Selected item in listview
                 isGroup = true;
+                Toast.makeText(getContext(),selectedText,Toast.LENGTH_SHORT).show();
+                isGroup = false;
+
             }
         });
         AlertDialog alertDialogObject = dialogBuilder.create();

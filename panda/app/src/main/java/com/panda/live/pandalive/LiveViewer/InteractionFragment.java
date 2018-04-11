@@ -45,6 +45,7 @@ import com.panda.live.pandalive.Utils.MagicTextView;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
+import com.panda.live.pandalive.data.model.User;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -57,6 +58,9 @@ import java.util.TimerTask;
  */
 
 public class InteractionFragment extends Fragment implements View.OnClickListener {
+
+    private String mUrl ="";
+    private String mIdRoom = "";
 
     private LinearLayout llpicimage;
     private RelativeLayout rlsentimenttime;
@@ -72,12 +76,16 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private EditText etInput;
     private TextView tvChat;
     private TextView sendInput;
+    private TextView tvName;
+    private TextView mID;
     private LinearLayout llInputParent;
     private EditText mMessage;
-    private CustomRoundView mAvatar;
+    private RelativeLayout rlMain;
+
+
     private FirebaseStorage mStorage;
     private StorageReference mStorageReference;
-
+    private CustomRoundView mAvatar;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
     private static RecyclerView mRecyclerView;
@@ -146,7 +154,9 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         }
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRef = mFirebaseDatabase.getReference();
-        retrieveMessage();
+
+        mStorage = FirebaseStorage.getInstance();
+        mStorageReference = mStorage.getReference();
     }
 
 
@@ -167,11 +177,14 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);
         tvSendthree = (TextView) view.findViewById(R.id.tvSendthree);
         tvSendfor = (TextView) view.findViewById(R.id.tvSendfor);
+        tvName = view.findViewById(R.id.tv_name);
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
+        rlMain = view.findViewById(R.id.rlmain);
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
-
+        mAvatar = view.findViewById(R.id.imgAvatar);
         mMessage = view.findViewById(R.id.etInput);
+        mID = view.findViewById(R.id.tv_id);
         mRecyclerView = view.findViewById(R.id.recycler_view);
         mLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -192,9 +205,12 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         tvSendthree.setOnClickListener(this);
         tvSendfor.setOnClickListener(this);
         sendInput.setOnClickListener(this);
+        rlMain.setOnClickListener(this);
         clearTiming();
+        binData();
         return view;
     }
+
 
     @Override
     public void onClick(View v) {
@@ -214,6 +230,9 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             case R.id.tvSendfor:
                 showGift("Nguyễn Văn Lộc");
                 break;
+            case R.id.rlmain:
+                hideKeyboard();
+                break;
             case R.id.sendInput:/*Gửi bình luận*/
                 sendText();
                 break;
@@ -229,6 +248,13 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         llInputParent.setVisibility(View.VISIBLE);
         llInputParent.requestFocus();
         //showKeyboard();
+    }
+
+
+    private void hideChat(){
+        tvChat.setVisibility(View.VISIBLE);
+        llInputParent.setVisibility(View.GONE);
+        llInputParent.requestFocus();
     }
 
     /**
@@ -428,6 +454,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
      * Ẩn bàn phím và bố cục ban đầu
      */
     public void hideKeyboard() {
+        hideChat();
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etInput.getWindowToken(), 0);
     }
@@ -478,8 +505,10 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         mRef.child("chat").child(PreferencesManager.getID(getContext())).setValue(datachat);
     }
 
+
     public void retrieveMessage() {
-        mRef.child("chat").child(PreferencesManager.getID(getContext())).addValueEventListener(new ValueEventListener() {
+        mRef.child("chat").child(mIdRoom).addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DataChat datachat = dataSnapshot.getValue(DataChat.class);
@@ -495,13 +524,40 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
                 Log.e("Error", databaseError.getMessage());
             }
         });
+        mRef.child("users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot idRoomSnapshot: dataSnapshot.getChildren()) {
+                    User user = idRoomSnapshot.getValue(User.class);
+                    if(user.id.equals(mIdRoom)){
+                        tvName.setText(user.username);
+                        mID.setText(mIdRoom);
+                        break;
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
+
+    private void binData() {
+        mUrl = getActivity().getIntent().getStringExtra("URL");
+        mIdRoom = getActivity().getIntent().getStringExtra("idRoom");
+
+        if (!mUrl.equals("") && !mIdRoom.equals("")){
+            retrieveMessage();
+            downloadImage();
+        }
+    }
+
     public void downloadImage(){
-        mStorageReference.child("images/"+PreferencesManager
-                .getUserIdFirebase(getContext())+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        mStorageReference.child("images/"+mIdRoom+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 // Got the download URL for 'users/me/profile.png'
@@ -514,4 +570,5 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             }
         });
     }
+
 }
