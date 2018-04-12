@@ -9,7 +9,7 @@
 
     <string name="button_logout_id">Log Out</string>
     <string name="id">id</string>
-    <string name="facebook_id">202336157186162</string>
+    <string name="facebook_id">2059237611002431</string>
 
     <string name="label_google_sign_in">Firebase + Google Sign In</string>
     <string name="desc_google_sign_in">Use a Google Sign In credential to authenticate with Firebase.</string>

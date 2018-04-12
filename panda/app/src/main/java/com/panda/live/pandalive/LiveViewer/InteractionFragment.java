@@ -80,6 +80,9 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private TextView mID;
     private LinearLayout llInputParent;
     private EditText mMessage;
+    private RelativeLayout rlMain;
+
+
     private FirebaseStorage mStorage;
     private StorageReference mStorageReference;
     private CustomRoundView mAvatar;
@@ -176,6 +179,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         tvSendfor = (TextView) view.findViewById(R.id.tvSendfor);
         tvName = view.findViewById(R.id.tv_name);
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
+        rlMain = view.findViewById(R.id.rlmain);
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
         mAvatar = view.findViewById(R.id.imgAvatar);
@@ -201,6 +205,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         tvSendthree.setOnClickListener(this);
         tvSendfor.setOnClickListener(this);
         sendInput.setOnClickListener(this);
+        rlMain.setOnClickListener(this);
         clearTiming();
         binData();
         return view;
@@ -225,6 +230,9 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             case R.id.tvSendfor:
                 showGift("Nguyễn Văn Lộc");
                 break;
+            case R.id.rlmain:
+                hideKeyboard();
+                break;
             case R.id.sendInput:/*Gửi bình luận*/
                 sendText();
                 break;
@@ -240,6 +248,13 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         llInputParent.setVisibility(View.VISIBLE);
         llInputParent.requestFocus();
         //showKeyboard();
+    }
+
+
+    private void hideChat(){
+        tvChat.setVisibility(View.VISIBLE);
+        llInputParent.setVisibility(View.GONE);
+        llInputParent.requestFocus();
     }
 
     /**
@@ -439,6 +454,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
      * Ẩn bàn phím và bố cục ban đầu
      */
     public void hideKeyboard() {
+        hideChat();
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(etInput.getWindowToken(), 0);
     }
@@ -486,11 +502,13 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
 
     public void sendMessage(String s) {
         DataChat datachat = new DataChat(PreferencesManager.getName(this.getContext()), s);
-        if(!mIdRoom.equals("")){ mRef.child("chat").child(mIdRoom).setValue(datachat);};
+        mRef.child("chat").child(PreferencesManager.getID(getContext())).setValue(datachat);
     }
+
 
     public void retrieveMessage() {
         mRef.child("chat").child(mIdRoom).addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 DataChat datachat = dataSnapshot.getValue(DataChat.class);
