@@ -1,10 +1,9 @@
-package com.panda.live.pandalive.LiveSingle;
+package com.panda.live.pandalive.LiveGoup;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -27,6 +26,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Service.Command;
+import com.panda.live.pandalive.Utils.Constant;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.Utils.Settings;
 import com.panda.live.pandalive.data.model.DataRoom;
@@ -39,10 +39,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
-public class LiveSingleViewFragment extends Fragment implements Broadcaster.ViewerCountObserver {
-    private SurfaceViewWithAutoAR mPreviewSurfaceView;
+public class LiveGroupViewFragment extends Fragment implements Broadcaster.ViewerCountObserver {
     private static Broadcaster mBroadcaster;
+    private SurfaceViewWithAutoAR mPreviewSurfaceView;
     private Display mDefaultDisplay;
     private Settings mSetting;
     private Command mCommand;
@@ -55,12 +54,12 @@ public class LiveSingleViewFragment extends Fragment implements Broadcaster.View
         @Override
         public void onConnectionStatusChange(BroadcastStatus broadcastStatus) {
             Log.e("TAG", "Received status change: " + broadcastStatus);
-            switch (broadcastStatus){
+            switch (broadcastStatus) {
                 case FINISHING:
-                    //removeBroadCast();
+                    removeBroadCast();
                     break;
-                 default:
-                     break;
+                default:
+                    break;
             }
         }
 
@@ -105,37 +104,34 @@ public class LiveSingleViewFragment extends Fragment implements Broadcaster.View
         }
     };
 
-    public LiveSingleViewFragment() {
+    public LiveGroupViewFragment() {
+        // Required empty public constructor
     }
 
-    public static LiveSingleViewFragment newInstance() {
-        LiveSingleViewFragment fragment = new LiveSingleViewFragment();
+    public static LiveGroupViewFragment newInstance() {
+        LiveGroupViewFragment fragment = new LiveGroupViewFragment();
         return fragment;
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.mDefaultDisplay = this.getActivity().getWindowManager().getDefaultDisplay();
         mSetting = Settings.getInstance(this.getContext());
         mCommand = Command.getInstance();
         mContext = this.getContext();
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View itemView = inflater.inflate(R.layout.fragment_live_single_view, container, false);
+
+        View itemView = inflater.inflate(R.layout.fragment_live_group_view, container, false);
         mPreviewSurfaceView = itemView.findViewById(R.id.PreviewSurfaceView);
         mBroadcaster = new Broadcaster(this.getActivity(), PreferencesManager.APPLICATION_ID, this.mBroadcasterObserver);
         return itemView;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        this.mBroadcaster.onActivityPause();
     }
 
     @Override
@@ -156,8 +152,8 @@ public class LiveSingleViewFragment extends Fragment implements Broadcaster.View
         mBroadcaster.setCameraSurface(mPreviewSurfaceView);
         mBroadcaster.setAudioQuality(Broadcaster.AudioSetting.HIGH_QUALITY);
         mBroadcaster.setMaxLiveResolution(1080, 1920);
-        mBroadcaster.setResolution(mDefaultDisplay.getWidth(), mDefaultDisplay.getHeight());
-        setData();
+        mBroadcaster.setResolution(300,300);
+        //setData();
     }
 
     @Override
@@ -198,11 +194,11 @@ public class LiveSingleViewFragment extends Fragment implements Broadcaster.View
                             Map<String, Object> values = new HashMap<>();
                             values.put("idRoom", PreferencesManager.getID(mContext));
                             values.put("isLock", "false");
-                            values.put("pwdRoom", "none");
+                            values.put("pwdRoom", Constant.CHANNEL_PASSWORD);
                             values.put("title",mSetting.getLiveTitle());
 
                             DataRoom dataRoom = new DataRoom(
-                                    -1,
+                                    Constant.CHANNEL,
                                     model.getResults().get(i).getPreview(),
                                     model.getResults().get(i).getResourceUri());
                             values.put("data", dataRoom);
@@ -258,4 +254,8 @@ public class LiveSingleViewFragment extends Fragment implements Broadcaster.View
             mBroadcaster.switchCamera();
         }
     }
+
+
+
+
 }

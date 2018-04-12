@@ -58,7 +58,8 @@
         <activity android:name=".StreamManager.LiveStreamerActivity" />
         <activity android:name=".StreamManager.LiveManagerActivity" />
         <activity android:name=".LiveSingle.LiveSingleActivity" />
-        <activity android:name=".GroupViewer.GroupDasboardActivity"></activity>
+        <activity android:name=".GroupViewer.GroupDasboardActivity" />
+        <activity android:name=".LiveGoup.LiveGroupActivity"></activity>
     </application>
 
 </manifest>

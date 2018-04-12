@@ -10,4 +10,7 @@ public class Constant {
     public static int MUSIC_CHANNEL = 1;
     public static int LEARNING_CHANNEL = 2;
     public static int CHAT_CHANNEL = 3;
+
+    public static int CHANNEL = -1;
+    public static String CHANNEL_PASSWORD = "none";
 }
