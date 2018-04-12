@@ -34,8 +34,9 @@ public class PreferencesManager {
 
 
     public static final String EXTRA_ACCESS_TOKEN = "accessToken";
-    public static final String APPLICATION_ID = "1nqdazj6u3lw317m1ra4ubki0";
-    public static final String API_KEY = "RHHIRbT6ThrpzbHctZbVIQ";
+    public static final String APPLICATION_ID = "RHHIRbT6ThrpzbHctZbVIQ";
+    public static final String API_KEY = "1nqdazj6u3lw317m1ra4ubki0";
+
     /**
      * The function is called to set the login accessToken Facebook, Google, Phone.
      * @param context Transfers the current context.

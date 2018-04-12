@@ -57,7 +57,7 @@ public class LiveSingleViewFragment extends Fragment implements Broadcaster.View
             Log.e("TAG", "Received status change: " + broadcastStatus);
             switch (broadcastStatus){
                 case FINISHING:
-                    //removeBroadCast();
+                    removeBroadCast();
                     break;
                  default:
                      break;
@@ -208,6 +208,7 @@ public class LiveSingleViewFragment extends Fragment implements Broadcaster.View
                             values.put("data", dataRoom);
 
                             mDatabase.child("RoomsOnline").push().setValue(values);
+                            mDatabase.child("VideosOffline").child(PreferencesManager.getID(mContext)).push().setValue(values);
                         } else {
                             Log.e("TAG", "Not ok");
                         }

@@ -1,5 +1,7 @@
 package com.panda.live.pandalive.data.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.panda.live.pandalive.GroupViewer.GroupDasboardActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.data.model.ChannelModel;
 
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 
 public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.MyViewHolder> {
     private ArrayList<ChannelModel> channelModels;
+    private Context mContext;
 
     public ChannelAdapter(ArrayList<ChannelModel> channelModels) {
         this.channelModels = channelModels;
@@ -26,6 +30,7 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.MyViewHo
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row_channel,parent,false);
+        mContext = parent.getContext();
         return new MyViewHolder(view);
     }
 
@@ -44,6 +49,12 @@ public class ChannelAdapter extends RecyclerView.Adapter<ChannelAdapter.MyViewHo
         public MyViewHolder(View itemView) {
             super(itemView);
             mImvIconChannel = itemView.findViewById(R.id.imv_item_channel);
+            mImvIconChannel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mContext.startActivity(new Intent(mContext, GroupDasboardActivity.class));
+                }
+            });
         }
     }
 }
