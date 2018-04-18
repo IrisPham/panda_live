@@ -62,10 +62,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.data.model.Profile;
 import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.model.Data;
 import com.panda.live.pandalive.profile.ProfileActivity;
+import com.panda.live.pandalive.profile.ProfileDetailActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONObject;
@@ -73,6 +75,8 @@ import org.json.JSONObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 9001;
@@ -80,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
     private CallbackManager mCallbackManager;
     private LinearLayout mLoginButton, mPhone;
     private Button mBtnSignUp, mBtnSignIn;
-    private Intent intentMain, intentRegistry, intentPhoneLogin;
+    private Intent intentMain, intentRegistry, intentPhoneLogin, intentProfileDetail;
     private Data mData;
     private BottomSheetBehavior mBottomSheetBehavior;
     private BottomSheetDialog mBottomSheetDialog;
@@ -164,6 +168,7 @@ public class LoginActivity extends AppCompatActivity {
         intentMain = new Intent(this, HomeActivity.class);
         intentRegistry = new Intent(this, PhoneAuthActivity.class);
         intentPhoneLogin = new Intent(this, PhoneLogin.class);
+        intentProfileDetail = new Intent(this, ProfileDetailActivity.class);
         mLoginButton = findViewById(R.id.button_facebook_login);
 
         mPhone = findViewById(R.id.phone_button);
@@ -283,8 +288,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onCompleted(JSONObject object,
                                                     GraphResponse response) {
-//                                mData.ID = id;
-//                                mData.name = name;
+//
                                 String id = object.optString(getString(R.string.id));
                                 String name = object.optString(getString(R.string.name));
                                 String uri = "http://graph.facebook.com/" + id + "/picture?type=large";
@@ -332,7 +336,8 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
 
                     if(PreferencesManager.getValueLoginFace(mContext) + 1 == 1){
-                        loadData();
+                        writeDataTheFirst();
+                        PreferencesManager.setValueLoginFace(mContext, 2);
                     }
                     PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
                     Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
@@ -355,7 +360,8 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                         } else {
                             if(PreferencesManager.getValueLoginGoogle(mContext) + 1 == 1){
-                                loadData();
+                                writeDataTheFirst();
+                                PreferencesManager.setValueLoginGoogle(mContext, 2);
                             }
                             PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
                             Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
@@ -371,9 +377,6 @@ public class LoginActivity extends AppCompatActivity {
         try {
             startAnim();
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-//            mData.name = account.getDisplayName();
-//            mData.ID = account.getId();
-//            mData.URI = account.getPhotoUrl().toString();
             PreferencesManager.saveUserInfo(mContext,account.getDisplayName(),
                     account.getId(), "","","",
                         account.getPhotoUrl(),"",
@@ -393,17 +396,17 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void loadData() {
+    public void writeDataTheFirst() {
         FirebaseUser users = mAuth.getCurrentUser();
         userID = users.getUid();
-        User user = new User(PreferencesManager.getID(mContext), "NO", PreferencesManager.getName(mContext),
-                "NO", "NO", 1000, 0, 0);
-        com.panda.live.pandalive.data.model.Profile profile =
-                new com.panda.live.pandalive.data.model.Profile("NO", "NO",
-                        "NO", "NO");
+        User user = new User(PreferencesManager.getID(mContext), "NO",
+                PreferencesManager.getName(mContext),"none",1000, 0, 0);
+        Profile profile = new Profile("none", "none",
+                        "none", "none", "none", "Vui lòng chọn ngày sinh");
         mRef.child("users").child(userID).setValue(user);
         mRef.child("users").child(userID).child("profile").setValue(profile);
     }
+
 
     void startAnim(){
         mAvi.show();
@@ -446,5 +449,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean hasPermission(String permission) {
         return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
+
+
 }
 

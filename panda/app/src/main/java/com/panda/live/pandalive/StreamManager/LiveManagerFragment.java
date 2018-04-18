@@ -1,6 +1,7 @@
 package com.panda.live.pandalive.StreamManager;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import com.bambuser.broadcaster.Broadcaster;
 import com.bambuser.broadcaster.CameraError;
 import com.bambuser.broadcaster.ConnectionError;
 import com.bambuser.broadcaster.SurfaceViewWithAutoAR;
+import com.panda.live.pandalive.LiveViewer.InteractionFragment;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.Utils.Settings;
@@ -26,6 +28,7 @@ public class LiveManagerFragment extends Fragment {
     private Broadcaster mBroadcaster;
     private Display mDefaultDisplay;
     private Settings mSettings;
+
 
     private Broadcaster.Observer mBroadcasterObserver = new Broadcaster.Observer() {
         @Override
@@ -133,4 +136,6 @@ public class LiveManagerFragment extends Fragment {
     private boolean hasPermission(String permission) {
         return ActivityCompat.checkSelfPermission(this.getActivity(), permission) == PackageManager.PERMISSION_GRANTED;
     }
+
+
 }

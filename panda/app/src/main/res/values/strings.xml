@@ -89,5 +89,17 @@
     <string name="tv_complete">Hoàn tất</string>
 
     <string name="name">name</string>
+    <string name="hint_gender">Vui lòng chọn giới tính</string>
+
+    <string-array name="male">
+        <item>Nam</item>
+        <item>Nữ</item>
+    </string-array>
+
+    <string-array name="female">
+        <item>Nữ</item>
+        <item>Nam</item>
+    </string-array>
+
 
 </resources>

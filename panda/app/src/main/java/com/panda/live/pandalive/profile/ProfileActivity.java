@@ -63,6 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
     private CharSequence colors[] = new CharSequence[]{"Thư viện", "Camera"};
     private Intent mIntentMain;
     private Context mContext;
+    private Intent mIntentProfileDetail;
 
 
     @Override
@@ -169,7 +170,8 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit_profile:
-                startActivity(new Intent(ProfileActivity.this, ProfileDetailActivity.class));
+                transferData();
+                startActivity(mIntentProfileDetail);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -258,7 +260,7 @@ public class ProfileActivity extends AppCompatActivity {
             progressDialog.show();
 
             ref = mStorageReference.child("images").child(PreferencesManager
-                    .getUserIdFirebase(getApplicationContext()) + "/avatarProfile");
+                    .getID(getApplicationContext()) + "/avatarProfile");
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -291,6 +293,7 @@ public class ProfileActivity extends AppCompatActivity {
         Toast.makeText(this, "Đăng xuất", Toast.LENGTH_SHORT).show();
         LoginManager.getInstance().logOut();
         startActivity(mIntentMain);
+        finish();
     }
 
 
@@ -303,12 +306,14 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         startActivity(mIntentMain);
+        finish();
 
     }
 
     private void signOutPhone() {
         Toast.makeText(this, "Đăng xuất", Toast.LENGTH_SHORT).show();
         startActivity(mIntentMain);
+        finish();
     }
 
 
@@ -360,7 +365,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     public void downloadImage(){
         mStorageReference.child("images/"+PreferencesManager
-                .getUserIdFirebase(mContext)+"/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                .getID(mContext)+"/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 // Got the download URL for 'users/me/profile.png'
@@ -396,4 +401,10 @@ public class ProfileActivity extends AppCompatActivity {
                 return;
         }
     }
+
+    public void transferData(){
+        mIntentProfileDetail = new Intent(ProfileActivity.this, ProfileDetailActivity.class);
+        mIntentProfileDetail.putExtra("id", mID.getText());
+    }
+
 }

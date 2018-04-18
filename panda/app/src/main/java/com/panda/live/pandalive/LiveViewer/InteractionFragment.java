@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -46,6 +47,8 @@ import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
 import com.panda.live.pandalive.data.model.User;
+import com.panda.live.pandalive.profile.ProfileActivity;
+import com.panda.live.pandalive.profile.ProfileDetailActivity;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -92,7 +95,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<DataChat> mData;
     private ChatAdapter mAdapter;
-
+    private Intent mIntentProfileDetail;
 
     /**
      * Khai báo các hiệu ứng
@@ -235,6 +238,10 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
                 break;
             case R.id.sendInput:/*Gửi bình luận*/
                 sendText();
+                break;
+            case R.id.imgAvatar:
+                transferData();
+
                 break;
         }
 
@@ -571,4 +578,10 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         });
     }
 
+    public void transferData(){
+        mIntentProfileDetail = new Intent(getContext(), ProfileDetailActivity.class);
+        mIntentProfileDetail.putExtra("id", mID.getText());
+        startActivity(mIntentProfileDetail);
+
+    }
 }

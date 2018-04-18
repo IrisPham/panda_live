@@ -42,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.panda.live.pandalive.LiveViewer.InteractionFragment;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.CustomRoundView;
 import com.panda.live.pandalive.Utils.HorizontalListView;
@@ -49,6 +50,7 @@ import com.panda.live.pandalive.Utils.MagicTextView;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
+import com.panda.live.pandalive.profile.ProfileDetailActivity;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -84,6 +86,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private TextView mName;
     private CustomRoundView mAvatar;
     private ImageView mImvSwitchCamera;
+
 
 
     private FirebaseDatabase mFirebaseDatabase;
@@ -140,6 +143,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRef = mFirebaseDatabase.getReference();
         mStorage = FirebaseStorage.getInstance();
@@ -147,6 +151,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         downloadImage();
         sendMessage("bắt đầu live stream");
         retrieveMessage();
+
     }
 
     @Override
@@ -195,6 +200,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         inAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_in);
         outAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_out);
 
+        mAvatar.setOnClickListener(this);
         tvChat.setOnClickListener(this);
         tvSendone.setOnClickListener(this);
         tvSendtwo.setOnClickListener(this);
@@ -236,6 +242,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             case R.id.imv_switch_camera:
                 LiveSingleViewFragment.switchCamera();
                 break;
+
 
         }
 
@@ -496,6 +503,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             }
         });
     }
+
 
 
 }

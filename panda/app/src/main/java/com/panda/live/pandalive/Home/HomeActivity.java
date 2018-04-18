@@ -16,16 +16,23 @@ import com.flyco.tablayout.SegmentTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceNavigationView;
 import com.luseen.spacenavigation.SpaceOnClickListener;
+import com.panda.live.pandalive.LiveViewer.InteractionFragment;
 import com.panda.live.pandalive.StreamManager.LiveManagerActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.Utils.ViewFindUtils;
+import com.panda.live.pandalive.data.model.Profile;
+import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.profile.ProfileActivity;
+import com.panda.live.pandalive.profile.ProfileDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,7 +49,7 @@ public class HomeActivity extends AppCompatActivity {
     private View mDecorView;
     private SegmentTabLayout mTabLayout_3;
     private String userID;
-
+    private DatabaseReference mDatabase;
     //Bottom Navigation
     private SpaceNavigationView mSpaceNavigationView;
 
@@ -50,13 +57,14 @@ public class HomeActivity extends AppCompatActivity {
 
     // Fire base
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
+    private Intent mIntentInteraction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         mToolbar = findViewById(R.id.toolbar);
+
 
         setSupportActionBar(mToolbar);
 
@@ -403,4 +411,10 @@ public class HomeActivity extends AppCompatActivity {
             return mFragments.get(position);
         }
     }
+    public void transferData(){
+        mIntentInteraction = new Intent(getApplicationContext(), InteractionFragment.class);
+        mIntentInteraction.putExtra("userid", PreferencesManager.getUserIdFirebase(getApplicationContext()));
+
+    }
+
 }

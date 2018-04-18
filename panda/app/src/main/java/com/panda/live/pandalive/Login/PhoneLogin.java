@@ -51,9 +51,7 @@ public class PhoneLogin extends AppCompatActivity {
     private boolean bool;
     private Intent intentMain;
 
-    private FirebaseStorage mStorage;
-    private StorageReference mStorageReference;
-    private StorageReference mRefStorage;
+
     private Uri mFilePath;
 
 
@@ -65,9 +63,6 @@ public class PhoneLogin extends AppCompatActivity {
         mPass = findViewById(R.id.field_pwd);
         mLogin = findViewById(R.id.button_login);
         intentMain = new Intent(this, HomeActivity.class);
-
-        mStorage = FirebaseStorage.getInstance();
-        mStorageReference = mStorage.getReference();
 
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,9 +89,11 @@ public class PhoneLogin extends AppCompatActivity {
                                     startActivity(intentMain);
                                     toastMessage("Đăng nhập thành công !");
                                     mFilePath = Uri.parse("android.resource://com.panda.live.pandalive/drawable/ic_camera.png");
+                                    PreferencesManager.setValueLoginPhone(mContext,
+                                            PreferencesManager.getValueLoginPhone(mContext) + 1);
                                     PreferencesManager.saveUserInfo(getApplication(),mUser.username,
-                                            phonenum, "none","none","none", mFilePath,
-                                            "none", "none",
+                                            phonenum, "none","none","none",
+                                            mFilePath, "none", "none",
                                             "none","none",1000);
                                     //uploadImage();
                                     finish();
@@ -139,38 +136,6 @@ public class PhoneLogin extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    private void uploadImage() {
-
-        if (mFilePath != null) {
-            final ProgressDialog progressDialog = new ProgressDialog(mContext);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-            mRefStorage = mStorageReference.child("images").child(userID + "/avatarProfile");
-            mRefStorage.putFile(mFilePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(PhoneLogin.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(PhoneLogin.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
-                        }
-                    });
-        }
-    }
 
     @Override
     public boolean onSupportNavigateUp() {

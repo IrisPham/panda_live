@@ -18,7 +18,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <ImageView
-                android:id="@+id/main.imageview.placeholder"
+                android:id="@+id/img_background_profile"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:scaleType="centerCrop"
@@ -45,6 +45,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_profile_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -131,7 +132,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:backgroundTint="@color/space_transparent"
-                        android:text="ádsdsd"
                         android:enabled="false"
                         android:textColor="#000000" />
                 </LinearLayout>
@@ -219,8 +219,17 @@
                         android:textColor="#000000"
                         android:textSize="18sp"
                         android:textStyle="bold" />
+                    <!--<EditText-->
+                        <!--android:id="@+id/edt_gender"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginLeft="5dp"-->
+                        <!--android:backgroundTint="@color/space_transparent"-->
+                        <!--android:enabled="false"-->
+                        <!--android:textColor="#000000" />-->
 
                     <Spinner
+                        android:id="@+id/sn_gender"
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:layout_marginLeft="5dp"
@@ -304,6 +313,7 @@
                     android:orientation="horizontal">
 
                     <TextView
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Công việc:"
@@ -312,7 +322,7 @@
                         android:textStyle="bold" />
 
                     <EditText
-                        android:id="@+id/edt_career"
+                        android:id="@+id/edt_job"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
@@ -358,6 +368,7 @@
     </android.support.v7.widget.Toolbar>
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/img_avatar_profile"
         android:layout_width="@dimen/image_width"
         android:layout_height="@dimen/image_width"
         android:layout_gravity="center_horizontal"
