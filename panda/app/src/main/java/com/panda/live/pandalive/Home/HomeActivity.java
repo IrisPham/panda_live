@@ -38,7 +38,7 @@ public class HomeActivity extends AppCompatActivity {
 
     //Tab
     private ArrayList<Fragment> mFragments = new ArrayList<>();
-    private String[] mTitles_3 = {"Kênh", "Panda", "Khám phá"};
+    private String[] mTitles_3 = {"Kênh", "Panda"};
     private View mDecorView;
     private SegmentTabLayout mTabLayout_3;
     private String userID;
@@ -60,16 +60,13 @@ public class HomeActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             if (i == 0) {
                 mFragments.add(ChannelsFragment.newInstance("", ""));
             } else {
                 if (i == 1) {
                     mFragments.add(PandaFragment.newInstance("", ""));
                 }
-//                } else {
-//                    mFragments.add(SimpleCardFragment.getInstance("Switch ViewPager " + mTitles_3[i].toString()));
-//                }
             }
         }
 
