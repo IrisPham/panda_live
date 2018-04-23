@@ -48,7 +48,7 @@
                     android:layout_width="63dp"
                     android:layout_height="63dp"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/item_avatar_live"
+                    android:background="@drawable/ic_panda_bear"
                     android:scaleType="centerCrop"
                     app:riv_border_color="#B0B0AE"
                     app:riv_corner_radius="30dip"
@@ -564,6 +564,7 @@
                 </LinearLayout>
 
                 <RelativeLayout
+                    android:id="@+id/rl_rank"
                     android:layout_width="0dp"
                     android:layout_height="50.5dp"
                     android:layout_weight="2.5"

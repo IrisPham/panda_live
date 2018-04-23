@@ -411,10 +411,6 @@ public class HomeActivity extends AppCompatActivity {
             return mFragments.get(position);
         }
     }
-    public void transferData(){
-        mIntentInteraction = new Intent(getApplicationContext(), InteractionFragment.class);
-        mIntentInteraction.putExtra("userid", PreferencesManager.getUserIdFirebase(getApplicationContext()));
 
-    }
 
 }

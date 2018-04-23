@@ -283,6 +283,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                             FirebaseUser user = task.getResult().getUser();
                             // [START_EXCLUDE]
                             updateUI(STATE_SIGNIN_SUCCESS, user);
+                            mIntentSetPass.putExtra("id",mPhoneNumberField.getText().toString() );
                             PreferencesManager.setID(mContext, mPhoneNumberField.getText().toString());
                             startActivity(mIntentSetPass);
                             // [END_EXCLUDE]
@@ -352,8 +353,8 @@ public class PhoneAuthActivity extends AppCompatActivity implements
                 break;
             case STATE_VERIFY_SUCCESS:
                 // Verification has succeeded, proceed to firebase sign in
-                disableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
-                        mVerificationField);
+                //disableViews(mStartButton, mVerifyButton, mResendButton, mPhoneNumberField,
+                //mVerificationField);
 
 
                 // Set the verification text based on the credential
@@ -388,7 +389,7 @@ public class PhoneAuthActivity extends AppCompatActivity implements
             //mSignedInViews.setVisibility(View.VISIBLE);
 
             enableViews(mPhoneNumberField, mVerificationField);
-            mPhoneNumberField.setText(null);
+            //mPhoneNumberField.setText(null);
             mVerificationField.setText(null);
         }
     }

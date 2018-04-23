@@ -32,7 +32,7 @@ public class SetPass extends AppCompatActivity {
     private String pass;
     private Button mButtonComplete;
     private Intent mIntent;
-    private String userID;
+    private String userID, mID;
 
     //add Firebase Database stuff
     private static final String TAG = "AddToDatabase";
@@ -54,7 +54,6 @@ public class SetPass extends AppCompatActivity {
         mData = new Data();
         mPass = findViewById(R.id.edit_pass);
         mButtonComplete = findViewById(R.id.button_complete);
-        Toast.makeText(getApplicationContext(),pass,Toast.LENGTH_SHORT).show();
 
 
         //Setup toolbar
@@ -78,7 +77,7 @@ public class SetPass extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         userID = user.getUid();
 
-
+        mID = getIntent().getStringExtra("id").toString();
 
         // Read from the database
 
@@ -88,7 +87,14 @@ public class SetPass extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "onClick: Submit pressed.");
                 pass = mPass.getText().toString();
-                writeDataTheFirst();
+                PreferencesManager.setPhoneNum(mContext, mID);
+                PreferencesManager.setPass(mContext, pass);
+                if(PreferencesManager.getValueLoginPhone(mContext) + 1 == 1){
+                    writeDataTheFirst();
+                    PreferencesManager.setValueLoginPhone(mContext, 2);
+                }
+                startActivity(mIntent);
+
             }
         });
     }
@@ -117,6 +123,6 @@ public class SetPass extends AppCompatActivity {
         myRef.child("users").child(userID).setValue(user);
         myRef.child("users").child(userID).child("profile").setValue(profile);
         toastMessage("Đăng kí thành công !");
-        startActivity(mIntent);
+
     }
 }

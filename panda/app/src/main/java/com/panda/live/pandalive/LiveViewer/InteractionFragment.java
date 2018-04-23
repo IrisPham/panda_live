@@ -208,7 +208,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         tvSendthree.setOnClickListener(this);
         tvSendfor.setOnClickListener(this);
         sendInput.setOnClickListener(this);
-        rlMain.setOnClickListener(this);
+        mAvatar.setOnClickListener(this);
         clearTiming();
         binData();
         return view;
@@ -241,7 +241,6 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
                 break;
             case R.id.imgAvatar:
                 transferData();
-
                 break;
         }
 

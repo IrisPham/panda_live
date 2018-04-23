@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,13 +55,11 @@ public class ProfileActivity extends AppCompatActivity {
     FirebaseStorage mStorage;
     StorageReference mStorageReference;
     private static final String TAG = "Profile";
-
+    private RelativeLayout mRlRank;
     private RoundedImageView mAvatar;
     private TextView mFullName, mLogout, mID;
     private GoogleSignInClient mGoogleSignInClient;
     private Uri filePath;
-    private StorageReference ref;
-    private CharSequence colors[] = new CharSequence[]{"Thư viện", "Camera"};
     private Intent mIntentMain;
     private Context mContext;
     private Intent mIntentProfileDetail;
@@ -78,36 +77,22 @@ public class ProfileActivity extends AppCompatActivity {
         mID.setText(id);
         mAvatar = findViewById(R.id.imgAvatar);
         filePath = Uri.parse(PreferencesManager.getPhotoUri(mContext));
-
-
         mFullName = findViewById(R.id.tv_full_name);
+        mRlRank = findViewById(R.id.rl_rank);
         String name = PreferencesManager.getName(mContext);
         mFullName.setText(name);
-
-
         mStorage = FirebaseStorage.getInstance();
         mStorageReference = mStorage.getReference();
-
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             showDialog();
             }
         });
-
-        mAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickBtnCaptureImage(v);
-            }
-        });
-
 
         //Setup toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_profile);
@@ -123,9 +108,19 @@ public class ProfileActivity extends AppCompatActivity {
                 onSupportNavigateUp();
             }
         });
+        setAvatar();
+//        setName();
+        mRlRank.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, RankActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
 
+    public void setAvatar(){
         int value = PreferencesManager.getValueStateLogin(mContext);
-
         switch (value) {
             case 1: //Login with Facebook
                 if(PreferencesManager.getCheckUpdateAvatarFace(mContext) + 1 == 1){
@@ -159,6 +154,14 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onResume(){
+        super.onResume();
+        setAvatar();
+        mFullName.setText(PreferencesManager.getName(mContext));
+//        setName();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -171,6 +174,7 @@ public class ProfileActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_edit_profile:
                 transferData();
+                mIntentProfileDetail.putExtra("id", mID.getText().toString());
                 startActivity(mIntentProfileDetail);
                 return true;
             default:
@@ -182,110 +186,6 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
-    }
-
-    private void chooseImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 0);
-    }
-
-    private void takePicture() {
-
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, 1);
-    }
-
-    private void onClickBtnCaptureImage(final View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-        builder.setTitle("Đính kèm file");
-        builder.setItems(colors, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0:
-                        //Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                        //        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        //startActivityForResult(pickPhoto , 1);//one can be replaced with any action code
-                        chooseImage();
-                        break;
-                    case 1:
-                        ActivityCompat.requestPermissions(ProfileActivity.this,
-                                new String[]{Manifest.permission.CAMERA}, 2);
-                        takePicture();
-                        break;
-                }
-            }
-        });
-        builder.show();
-    }
-
-
-    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        switch (requestCode) {
-            case 0:
-                if (resultCode == RESULT_OK) {
-                    filePath = imageReturnedIntent.getData();
-                    Glide.with(this).load(filePath).into(mAvatar);
-                    uploadImage();
-                    updateValueCheckAvatar();
-                    break;
-                }
-                break;
-            case 1:
-                if (resultCode == RESULT_OK) {
-                    filePath = imageReturnedIntent.getData();
-                    Glide.with(this).load(filePath).into(mAvatar);
-                    uploadImage();
-                    updateValueCheckAvatar();
-                    break;
-                }
-            case 2:
-                //takePicture();
-                break;
-        }
-    }
-
-    private void toastMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
-    private void uploadImage() {
-
-        if (filePath != null) {
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-
-            ref = mStorageReference.child("images").child(PreferencesManager
-                    .getID(getApplicationContext()) + "/avatarProfile");
-            ref.putFile(filePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(ProfileActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(ProfileActivity.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
-                        }
-                    });
-        }
-
     }
 
 
@@ -346,7 +246,6 @@ public class ProfileActivity extends AppCompatActivity {
 
                             case 3: //Login with Phone
                                 signOutPhone();
-
                                 break;
                             default:
                                 return;
@@ -379,32 +278,30 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    public void updateValueCheckAvatar(){
-        int value = PreferencesManager.getValueStateLogin(mContext);
-
-        switch (value) {
-            case 1: //Login with Facebook
-                PreferencesManager.setCheckUpdateAvatarFace(mContext,
-                        PreferencesManager.getCheckUpdateAvatarFace(mContext)+1);
-                break;
-
-            case 2: //Login with Google
-                PreferencesManager.setCheckUpdateAvatarGoogle(mContext,
-                        PreferencesManager.getCheckUpdateAvatarGoogle(mContext)+1);
-                break;
-
-            case 3: //Login with Phone
-                PreferencesManager.setCheckUpdateAvatarPhone(mContext,
-                        PreferencesManager.getCheckUpdateAvatarPhone(mContext)+1);
-                break;
-            default:
-                return;
-        }
-    }
 
     public void transferData(){
         mIntentProfileDetail = new Intent(ProfileActivity.this, ProfileDetailActivity.class);
         mIntentProfileDetail.putExtra("id", mID.getText());
+    }
+
+    public void setName(){
+        int value = PreferencesManager.getValueStateLogin(mContext);
+
+        switch (value) {
+            case 1: //Login with Facebook
+                mFullName.setText(PreferencesManager.getNameLoginFace(mContext));
+                break;
+
+            case 2: //Login with Google
+                mFullName.setText(PreferencesManager.getNameLoginGoogle(mContext));
+                break;
+
+            case 3: //Login with Phone
+                mFullName.setText(PreferencesManager.getNameLoginPhone(mContext));
+                break;
+            default:
+                return;
+        }
     }
 
 }

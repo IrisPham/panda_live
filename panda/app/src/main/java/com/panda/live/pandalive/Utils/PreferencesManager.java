@@ -22,12 +22,15 @@ public class PreferencesManager {
     public static final String EXTRA_USER_EDUCATION = "education";
     public static final String EXTRA_USER_COIN = "coin";
     public static final String EXTRA_PHONE_NUM ="phone";
+    public static final String EXTRA_PASS ="pass";
+    public static final String EXTRA_NAME_LOGIN_PHONE ="nameloginphone";
+    public static final String EXTRA_NAME_LOGIN_FACE ="nameloginface";
+    public static final String EXTRA_NAME_LOGIN_GOOGLE ="namelogingoogle";
     public static final String EXTRA_USER_ID_FIREBASE = "userid";
     public static final String EXTRA_STATE_LOGIN = "stateLogin";
     public static final String EXTRA_CHECK_LOGIN_FACE = "checkLoginFace";
     public static final String EXTRA_CHECK_LOGIN_GOOGLE = "checkLoginGoogle";
     public static final String EXTRA_CHECK_LOGIN_PHONE= "checkLoginPhone";
-
     public static final String EXTRA_CHECK_UPDATE_AVATAR_FACE = "checkUpdateAvatarFace";
     public static final String EXTRA_CHECK_UPDATE_AVATAR_GOOGLE = "checkUpdateAvatarGoogle";
     public static final String EXTRA_CHECK_UPDATE_AVATAR_PHONE = "checkUpdateAvatarPhone";
@@ -127,6 +130,42 @@ public class PreferencesManager {
         editor.apply();
     }
 
+    public static void setNameLoginPhone(Context context, String name){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(EXTRA_NAME_LOGIN_PHONE, name);
+        editor.apply();
+    }
+
+    public static String getNameLoginPhone(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getString(EXTRA_NAME_LOGIN_PHONE,"none");
+    }
+
+    public static void setNameLoginFace(Context context, String name){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(EXTRA_NAME_LOGIN_FACE, name);
+        editor.apply();
+    }
+
+    public static String getNameLoginFace(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getString(EXTRA_NAME_LOGIN_FACE,"none");
+    }
+
+    public static void setNameLoginGoogle(Context context, String name){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(EXTRA_NAME_LOGIN_GOOGLE, name);
+        editor.apply();
+    }
+
+    public static String getNameLoginGoogle(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getString(EXTRA_NAME_LOGIN_GOOGLE,"none");
+    }
+
 
     public static String getName(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -162,6 +201,18 @@ public class PreferencesManager {
     public static String getPhoneNum(Context context){
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         return sharedPref.getString(EXTRA_PHONE_NUM,"");
+    }
+
+    public static void setPass(Context context, String pas){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(EXTRA_PASS, pas);
+        editor.apply();
+    }
+
+    public static String getPass(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        return sharedPref.getString(EXTRA_PASS,"");
     }
 
     public static void setUserIdFirebase(Context context, String userid){
