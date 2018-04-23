@@ -97,8 +97,10 @@ public class PandaFragment extends Fragment {
                 if(!mPandaModels.isEmpty()){mPandaModels.clear();}
                 for (DataSnapshot idRoomSnapshot: dataSnapshot.getChildren()) {
                     PandaModel pandaModel = idRoomSnapshot.getValue(PandaModel.class);
-                    mPandaModels.add(pandaModel);
-                    mAdapter.notifyDataSetChanged();
+                    if(pandaModel.getData().channelId == -1){
+                        mPandaModels.add(pandaModel);
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
             }
 

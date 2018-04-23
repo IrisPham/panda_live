@@ -87,6 +87,7 @@ public class HomeActivity extends AppCompatActivity {
         configBottomNavigation(savedInstanceState);
         configFirebase();
         //setDataProvincial();
+
     }
     private void configFirebase(){
         mAuth = FirebaseAuth.getInstance();
@@ -400,4 +401,5 @@ public class HomeActivity extends AppCompatActivity {
             return mFragments.get(position);
         }
     }
+
 }

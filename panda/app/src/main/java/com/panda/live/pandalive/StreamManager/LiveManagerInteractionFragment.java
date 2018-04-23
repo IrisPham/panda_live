@@ -14,11 +14,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -287,18 +291,44 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
         switch (nameChannel) {
             case "Học tập":
                 Constant.CHANNEL = 0;
+                setPasswordForGroup();
                 break;
             case "Âm nhạc":
                 Constant.CHANNEL = 1;
+                Constant.CHANNEL_PASSWORD = "none";
                 break;
             case "Phim":
                 Constant.CHANNEL = 2;
+                Constant.CHANNEL_PASSWORD = "none";
                 break;
             case "Tán ngẫu":
                 Constant.CHANNEL = 3;
+                Constant.CHANNEL_PASSWORD = "none";
                 break;
             default:
                 break;
         }
+    }
+
+    private void setPasswordForGroup(){
+        final EditText edittext = new EditText(this.getContext());
+        edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this.getContext());
+        alert.setTitle("Nhập mật khẩu phòng");
+        alert.setView(edittext);
+        alert.setPositiveButton("Hủy", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                isGroup = true;
+            }
+        });
+        alert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String passwordGroup = edittext.getText().toString();
+                Constant.CHANNEL_PASSWORD = passwordGroup;
+                Log.e("TAG",Constant.CHANNEL_PASSWORD );
+            }
+        });
+
+        alert.show();
     }
 }
