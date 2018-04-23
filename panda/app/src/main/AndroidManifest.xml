@@ -55,6 +55,8 @@
         <activity
             android:name=".profile.ProfileDetailActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".profile.RankActivity" />
         <activity android:name=".StreamManager.LiveStreamerActivity" />
         <activity android:name=".StreamManager.LiveManagerActivity" />
         <activity android:name=".LiveSingle.LiveSingleActivity"/>

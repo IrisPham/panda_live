@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginTop="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_numberic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="1"
+        android:textSize="10sp" />
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imgAvatar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/item_avatar_live"
+        android:scaleType="centerCrop"
+        android:layout_marginLeft="5dp"
+        app:riv_border_color="#B0B0AE"
+        app:riv_corner_radius="30dip"
+        app:riv_mutate_background="true"
+        app:riv_oval="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/imv_rank"/>
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+
+        android:id="@+id/tv_name_rec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="Name "
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/textMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="Hello"
+        android:layout_marginEnd="5dp"
+        android:textSize="10sp" />
+</LinearLayout>
+
+
+
+</LinearLayout>

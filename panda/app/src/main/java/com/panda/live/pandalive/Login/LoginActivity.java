@@ -54,18 +54,24 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.panda.live.pandalive.Home.HomeActivity;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.data.model.PandaModel;
+import com.panda.live.pandalive.data.model.Profile;
 import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.model.Data;
 import com.panda.live.pandalive.profile.ProfileActivity;
+import com.panda.live.pandalive.profile.ProfileDetailActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONObject;
@@ -73,6 +79,8 @@ import org.json.JSONObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 9001;
@@ -80,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
     private CallbackManager mCallbackManager;
     private LinearLayout mLoginButton, mPhone;
     private Button mBtnSignUp, mBtnSignIn;
-    private Intent intentMain, intentRegistry, intentPhoneLogin;
+    private Intent intentMain, intentRegistry, intentPhoneLogin, intentProfileDetail;
     private Data mData;
     private BottomSheetBehavior mBottomSheetBehavior;
     private BottomSheetDialog mBottomSheetDialog;
@@ -97,6 +105,8 @@ public class LoginActivity extends AppCompatActivity {
     private StorageReference mStorageReference;
     private StorageReference mRefStorage;
     private Uri mFilePath;
+    private String mID, mName;
+    public boolean checkID = false;
 
     @TargetApi(Build.VERSION_CODES.FROYO)
     public static String printKeyHash(Activity context) {
@@ -164,6 +174,7 @@ public class LoginActivity extends AppCompatActivity {
         intentMain = new Intent(this, HomeActivity.class);
         intentRegistry = new Intent(this, PhoneAuthActivity.class);
         intentPhoneLogin = new Intent(this, PhoneLogin.class);
+        intentProfileDetail = new Intent(this, ProfileDetailActivity.class);
         mLoginButton = findViewById(R.id.button_facebook_login);
 
         mPhone = findViewById(R.id.phone_button);
@@ -283,15 +294,18 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onCompleted(JSONObject object,
                                                     GraphResponse response) {
-//                                mData.ID = id;
-//                                mData.name = name;
-                                String id = object.optString(getString(R.string.id));
-                                String name = object.optString(getString(R.string.name));
-                                String uri = "http://graph.facebook.com/" + id + "/picture?type=large";
+//
+                                mID = object.optString(getString(R.string.id));
+                                String uri = "http://graph.facebook.com/" + mID + "/picture?type=large";
                                 mFilePath = Uri.parse(uri);
+                                mName = object.optString(getString(R.string.name));
+                                if((!PreferencesManager.getNameLoginFace(mContext).equals(mName))
+                                        && (!PreferencesManager.getNameLoginFace(mContext).equals("none"))){
+                                    mName = PreferencesManager.getNameLoginFace(mContext);
+                                }
 
-                                PreferencesManager.saveUserInfo(mContext,name,
-                                        id, "none","none","none",
+                                PreferencesManager.saveUserInfo(mContext, mName,
+                                        mID, "none","none","none",
                                         Uri.parse(uri),"none", "none","none","none",1000);
                                 saveFacebookCredentialsInFirebase(loginResult.getAccessToken());
                             }
@@ -331,9 +345,11 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    if(PreferencesManager.getValueLoginFace(mContext) + 1 == 1){
-                        loadData();
+                    if(PreferencesManager.getValueLoginFace(getApplicationContext()) + 1 == 1){
+                        writeDataTheFirst();
+                        PreferencesManager.setValueLoginFace(getApplicationContext(),2);
                     }
+                    PreferencesManager.setStateLogin(mContext,1);
                     PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
                     Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                     startActivity(intentMain);
@@ -354,9 +370,15 @@ public class LoginActivity extends AppCompatActivity {
                         if (!task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                         } else {
-                            if(PreferencesManager.getValueLoginGoogle(mContext) + 1 == 1){
-                                loadData();
+//                            checkLogin();
+//                            if(!checkID){
+//                                writeDataTheFirst();
+//                            }
+                            if(PreferencesManager.getValueLoginGoogle(getApplicationContext()) + 1 == 1){
+                                writeDataTheFirst();
+                                PreferencesManager.setValueLoginGoogle(getApplicationContext(),2);
                             }
+                            PreferencesManager.setStateLogin(mContext,2);
                             PreferencesManager.setAccessToken(mContext, FirebaseAuth.getInstance().getUid());
                             Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                             startActivity(intentMain);
@@ -371,10 +393,21 @@ public class LoginActivity extends AppCompatActivity {
         try {
             startAnim();
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-//            mData.name = account.getDisplayName();
-//            mData.ID = account.getId();
-//            mData.URI = account.getPhotoUrl().toString();
-            PreferencesManager.saveUserInfo(mContext,account.getDisplayName(),
+            mID = account.getId();
+//            if(PreferencesManager.getNameLoginGoogle(mContext).equals("none")){
+//                mName = account.getDisplayName();
+//                PreferencesManager.setNameLoginGoogle(mContext, mName);
+//            }
+//            else{
+//                mName = PreferencesManager.getNameLoginGoogle(mContext);
+//                PreferencesManager.setNameLoginGoogle(mContext, mName);
+//            }
+            mName = account.getDisplayName();
+            if((!PreferencesManager.getNameLoginGoogle(mContext).equals(mName)) &&
+                    (!PreferencesManager.getNameLoginGoogle(mContext).equals("none"))){
+                mName = PreferencesManager.getNameLoginGoogle(mContext);
+            }
+            PreferencesManager.saveUserInfo(mContext, mName,
                     account.getId(), "","","",
                         account.getPhotoUrl(),"",
                             "","","",1000);
@@ -393,58 +426,27 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void loadData() {
+    public void writeDataTheFirst() {
         FirebaseUser users = mAuth.getCurrentUser();
         userID = users.getUid();
-        User user = new User(PreferencesManager.getID(mContext), "NO", PreferencesManager.getName(mContext),
-                "NO", "NO", 1000, 0, 0);
-        com.panda.live.pandalive.data.model.Profile profile =
-                new com.panda.live.pandalive.data.model.Profile("NO", "NO",
-                        "NO", "NO");
+        User user = new User(PreferencesManager.getID(mContext), "NO",
+                PreferencesManager.getName(mContext),"none",1000, 0, 0);
+        Profile profile = new Profile("none", "none",
+                        "none", "none", "none", "Vui lòng chọn ngày sinh");
         mRef.child("users").child(userID).setValue(user);
         mRef.child("users").child(userID).child("profile").setValue(profile);
     }
+
 
     void startAnim(){
         mAvi.show();
         // or avi.smoothToShow();
     }
 
-    private void uploadImage() {
-
-        if (mFilePath != null) {
-            final ProgressDialog progressDialog = new ProgressDialog(mContext);
-            progressDialog.setTitle("Uploading...");
-            progressDialog.show();
-            mRefStorage = mStorageReference.child("images").child(userID + "/avatarLive");
-            mRefStorage.putFile(mFilePath)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            progressDialog.dismiss();
-                            Toast.makeText(mContext, "Uploaded", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(mContext, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
-                                    .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
-                        }
-                    });
-        }
-    }
-
     private boolean hasPermission(String permission) {
         return ActivityCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
+
+
 }
 

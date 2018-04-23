@@ -17,8 +17,7 @@ public class User {
     public String pwd;
     public String username;
     public String rank;
-    public String uri;
-    public int xu;
+    public int coin;
     public int hourOnl;
     public int exp;
 
@@ -29,18 +28,16 @@ public class User {
     }
 
     public User(String id, String pwd, String username,
-                String rank, String uri, int xu, int hourOnl, int exp ) {
+                String rank, int coin, int hourOnl, int exp ) {
         this.id = id;
         this.pwd = pwd;
         this.username = username;
         this.rank = rank;
-        this.uri = uri;
-        this.xu = xu;
+        this.coin = coin;
         this.hourOnl = hourOnl;
         this.exp = exp;
 
     }
-
 
 }
 

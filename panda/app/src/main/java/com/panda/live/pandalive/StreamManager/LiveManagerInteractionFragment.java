@@ -35,6 +35,7 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.panda.live.pandalive.LiveSingle.LiveSingleActivity;
+import com.panda.live.pandalive.LiveViewer.InteractionFragment;
 import com.panda.live.pandalive.MainActivity.MainActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.PreferencesManager;
@@ -69,6 +70,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private FirebaseAuth mAuth;
+
     public LiveManagerInteractionFragment() {
     }
 
@@ -285,4 +287,6 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
         AlertDialog alertDialogObject = dialogBuilder.create();
         alertDialogObject.show();
     }
+
+
 }
