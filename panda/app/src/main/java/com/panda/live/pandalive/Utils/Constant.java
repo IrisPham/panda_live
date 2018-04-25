@@ -5,4 +5,12 @@ package com.panda.live.pandalive.Utils;
  */
 
 public class Constant {
+    public static int LIVE_SINGLE_CHANNEL = -1;
+    public static int FILM_CHANNEL = 0;
+    public static int MUSIC_CHANNEL = 1;
+    public static int LEARNING_CHANNEL = 2;
+    public static int CHAT_CHANNEL = 3;
+
+    public static int CHANNEL = -1;
+    public static String CHANNEL_PASSWORD = "none";
 }

@@ -16,23 +16,16 @@ import com.flyco.tablayout.SegmentTabLayout;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.luseen.spacenavigation.SpaceItem;
 import com.luseen.spacenavigation.SpaceNavigationView;
 import com.luseen.spacenavigation.SpaceOnClickListener;
-import com.panda.live.pandalive.LiveViewer.InteractionFragment;
-import com.panda.live.pandalive.StreamManager.LiveManagerActivity;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.StreamManager.LiveManagerActivity;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.Utils.ViewFindUtils;
-import com.panda.live.pandalive.data.model.Profile;
-import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.profile.ProfileActivity;
-import com.panda.live.pandalive.profile.ProfileDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,7 +38,7 @@ public class HomeActivity extends AppCompatActivity {
 
     //Tab
     private ArrayList<Fragment> mFragments = new ArrayList<>();
-    private String[] mTitles_3 = {"Kênh", "Panda", "Khám phá"};
+    private String[] mTitles_3 = {"Kênh", "Panda"};
     private View mDecorView;
     private SegmentTabLayout mTabLayout_3;
     private String userID;
@@ -68,16 +61,13 @@ public class HomeActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             if (i == 0) {
                 mFragments.add(ChannelsFragment.newInstance("", ""));
             } else {
                 if (i == 1) {
                     mFragments.add(PandaFragment.newInstance("", ""));
                 }
-//                } else {
-//                    mFragments.add(SimpleCardFragment.getInstance("Switch ViewPager " + mTitles_3[i].toString()));
-//                }
             }
         }
 
@@ -98,13 +88,15 @@ public class HomeActivity extends AppCompatActivity {
         configBottomNavigation(savedInstanceState);
         configFirebase();
         //setDataProvincial();
+
     }
-    private void configFirebase(){
+
+    private void configFirebase() {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = mAuth.getCurrentUser();
         userID = user.getUid();
-        PreferencesManager.setUserIdFirebase(getApplicationContext(),userID);
+        PreferencesManager.setUserIdFirebase(getApplicationContext(), userID);
     }
 
     private void configBottomNavigation(Bundle savedInstanceState) {
@@ -183,7 +175,7 @@ public class HomeActivity extends AppCompatActivity {
         setDataPrefix();
     }
 
-    private void setDataPrefix(){
+    private void setDataPrefix() {
         try {
             JSONArray jsonArray = new JSONArray(loadJSONFromAsset());
 
@@ -205,7 +197,6 @@ public class HomeActivity extends AppCompatActivity {
             avatarLink[4] = "https://preview.bambuser.io/live/eyJyZXNvdXJjZVVyaSI6Imh0dHBzOlwvXC9jZG4uYmFtYnVzZXIubmV0XC9icm9hZGNhc3RzXC85ZmFmZWNhNS1kMGNmLTRhOTItOTViYy02NjI4OTMyYzYxZTgifQ==/preview.jpg";
 
 
-
             for (int i = 0; i < 1; i++) {
                 room.setId(PreferencesManager.getAccessToken(this));
                 room.setPassword("12345");
@@ -222,10 +213,32 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    public class Room{
+    private String loadJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = getAssets().open("tree.json");
+
+            int size = is.available();
+
+            byte[] buffer = new byte[size];
+
+            is.read(buffer);
+
+            is.close();
+
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            Log.e("TAG", ex.getMessage());
+            return null;
+        }
+        return json;
+    }
+
+    public class Room {
         String id;
         String password;
         Data data;
+
         public Room() {
 
         }
@@ -254,7 +267,8 @@ public class HomeActivity extends AppCompatActivity {
             this.data = data;
         }
     }
-    public class Data{
+
+    public class Data {
         public String reSourceUri;
         public String ChannelId;
         public String avatarLink;
@@ -288,7 +302,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    class provincial{
+    class provincial {
         String name;
         String slug;
         String type;
@@ -339,27 +353,6 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private String loadJSONFromAsset() {
-        String json = null;
-        try {
-            InputStream is = getAssets().open("tree.json");
-
-            int size = is.available();
-
-            byte[] buffer = new byte[size];
-
-            is.read(buffer);
-
-            is.close();
-
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            Log.e("TAG", ex.getMessage());
-            return null;
-        }
-        return json;
-    }
-
 //    private void saveFacebookCredentialsInFirebase(AccessToken accessToken) {
 //        AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
 //        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -390,7 +383,6 @@ public class HomeActivity extends AppCompatActivity {
 //                });
 //    }
 
-
     private class MyPagerAdapter extends FragmentPagerAdapter {
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -411,6 +403,4 @@ public class HomeActivity extends AppCompatActivity {
             return mFragments.get(position);
         }
     }
-
-
 }

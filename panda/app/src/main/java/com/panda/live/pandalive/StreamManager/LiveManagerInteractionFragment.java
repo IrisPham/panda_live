@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,17 +34,15 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.panda.live.pandalive.LiveGoup.LiveGroupActivity;
 import com.panda.live.pandalive.LiveSingle.LiveSingleActivity;
-import com.panda.live.pandalive.LiveViewer.InteractionFragment;
-import com.panda.live.pandalive.MainActivity.MainActivity;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.Utils.Constant;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.Utils.Settings;
-import com.panda.live.pandalive.profile.ProfileActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -54,18 +52,18 @@ import static android.app.Activity.RESULT_OK;
  * Created by Android Studio on 2/6/2018.
  */
 
-public class LiveManagerInteractionFragment extends Fragment implements View.OnClickListener{
+public class LiveManagerInteractionFragment extends Fragment implements View.OnClickListener {
+    private static final String TAG = "LiveManager";
+    FirebaseStorage mStorage;
+    StorageReference mStorageReference;
     private View mView;
     private EditText mEdtTitle;
     private boolean isGroup = false;
     private Settings mSetting;
     private CircleImageView mAvatar;
     private CharSequence colors[] = new CharSequence[]{"Thư viện", "Camera"};
-    private static final String TAG = "LiveManager";
     private Uri mFilePath;
     private String userID;
-    FirebaseStorage mStorage;
-    StorageReference mStorageReference;
     private StorageReference mRefStorage;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
@@ -110,7 +108,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if (s != null ) mSetting.setLiveTitle(s.toString().trim());
+                    if (s != null) mSetting.setLiveTitle(s.toString().trim());
                 }
 
                 @Override
@@ -260,17 +258,16 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
         if (isGroup) {
             startActivity(new Intent(this.getActivity(), LiveSingleActivity.class));
         } else {
-            //startActivity(new Intent(this.getActivity(), L.class));
+            startActivity(new Intent(this.getActivity(), LiveGroupActivity.class));
         }
     }
 
-    public void showAlertDialogWithListview()
-    {
+    public void showAlertDialogWithListview() {
         List<String> topic = new ArrayList<>();
         topic.add("Học tập");
         topic.add("Âm nhạc");
         topic.add("Phim");
-        topic.add("Tán gẫu");
+        topic.add("Tán ngẫu");
 
         final CharSequence[] Topics = topic.toArray(new String[topic.size()]);
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
@@ -278,9 +275,9 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
         dialogBuilder.setItems(Topics, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int item) {
                 String selectedText = Topics[item].toString();  //Selected item in listview
-                isGroup = true;
-                Toast.makeText(getContext(),selectedText,Toast.LENGTH_SHORT).show();
                 isGroup = false;
+                Toast.makeText(getContext(), "Chọn kênh live: " + selectedText, Toast.LENGTH_SHORT).show();
+                chooserChannel(selectedText);
 
             }
         });
@@ -288,5 +285,48 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
         alertDialogObject.show();
     }
 
+    private void chooserChannel(String nameChannel) {
+        switch (nameChannel) {
+            case "Học tập":
+                Constant.CHANNEL = 0;
+                setPasswordForGroup();
+                break;
+            case "Âm nhạc":
+                Constant.CHANNEL = 1;
+                Constant.CHANNEL_PASSWORD = "none";
+                break;
+            case "Phim":
+                Constant.CHANNEL = 2;
+                Constant.CHANNEL_PASSWORD = "none";
+                break;
+            case "Tán ngẫu":
+                Constant.CHANNEL = 3;
+                Constant.CHANNEL_PASSWORD = "none";
+                break;
+            default:
+                break;
+        }
+    }
 
+    private void setPasswordForGroup() {
+        final EditText edittext = new EditText(this.getContext());
+        edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this.getContext());
+        alert.setTitle("Nhập mật khẩu phòng");
+        alert.setView(edittext);
+        alert.setPositiveButton("Hủy", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                isGroup = true;
+            }
+        });
+        alert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String passwordGroup = edittext.getText().toString();
+                Constant.CHANNEL_PASSWORD = passwordGroup;
+                Log.e("TAG", Constant.CHANNEL_PASSWORD);
+            }
+        });
+
+        alert.show();
+    }
 }

@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -59,7 +59,10 @@
             android:name=".profile.RankActivity" />
         <activity android:name=".StreamManager.LiveStreamerActivity" />
         <activity android:name=".StreamManager.LiveManagerActivity" />
-        <activity android:name=".LiveSingle.LiveSingleActivity"/>
+        <activity android:name=".LiveSingle.LiveSingleActivity" />
+        <activity android:name=".GroupViewer.GroupDasboardActivity" />
+        <activity android:name=".LiveGoup.LiveGroupActivity" />
+        <activity android:name=".GroupViewer.GroupActivity"></activity>
     </application>
 
 </manifest>

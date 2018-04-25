@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.panda.live.pandalive.GroupViewer.GroupActivity;
 import com.panda.live.pandalive.LiveViewer.LiveActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.data.model.PandaModel;
@@ -26,11 +27,11 @@ import java.util.ArrayList;
  * Created by Android Studio on 3/12/2018.
  */
 
-public class PandaAdapter extends RecyclerView.Adapter<PandaAdapter.MyViewHolder> {
+public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder> {
     private ArrayList<PandaModel> pandaModels;
     private Context mContext;
 
-    public PandaAdapter(ArrayList<PandaModel> pandaModels, Context mContext) {
+    public GroupAdapter(ArrayList<PandaModel> pandaModels, Context mContext) {
         this.pandaModels = pandaModels;
         this.mContext = mContext;
     }
@@ -38,7 +39,7 @@ public class PandaAdapter extends RecyclerView.Adapter<PandaAdapter.MyViewHolder
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row_panda, parent, false);
-        return new PandaAdapter.MyViewHolder(view);
+        return new GroupAdapter.MyViewHolder(view);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class PandaAdapter extends RecyclerView.Adapter<PandaAdapter.MyViewHolder
                     String passwordGroup = edittext.getText().toString();
 
                     if (passwordGroup.equals(pandaModels.get(adapterPositon).getPwdRoom()) && !passwordGroup.equals("none")) {
-                        Intent intent = new Intent(mContext, LiveActivity.class);
+                        Intent intent = new Intent(mContext, GroupActivity.class);
                         intent.putExtra("URL", pandaModels.get(adapterPositon).getData().getResourceUri());
                         intent.putExtra("idRoom", pandaModels.get(adapterPositon).getIdRoom());
                         mContext.startActivity(intent);
