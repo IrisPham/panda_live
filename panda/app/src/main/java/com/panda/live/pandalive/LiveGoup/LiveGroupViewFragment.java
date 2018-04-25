@@ -226,14 +226,27 @@ public class LiveGroupViewFragment extends Fragment implements Broadcaster.Viewe
                                     model.getResults().get(i).getResourceUri());
                             values.put("data", dataRoom);
 
-                            PositonGroupModel positonGroupModel = new PositonGroupModel();
-
-                            positonGroupModel.setPosition("1");
-                            positonGroupModel.setResourceUrl(model.getResults().get(i).getResourceUri());
-
                             mDatabase.child("RoomsOnline").push().setValue(values);
                             mDatabase.child("VideosOffline").child(PreferencesManager.getID(mContext)).push().setValue(values);
-                            mDatabase.child("PositionGroup").child(PreferencesManager.getID(mContext)).child(PreferencesManager.getID(mContext)).setValue(positonGroupModel);
+
+                            PositonGroupModel positonGroupModel = new PositonGroupModel();
+                            PositonGroupModel.Data data = new PositonGroupModel.Data();
+                            for(int pos = 1;  pos <= 8; pos++){
+                                if (pos == 1){
+                                    positonGroupModel.setPosition(pos);
+                                    positonGroupModel.setState(true);
+                                    data.setMemberId(PreferencesManager.getID(mContext));
+                                    data.setResourceUrl(model.getResults().get(i).getResourceUri());
+                                    positonGroupModel.setData(data);
+                                } else {
+                                    positonGroupModel.setPosition(pos);
+                                    positonGroupModel.setState(false);
+                                    data.setMemberId("none");
+                                    data.setResourceUrl("none");
+                                    positonGroupModel.setData(data);
+                                }
+                                mDatabase.child("PositionGroup").child(PreferencesManager.getID(mContext)).push().setValue(positonGroupModel);
+                            }
                         }
                     }
                 } else {
@@ -343,7 +356,6 @@ public class LiveGroupViewFragment extends Fragment implements Broadcaster.Viewe
                 listMembers.put(String.valueOf(position),new GroupBroadcast((SurfaceView) mView.findViewById(R.id.VideoSurfaceView_user_8),"https://cdn.bambuser.net/broadcasts/13fe5714-cf72-48e4-85b1-9339cb9aa5fe?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1524189180&da_static=1&da_ttl=0&da_signature=8796f4168938a4afc1463df332daeb83b28842ed23cb596cc0dc11753fe24cb0",mContext));
                 break;
         }
-
     }
 
     private void removePositionGroup(){

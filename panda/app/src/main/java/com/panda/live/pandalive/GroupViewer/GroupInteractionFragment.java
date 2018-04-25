@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -27,6 +28,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bambuser.broadcaster.SurfaceViewWithAutoAR;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,6 +46,7 @@ import com.panda.live.pandalive.Utils.MagicTextView;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
+import com.panda.live.pandalive.data.model.GroupBroadcast;
 import com.panda.live.pandalive.data.model.PositonGroupModel;
 
 import java.util.ArrayList;
@@ -106,6 +109,7 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
     private Timer timer;
 
     private static Context mContext;
+
 
 
     public GroupInteractionFragment() {
@@ -478,32 +482,20 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
 
     public static void sendPositionLive(String resourceUrl) {
 
-        PositonGroupModel positonGroupModel = new PositonGroupModel();
-        positonGroupModel.setPosition(String.valueOf(mPosition));
-        positonGroupModel.setResourceUrl(resourceUrl);
-
-        mRef.child("PositionGroup")
-                .child(mID.getText().toString())
-                .child(PreferencesManager.getID(mContext))
-                .setValue(positonGroupModel);
+//        PositonGroupModel positonGroupModel = new PositonGroupModel();
+//        PositonGroupModel.Data data = new PositonGroupModel.Data();
+//        positonGroupModel.setPosition(pos);
+//        positonGroupModel.setState(false);
+//        data.setMemberId("none");
+//        data.setResourceUrl("none");
+//        positonGroupModel.setData(data);
+//        mDatabase.child("PositionGroup").child(PreferencesManager.getID(mContext)).push().setValue(positonGroupModel);
+//
     }
 
-    public void retrievePositionGroup() {
-        mRef.child("PositionGroup").child(mID.getText().toString()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot position : dataSnapshot.getChildren()) {
-                    mPosition++;
-                    Log.e(TAG, String.valueOf(position));
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG, databaseError.getMessage());
-            }
-        });
-    }
+
+
 
     private void binData() {
         mUrl = getActivity().getIntent().getStringExtra("URL");
@@ -513,9 +505,9 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
             downloadImage();
             sendMessage("bắt đầu live stream");
             retrieveMessage();
-            retrievePositionGroup();
         }
     }
+
 
     /*
      * Inner class này dùng để tạo hiệu ứng số lần tặng quà từ người dùng
