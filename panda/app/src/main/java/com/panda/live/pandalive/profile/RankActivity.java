@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -24,6 +26,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.data.adapter.ChatAdapter;
+import com.panda.live.pandalive.data.adapter.RankAdapter;
+import com.panda.live.pandalive.data.model.DataChat;
+import com.panda.live.pandalive.data.model.RankModel;
 import com.panda.live.pandalive.data.model.User;
 
 import java.util.ArrayList;
@@ -34,15 +40,20 @@ import java.util.ArrayList;
  */
 
 public class RankActivity extends AppCompatActivity {
-    private RecyclerView mRecyclerView;
     private DatabaseReference mDatabase;
-    private RoundedImageView mAvatar1, mAvatar2, mAvatar3;
-    private TextView mCoin1, mCoin2, mCoin3, mName1, mName2, mName3;
+    private RoundedImageView mAvatar1, mAvatar2, mAvatar3, mAvatar;
+    private TextView mCoin1, mCoin2, mCoin3, mName1, mName2, mName3, mNumeric, mName, mCoin;
     private int[]mCoinArr;
     private String[]mNameArr;
     private String[]mIDArr;
     private StorageReference mStorageReference;
     private int i = 0;
+
+    private static RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private ArrayList<RankModel> mData;
+    private RankAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +91,10 @@ public class RankActivity extends AppCompatActivity {
                 mCoinArr = new int[10];
                 mNameArr = new String[10];
                 mIDArr = new String[10];
+                for(int k=0; k<mData.size(); k++){
+                    mAdapter.notifyItemRemoved(k);
+                }
+                if(!mData.isEmpty()){mData.clear();}
                 for(DataSnapshot coin : dataSnapshot.getChildren()){
                     User user = coin.getValue(User.class);
                     if(user.coin != 0){
@@ -131,11 +146,17 @@ public class RankActivity extends AppCompatActivity {
         downloadImage(mIDArr[0], mAvatar1);
         downloadImage(mIDArr[1], mAvatar2);
         downloadImage(mIDArr[2], mAvatar3);
+        for(int n=3; n<i; n++){
+            mData.add(new RankModel(n+1 + "",mAvatar1 , mNameArr[n], mCoinArr[n]));
+            mAdapter.notifyDataSetChanged();
+//            mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+        }
         i=0;
+
+
     }
 
     public void binActivity() {
-        mRecyclerView = findViewById(R.id.recycler_view_rank);
         mCoin1 = findViewById(R.id.tv_coin1);
         mCoin2 = findViewById(R.id.tv_coin2);
         mCoin3 = findViewById(R.id.tv_coin3);
@@ -145,6 +166,15 @@ public class RankActivity extends AppCompatActivity {
         mAvatar1 = findViewById(R.id.imgAvatar1);
         mAvatar2 = findViewById(R.id.imgAvatar2);
         mAvatar3 = findViewById(R.id.imgAvatar3);
+        mRecyclerView = findViewById(R.id.recycler_view_rank_user);
+        mLayoutManager = new LinearLayoutManager(this.getApplicationContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mData = new ArrayList<>();
+        mAdapter = new RankAdapter(mData);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
+
 
     }
     public void downloadImage(String id, final RoundedImageView avatar) {
@@ -162,5 +192,6 @@ public class RankActivity extends AppCompatActivity {
             }
         });
     }
+
 
 }
