@@ -2,6 +2,7 @@ package com.panda.live.pandalive.StreamManager;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -68,6 +69,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private FirebaseAuth mAuth;
+    private Context mContext;
 
     public LiveManagerInteractionFragment() {
     }
@@ -75,7 +77,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        mContext = this.getContext();
         mSetting = Settings.getInstance(this.getContext());
         mSetting.setAuthor(PreferencesManager.getID(this.getContext()));
 
@@ -88,6 +90,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
 
         mStorage = FirebaseStorage.getInstance();
         mStorageReference = mStorage.getReference();
+        setAvatar(PreferencesManager.getID(mContext));
     }
 
     @Override
@@ -136,6 +139,38 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
                 onClickBtnCaptureImage(v);
             default:
                 break;
+        }
+    }
+
+    public void setAvatar(String s) {
+        int value = PreferencesManager.getValueStateLogin(mContext);
+        switch (value) {
+            case 1: //Login with Facebook
+                if (PreferencesManager.getCheckUpdateAvatarFace(mContext) + 1 == 1) {
+                    Glide.with(mContext).load(mFilePath).into(mAvatar);
+                } else {
+                    downloadImage(s);
+                }
+                break;
+
+            case 2: //Login with Google
+                if (PreferencesManager.getCheckUpdateAvatarGoogle(mContext) + 1 == 1) {
+                    Glide.with(mContext).load(mFilePath).into(mAvatar);
+                } else {
+                    downloadImage(s);
+                }
+                break;
+
+            case 3: //Login with Phone
+                if (PreferencesManager.getCheckUpdateAvatarPhone(mContext) + 1 == 1) {
+                    return;
+                } else {
+                    downloadImage(s);
+                }
+
+                break;
+            default:
+                return;
         }
     }
 
@@ -205,7 +240,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
 
         if (mFilePath != null) {
             final ProgressDialog progressDialog = new ProgressDialog(this.getContext());
-            progressDialog.setTitle("Uploading...");
+            progressDialog.setTitle("Cập nhật");
             progressDialog.show();
             mRefStorage = mStorageReference.child("images").child(PreferencesManager.getID(getContext()) + "/avatarLive");
             mRefStorage.putFile(mFilePath)
@@ -228,7 +263,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
+                            progressDialog.setMessage("Đang cập nhật... " + (int) progress + "%");
                         }
                     });
         }
@@ -328,5 +363,20 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
         });
 
         alert.show();
+    }
+
+    public void downloadImage(String id) {
+        mStorageReference.child("images/" + id + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                Glide.with(mContext).load(uri).into(mAvatar);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
     }
 }

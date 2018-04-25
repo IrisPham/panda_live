@@ -232,7 +232,7 @@
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_rank"
+        android:id="@+id/recycler_view_rank_user"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

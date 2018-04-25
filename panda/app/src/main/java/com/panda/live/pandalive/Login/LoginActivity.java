@@ -370,10 +370,6 @@ public class LoginActivity extends AppCompatActivity {
                         if (!task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, "Có lỗi xảy ra", Toast.LENGTH_SHORT).show();
                         } else {
-//                            checkLogin();
-//                            if(!checkID){
-//                                writeDataTheFirst();
-//                            }
                             if(PreferencesManager.getValueLoginGoogle(getApplicationContext()) + 1 == 1){
                                 writeDataTheFirst();
                                 PreferencesManager.setValueLoginGoogle(getApplicationContext(),2);
@@ -394,14 +390,6 @@ public class LoginActivity extends AppCompatActivity {
             startAnim();
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             mID = account.getId();
-//            if(PreferencesManager.getNameLoginGoogle(mContext).equals("none")){
-//                mName = account.getDisplayName();
-//                PreferencesManager.setNameLoginGoogle(mContext, mName);
-//            }
-//            else{
-//                mName = PreferencesManager.getNameLoginGoogle(mContext);
-//                PreferencesManager.setNameLoginGoogle(mContext, mName);
-//            }
             mName = account.getDisplayName();
             if((!PreferencesManager.getNameLoginGoogle(mContext).equals(mName)) &&
                     (!PreferencesManager.getNameLoginGoogle(mContext).equals("none"))){

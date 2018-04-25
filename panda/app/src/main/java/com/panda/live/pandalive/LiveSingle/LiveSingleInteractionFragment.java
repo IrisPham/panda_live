@@ -111,8 +111,8 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
      * Khai báo các data liên quan đến quà, bình luận,...
      */
     private List<View> giftViewCollection = new ArrayList<View>();
-    private List<String> messageData = new LinkedList<>();
-    private MessageAdapter messageAdapter;
+
+
     private Timer timer;
     // TODO: Rename and change types of parameters
     private String mParam1;
