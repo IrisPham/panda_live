@@ -86,7 +86,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private TextView mName;
     private CustomRoundView mAvatar;
     private ImageView mImvSwitchCamera;
-
+    private Uri mFilePath;
 
 
     private FirebaseDatabase mFirebaseDatabase;
@@ -99,6 +99,8 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<DataChat> mData;
     private ChatAdapter mAdapter;
+
+    private Context mContext;
     /**
      * Khai báo các hiệu ứng
      */
@@ -148,7 +150,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         mRef = mFirebaseDatabase.getReference();
         mStorage = FirebaseStorage.getInstance();
         mStorageReference = mStorage.getReference();
-        downloadImage();
+        mContext = this.getActivity();
         sendMessage("bắt đầu live stream");
         retrieveMessage();
 
@@ -175,6 +177,8 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
         rlMain = view.findViewById(R.id.rlmain);
+
+        mFilePath = Uri.parse(PreferencesManager.getPhotoUri(getActivity()));
 
         mID = view.findViewById(R.id.tv_id);
         mID.setText(PreferencesManager.getID(this.getContext()));
@@ -208,7 +212,8 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         tvSendfor.setOnClickListener(this);
         sendInput.setOnClickListener(this);
         mImvSwitchCamera.setOnClickListener(this);
-        rlMain.setOnClickListener(this);
+
+        downloadImage();
         clearTiming();
 
         return view;
@@ -464,6 +469,8 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         }
     }
 
+
+
     public void sendMessage(String s) {
         DataChat datachat = new DataChat(PreferencesManager.getName(this.getContext()), s);
         mRef.child("chat").child(PreferencesManager.getID(this.getContext())).setValue(datachat);
@@ -488,13 +495,52 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         });
     }
 
+    public void setAvatar(){
+        int value = PreferencesManager.getValueStateLogin(mContext);
+        switch (value) {
+            case 1: //Login with Facebook
+                if(PreferencesManager.getCheckUpdateAvatarFace(mContext) + 1 == 1){
+                    Glide.with(mContext).load(Uri.parse(PreferencesManager.getPhotoUri(mContext))).into(mAvatar);
+                }
+                else{
+                    downloadImageProfile();
+                }
+                break;
+
+            case 2: //Login with Google
+                if(PreferencesManager.getCheckUpdateAvatarGoogle(mContext) + 1 == 1){
+                    Glide.with(mContext).load(PreferencesManager.getPhotoUri(mContext)).into(mAvatar);
+                }
+                else{
+                    downloadImageProfile();
+                }
+                break;
+
+            case 3: //Login with Phone
+                if(PreferencesManager.getCheckUpdateAvatarPhone(mContext) + 1 == 1){
+                    return;
+                }
+                else{
+                    downloadImageProfile();
+                }
+
+                break;
+            default:
+                return;
+        }
+    }
+
     public void downloadImage(){
+        setAvatar();
         mStorageReference.child("images/"+PreferencesManager
                 .getID(getContext())+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
+                if(uri != null){
+                    Glide.with(getActivity()).load(uri).into(mAvatar);
+                }
                 // Got the download URL for 'users/me/profile.png'
-                Glide.with(getActivity()).load(uri).into(mAvatar);
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -504,7 +550,20 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         });
     }
 
-
+    public void downloadImageProfile() {
+        mStorageReference.child("images/" + PreferencesManager.getID(mContext)+ "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                Glide.with(mContext).load(uri).into(mAvatar);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+    }
 
 }
 

@@ -306,7 +306,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                 PreferencesManager.saveUserInfo(mContext, mName,
                                         mID, "none","none","none",
-                                        Uri.parse(uri),"none", "none","none","none",1000);
+                                        mFilePath,"none", "none","none","none",1000);
                                 saveFacebookCredentialsInFirebase(loginResult.getAccessToken());
                             }
                         });
