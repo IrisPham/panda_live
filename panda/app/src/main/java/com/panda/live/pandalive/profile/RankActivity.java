@@ -48,7 +48,7 @@ public class RankActivity extends AppCompatActivity {
     private String[]mNameArr;
     private String[]mIDArr;
     private StorageReference mStorageReference;
-    private static Uri mUri;
+    private Uri mUri;
     private int i = 0;
 
     private static RecyclerView mRecyclerView;
@@ -146,12 +146,11 @@ public class RankActivity extends AppCompatActivity {
         mName1.setText(mNameArr[0]);
         mName2.setText(mNameArr[1]);
         mName3.setText(mNameArr[2]);
-        downloadImage(mIDArr[0], mAvatar1);
-        downloadImage(mIDArr[1], mAvatar2);
-        downloadImage(mIDArr[2], mAvatar3);
+        downloadImageTop(mIDArr[0], mAvatar1);
+        downloadImageTop(mIDArr[1], mAvatar2);
+        downloadImageTop(mIDArr[2], mAvatar3);
         for(int n=3; n<i; n++){
-            getUri(mIDArr[n], n);
-//            mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+            setValueToList(mIDArr[n], n);
         }
         i=0;
 
@@ -177,8 +176,9 @@ public class RankActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
 
+
     }
-    public void downloadImage(String id, final RoundedImageView avatar) {
+    public void downloadImageTop(String id, final RoundedImageView avatar) {
         mStorageReference.child("images/" + id + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -194,19 +194,19 @@ public class RankActivity extends AppCompatActivity {
             }
         });
     }
-    public void getUri(String id, final int n) {
+    public void setValueToList(String id, final int n) {
         mStorageReference.child("images/" + id + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 // Got the download URL for 'users/me/profile.png'
-                    mData.add(new RankModel(n+1 + "" , uri , mNameArr[n], mCoinArr[n]));
-                    mAdapter.notifyDataSetChanged();
+                mData.add(new RankModel(n+1 + "" , uri , mNameArr[n], mCoinArr[n]));
+                mAdapter.notifyDataSetChanged();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle any errors
-
+                Log.e("LOI", exception.getMessage());
             }
         });
     }

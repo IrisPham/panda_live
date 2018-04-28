@@ -469,8 +469,6 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         }
     }
 
-
-
     public void sendMessage(String s) {
         DataChat datachat = new DataChat(PreferencesManager.getName(this.getContext()), s);
         mRef.child("chat").child(PreferencesManager.getID(this.getContext())).setValue(datachat);
@@ -540,7 +538,6 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
                     Glide.with(getActivity()).load(uri).into(mAvatar);
                 }
                 // Got the download URL for 'users/me/profile.png'
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
