@@ -26,6 +26,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.panda.live.pandalive.R;
+import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
 import com.panda.live.pandalive.data.adapter.RankAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
@@ -47,6 +48,7 @@ public class RankActivity extends AppCompatActivity {
     private String[]mNameArr;
     private String[]mIDArr;
     private StorageReference mStorageReference;
+    private Uri mUri;
     private int i = 0;
 
     private static RecyclerView mRecyclerView;
@@ -74,6 +76,7 @@ public class RankActivity extends AppCompatActivity {
         });
 
         mStorageReference = FirebaseStorage.getInstance().getReference();
+
         binActivity();
         binData();
     }
@@ -91,10 +94,10 @@ public class RankActivity extends AppCompatActivity {
                 mCoinArr = new int[10];
                 mNameArr = new String[10];
                 mIDArr = new String[10];
-                for(int k=0; k<mData.size(); k++){
-                    mAdapter.notifyItemRemoved(k);
+
+                if(!mData.isEmpty()){
+                    mData.clear();
                 }
-                if(!mData.isEmpty()){mData.clear();}
                 for(DataSnapshot coin : dataSnapshot.getChildren()){
                     User user = coin.getValue(User.class);
                     if(user.coin != 0){
@@ -143,13 +146,11 @@ public class RankActivity extends AppCompatActivity {
         mName1.setText(mNameArr[0]);
         mName2.setText(mNameArr[1]);
         mName3.setText(mNameArr[2]);
-        downloadImage(mIDArr[0], mAvatar1);
-        downloadImage(mIDArr[1], mAvatar2);
-        downloadImage(mIDArr[2], mAvatar3);
+        downloadImageTop(mIDArr[0], mAvatar1);
+        downloadImageTop(mIDArr[1], mAvatar2);
+        downloadImageTop(mIDArr[2], mAvatar3);
         for(int n=3; n<i; n++){
-            mData.add(new RankModel(n+1 + "",mAvatar1 , mNameArr[n], mCoinArr[n]));
-            mAdapter.notifyDataSetChanged();
-//            mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
+            setValueToList(mIDArr[n], n);
         }
         i=0;
 
@@ -171,18 +172,19 @@ public class RankActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mData = new ArrayList<>();
-        mAdapter = new RankAdapter(mData);
+        mAdapter = new RankAdapter(getApplicationContext(), mData);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
 
 
     }
-    public void downloadImage(String id, final RoundedImageView avatar) {
+    public void downloadImageTop(String id, final RoundedImageView avatar) {
         mStorageReference.child("images/" + id + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 // Got the download URL for 'users/me/profile.png'
                 Glide.with(getApplicationContext()).load(uri).into(avatar);
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -192,6 +194,21 @@ public class RankActivity extends AppCompatActivity {
             }
         });
     }
-
+    public void setValueToList(String id, final int n) {
+        mStorageReference.child("images/" + id + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                mData.add(new RankModel(n+1 + "" , uri , mNameArr[n], mCoinArr[n]));
+                mAdapter.notifyDataSetChanged();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Log.e("LOI", exception.getMessage());
+            }
+        });
+    }
 
 }
