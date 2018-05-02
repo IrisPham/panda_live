@@ -1,5 +1,7 @@
 package com.panda.live.pandalive.data.model;
 
+import android.net.Uri;
+
 import com.makeramen.roundedimageview.RoundedImageView;
 
 /**
@@ -8,7 +10,7 @@ import com.makeramen.roundedimageview.RoundedImageView;
 
 public class RankModel {
     public String numeric;
-    public RoundedImageView img;
+    public Uri uri;
     public String name;
     public int coin;
 
@@ -16,9 +18,9 @@ public class RankModel {
 
     }
 
-    public RankModel(String numeric, RoundedImageView img , String name, int coin){
+    public RankModel(String numeric, Uri uri, String name, int coin){
         this.numeric = numeric;
-        this.img = img;
+        this.uri = uri;
         this.name = name;
         this.coin = coin;
     }
@@ -27,8 +29,8 @@ public class RankModel {
         return numeric;
     }
 
-    public RoundedImageView getImg(){
-        return img;
+    public Uri getUri(){
+        return uri;
     }
 
     public String getName(){

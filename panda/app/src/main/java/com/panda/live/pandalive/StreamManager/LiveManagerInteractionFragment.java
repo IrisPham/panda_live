@@ -70,14 +70,15 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
     private DatabaseReference myRef;
     private FirebaseAuth mAuth;
     private Context mContext;
-
+    private int mChangeAvatar = 0;
+    private Intent mIntentLiveSingle;
     public LiveManagerInteractionFragment() {
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = this.getContext();
+        mContext = this.getActivity();
         mSetting = Settings.getInstance(this.getContext());
         mSetting.setAuthor(PreferencesManager.getID(this.getContext()));
 
@@ -87,10 +88,10 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
         FirebaseUser user = mAuth.getCurrentUser();
         userID = user.getUid();
 
-
         mStorage = FirebaseStorage.getInstance();
         mStorageReference = mStorage.getReference();
-        setAvatar(PreferencesManager.getID(mContext));
+        mIntentLiveSingle = new Intent(this.getActivity(), LiveSingleActivity.class);
+
     }
 
     @Override
@@ -103,6 +104,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
             mView.findViewById(R.id.layout_live_group).setOnClickListener(this);
             mView.findViewById(R.id.layout_live_single).setOnClickListener(this);
             mView.findViewById(R.id.imgAvatar).setOnClickListener(this);
+            setAvatar(PreferencesManager.getID(mContext));
             mEdtTitle.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -149,7 +151,11 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
                 if (PreferencesManager.getCheckUpdateAvatarFace(mContext) + 1 == 1) {
                     Glide.with(mContext).load(mFilePath).into(mAvatar);
                 } else {
-                    downloadImage(s);
+                    if(PreferencesManager.getCheckUpdateAvatarFace(mContext) + 1 == 1){
+                        Glide.with(mContext).load(Uri.parse(PreferencesManager.getPhotoUri(mContext))).into(mAvatar);
+                    } else {
+                        downloadImage(s);
+                    }
                 }
                 break;
 
@@ -220,6 +226,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
                     mFilePath = imageReturnedIntent.getData();
                     Glide.with(this).load(mFilePath).into(mAvatar);
                     uploadImage();
+                    mChangeAvatar = 1;
                     break;
                 }
                 break;
@@ -228,12 +235,14 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
                     mFilePath = imageReturnedIntent.getData();
                     Glide.with(this).load(mFilePath).into(mAvatar);
                     uploadImage();
+                    mChangeAvatar = 1;
                     break;
                 }
             case 2:
                 //takePicture();
                 break;
         }
+
     }
 
     private void uploadImage() {
@@ -291,7 +300,7 @@ public class LiveManagerInteractionFragment extends Fragment implements View.OnC
 
     private void handleStartBroadCast() {
         if (isGroup) {
-            startActivity(new Intent(this.getActivity(), LiveSingleActivity.class));
+            startActivity(mIntentLiveSingle);
         } else {
             startActivity(new Intent(this.getActivity(), LiveGroupActivity.class));
         }
