@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -24,6 +26,7 @@ import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -39,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.panda.live.pandalive.Login.LoginActivity;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.CustomRoundView;
 import com.panda.live.pandalive.Utils.HorizontalListView;
@@ -84,7 +88,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private LinearLayout llInputParent;
     private EditText mMessage;
     private RelativeLayout rlMain;
-
+    private ImageView mCamera;
 
     private FirebaseStorage mStorage;
     private StorageReference mStorageReference;
@@ -96,6 +100,10 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private ArrayList<DataChat> mData;
     private ChatAdapter mAdapter;
     private Intent mIntentProfileDetail;
+
+    private BottomSheetBehavior mBottomSheetBehavior;
+    private BottomSheetDialog mBottomSheetDialog;
+    private View mBottomSheetView;
 
     /**
      * Khai báo các hiệu ứng
@@ -160,6 +168,23 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
 
         mStorage = FirebaseStorage.getInstance();
         mStorageReference = mStorage.getReference();
+
+        mBottomSheetView = getLayoutInflater().inflate(R.layout.item_row_gift, null);
+        mBottomSheetDialog = new BottomSheetDialog(this.getContext());
+        mBottomSheetDialog.setContentView(mBottomSheetView);
+        mBottomSheetBehavior = BottomSheetBehavior.from((View) mBottomSheetView.getParent());
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                // React to state change
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // React to dragging events
+            }
+        });
     }
 
 
@@ -197,7 +222,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
         mRecyclerView.setHasFixedSize(true);
-
+        mCamera = view.findViewById(R.id.imv_switch_camera);
         giftNumAnim = new NumAnim();
         inAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_in);
         outAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_out);
@@ -209,6 +234,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         tvSendfor.setOnClickListener(this);
         sendInput.setOnClickListener(this);
         mAvatar.setOnClickListener(this);
+        mCamera.setOnClickListener(this);
         clearTiming();
         binData();
         return view;
@@ -242,6 +268,9 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             case R.id.imgAvatar:
                 transferData();
                 break;
+            case R.id.imv_switch_camera:
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                mBottomSheetDialog.show();
         }
 
     }

@@ -7,6 +7,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -93,7 +95,12 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
     private ArrayList<DataChat> mData;
     private ChatAdapter mAdapter;
     private String mUrl ="";
-    private String mIdRoom = "";
+    private String mIdRoom="";
+    private ImageView mGift;
+
+    private BottomSheetBehavior mBottomSheetBehavior;
+    private BottomSheetDialog mBottomSheetDialog;
+    private View mBottomSheetView;
     /**
      * Khai báo các hiệu ứng
      */
@@ -129,6 +136,23 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         mStorage = FirebaseStorage.getInstance();
         mStorageReference = mStorage.getReference();
         mContext = this.getContext();
+
+        mBottomSheetView = getLayoutInflater().inflate(R.layout.item_row_gift, null);
+        mBottomSheetDialog = new BottomSheetDialog(mContext);
+        mBottomSheetDialog.setContentView(mBottomSheetView);
+        mBottomSheetBehavior = BottomSheetBehavior.from((View) mBottomSheetView.getParent());
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                // React to state change
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // React to dragging events
+            }
+        });
     }
 
     @Override
@@ -155,7 +179,7 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         rlMain = view.findViewById(R.id.rlmain);
 
         mID = view.findViewById(R.id.tv_id);
-        mImvSwitchCamera = view.findViewById(R.id.imv_switch_camera);
+        mGift = view.findViewById(R.id.imv_gift);
 
         mName = view.findViewById(R.id.tv_name);
         mName.setText(PreferencesManager.getName(this.getContext()));
@@ -186,6 +210,7 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         sendInput.setOnClickListener(this);
         mImvSwitchCamera.setOnClickListener(this);
         rlMain.setOnClickListener(this);
+        mGift.setOnClickListener(this);
         clearTiming();
         binData();
         return view;
@@ -222,6 +247,9 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
             case R.id.imv_switch_camera:
                 GroupViewFragment.switchCamera();
                 break;
+            case R.id.imv_gift:
+                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                mBottomSheetDialog.show();
 
         }
 
