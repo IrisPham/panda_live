@@ -5,6 +5,9 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +15,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
@@ -59,6 +63,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import lib.homhomlib.view2.DivergeView;
 
 /**
  * Created by Android Studio on 2/6/2018.
@@ -122,6 +128,12 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private MessageAdapter messageAdapter;
 
     private Timer timer;
+
+    //Khai báo hiệu ứng trái tim
+    private DivergeView mDivergeView;
+    private ImageView mImvSentHeart;
+    private ArrayList<Bitmap> mList;
+    private int mIndex = 0;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -201,10 +213,10 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         llgiftcontent = (LinearLayout) view.findViewById(R.id.llgiftcontent);
         lvmessage = (ListView) view.findViewById(R.id.lvmessage);
         tvChat = (TextView) view.findViewById(R.id.tvChat);
-        tvSendone = (TextView) view.findViewById(R.id.tvSendone);
-        tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);
-        tvSendthree = (TextView) view.findViewById(R.id.tvSendthree);
-        tvSendfor = (TextView) view.findViewById(R.id.tvSendfor);
+//        tvSendone = (TextView) view.findViewById(R.id.tvSendone);
+//        tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);
+//        tvSendthree = (TextView) view.findViewById(R.id.tvSendthree);
+//        tvSendfor = (TextView) view.findViewById(R.id.tvSendfor);
         tvName = view.findViewById(R.id.tv_name);
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
         rlMain = view.findViewById(R.id.rlmain);
@@ -226,17 +238,23 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         giftNumAnim = new NumAnim();
         inAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_in);
         outAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_out);
+        mImvSentHeart = view.findViewById(R.id.imv_heart);
+        mDivergeView = view.findViewById(R.id.divergeView);
+        mList = new ArrayList<>();
 
         tvChat.setOnClickListener(this);
-        tvSendone.setOnClickListener(this);
-        tvSendtwo.setOnClickListener(this);
-        tvSendthree.setOnClickListener(this);
-        tvSendfor.setOnClickListener(this);
+//        tvSendone.setOnClickListener(this);
+//        tvSendtwo.setOnClickListener(this);
+//        tvSendthree.setOnClickListener(this);
+//        tvSendfor.setOnClickListener(this);
         sendInput.setOnClickListener(this);
         mAvatar.setOnClickListener(this);
         mCamera.setOnClickListener(this);
+        mImvSentHeart.setOnClickListener(this);
+        rlMain.setOnClickListener(this);
         clearTiming();
         binData();
+        addResourceHeart();
         return view;
     }
 
@@ -271,8 +289,21 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             case R.id.imv_switch_camera:
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 mBottomSheetDialog.show();
+                break;
+            case R.id.imv_heart:
+                handleHeartAnimation();
+                break;
         }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mList != null){
+            mList.clear();
+            mList = null;
+        }
     }
 
     /**
@@ -542,7 +573,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
 
 
     public void retrieveMessage() {
-        mRef.child("chat").child(mIdRoom).addValueEventListener(new ValueEventListener() {
+        mRef.child("chat").child(PreferencesManager.getID(this.getContext())).addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -611,5 +642,60 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         mIntentProfileDetail.putExtra("id", mID.getText());
         startActivity(mIntentProfileDetail);
 
+    }
+
+    private void addResourceHeart() {
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_blue, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(),R.drawable.ic_heart_blue_x2,null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(),R.drawable.ic_heart_green,null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(),R.drawable.ic_heart_orange,null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(),R.drawable.ic_heart_pink,null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_red, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_yellow, null)).getBitmap());
+
+        mDivergeView.post(new Runnable() {
+            @Override
+            public void run() {
+                mDivergeView.setEndPoint(new PointF(mDivergeView.getMeasuredWidth()/2,0));
+                mDivergeView.setDivergeViewProvider(new Provider());
+            }
+        });
+
+        autoSendHeartAnimation();
+    }
+
+    private void autoSendHeartAnimation(){
+        new Thread() {
+            public void run() {
+               while (true){
+                   try {
+                       if(mIndex == 6){
+                           mIndex = 0 ;
+                       }
+                       mDivergeView.startDiverges(mIndex);
+                       mIndex++;
+                       Thread.sleep(100);
+                   } catch (InterruptedException e) {
+                       e.printStackTrace();
+                   }
+               }
+            }
+        }.start();
+    }
+
+    private void handleHeartAnimation(){
+        if(mIndex == 6){
+            mIndex = 0 ;
+        }
+        mDivergeView.startDiverges(mIndex);
+        mIndex++;
+    }
+
+    class Provider implements DivergeView.DivergeViewProvider{
+
+        @Override
+        public Bitmap getBitmap(Object obj) {
+            return mList == null ? null : mList.get((int)obj);
+        }
     }
 }
