@@ -17,7 +17,8 @@
             android:layout_width="0dp"
             android:layout_height="123dp"
             android:layout_weight="1"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="@drawable/ic_group_owner">
 
             <com.bambuser.broadcaster.SurfaceViewWithAutoAR
                 android:id="@+id/PreviewSurfaceView"
@@ -31,7 +32,8 @@
             android:id="@+id/ln_preview_user_1"
             android:layout_width="0dp"
             android:layout_height="123dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="@drawable/ic_group_1">
 
             <com.bambuser.broadcaster.SurfaceViewWithAutoAR
                 android:id="@+id/VideoSurfaceView_user_1"
@@ -40,14 +42,15 @@
                 android:layout_centerInParent="true"
                 android:onClick="onClick"
                 android:soundEffectsEnabled="false"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ln_preview_user_2"
             android:layout_width="0dp"
             android:layout_height="123dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="@drawable/ic_group_2">
 
             <com.bambuser.broadcaster.SurfaceViewWithAutoAR
                 android:id="@+id/VideoSurfaceView_user_2"
@@ -56,7 +59,7 @@
                 android:layout_centerInParent="true"
                 android:onClick="onClick"
                 android:soundEffectsEnabled="false"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -73,7 +76,8 @@
             android:id="@+id/ln_preview_user_3"
             android:layout_width="0dp"
             android:layout_height="123dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="@drawable/ic_group_3">
 
             <com.bambuser.broadcaster.SurfaceViewWithAutoAR
                 android:id="@+id/VideoSurfaceView_user_3"
@@ -82,14 +86,15 @@
                 android:layout_centerInParent="true"
                 android:onClick="onClick"
                 android:soundEffectsEnabled="false"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ln_preview_user_4"
             android:layout_width="0dp"
             android:layout_height="123dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:background="@drawable/ic_group_4">
 
             <com.bambuser.broadcaster.SurfaceViewWithAutoAR
                 android:id="@+id/VideoSurfaceView_user_4"
@@ -98,7 +103,7 @@
                 android:layout_centerInParent="true"
                 android:onClick="onClick"
                 android:soundEffectsEnabled="false"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout
@@ -115,7 +120,7 @@
                 android:layout_centerInParent="true"
                 android:onClick="onClick"
                 android:soundEffectsEnabled="false"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -142,7 +147,7 @@
                 android:layout_centerInParent="true"
                 android:onClick="onClick"
                 android:soundEffectsEnabled="false"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout
@@ -159,7 +164,7 @@
                 android:layout_centerInParent="true"
                 android:onClick="onClick"
                 android:soundEffectsEnabled="false"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout
@@ -176,7 +181,7 @@
                 android:layout_centerInParent="true"
                 android:onClick="onClick"
                 android:soundEffectsEnabled="false"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
         </LinearLayout>
 
     </LinearLayout>

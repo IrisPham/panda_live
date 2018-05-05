@@ -11,6 +11,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bambuser.broadcaster.BroadcastStatus;
 import com.bambuser.broadcaster.Broadcaster;
@@ -21,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Service.Command;
@@ -48,7 +50,7 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
     private Display mDefaultDisplay;
     private Command mCommand;
     private View mView;
-    private String mIdRoom;
+    private static String mIdRoom;
 
     private HashMap<String, GroupBroadcast> listMembers = new HashMap<>();
 
@@ -61,7 +63,7 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
             Log.e("TAG", "Received status change: " + broadcastStatus);
             switch (broadcastStatus) {
                 case FINISHING:
-
+                    leaveGroup();
                     break;
                 default:
                     break;
@@ -118,15 +120,6 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
     private SurfaceViewWithAutoAR mVideoSurfaceView_4;
     private SurfaceViewWithAutoAR mVideoSurfaceView_5;
     private SurfaceViewWithAutoAR mVideoSurfaceView_6;
-
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        if (this.mBroadcaster != null) {
-//            this.mBroadcaster.onActivityDestroy();
-//        }
-//        this.mBroadcaster = null;
-//    }
     private SurfaceViewWithAutoAR mVideoSurfaceView_7;
     private SurfaceViewWithAutoAR mVideoSurfaceView_8;
 
@@ -139,24 +132,6 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
         return fragment;
     }
 
-//    private void removeBroadCast() {
-//        Query idRoomQuery = mDatabase.child("RoomsOnline").orderByChild("idRoom").equalTo(PreferencesManager.getID(mContext));
-//
-//        idRoomQuery.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot idRoomSnapshot : dataSnapshot.getChildren()) {
-//                    idRoomSnapshot.getRef().removeValue();
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                Log.e("TAG", "onCancelled", databaseError.toException());
-//            }
-//        });
-//    }
-
     public static void switchCamera() {
         if (mBroadcaster.canSwitchCameraWithoutResolutionChange()) {
             mBroadcaster.switchCamera();
@@ -164,17 +139,44 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
     }
 
     public static void setData() {
-//        mBroadcaster.setAuthor(mSetting.getAuthor());
-//        mBroadcaster.setTitle(mSetting.getLiveTitle());
-//        startBroadcaster();
+        mBroadcaster.setAuthor(PreferencesManager.getID(mContext));
+        mBroadcaster.setTitle("liveGroup-" + "groupName");
+        startBroadcaster();
     }
 
     private static void startBroadcaster() {
-//        if (mBroadcaster.canStartBroadcasting()) {
-//            mBroadcaster.startBroadcast();
-//        } else {
-//            Toast.makeText(mContext, "Broadcaster chưa sẵn sàng", Toast.LENGTH_SHORT).show();
-//        }
+        if (mBroadcaster.canStartBroadcasting()) {
+            mBroadcaster.startBroadcast();
+        } else {
+            Toast.makeText(mContext, "Broadcaster chưa sẵn sàng", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (this.mBroadcaster != null) {
+            this.mBroadcaster.onActivityDestroy();
+        }
+        this.mBroadcaster = null;
+    }
+
+    private void removeBroadCast() {
+        Query idRoomQuery = mDatabase.child("RoomsOnline").orderByChild("idRoom").equalTo(PreferencesManager.getID(mContext));
+
+        idRoomQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot idRoomSnapshot : dataSnapshot.getChildren()) {
+                    idRoomSnapshot.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("TAG", "onCancelled", databaseError.toException());
+            }
+        });
     }
 
     @Override
@@ -195,7 +197,7 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
         View itemView = inflater.inflate(R.layout.fragment_group_view, container, false);
         mView = itemView;
         mPreviewSurfaceView = itemView.findViewById(R.id.PreviewSurfaceView);
-        // mBroadcaster = new Broadcaster(this.getActivity(), PreferencesManager.APPLICATION_ID, this.mBroadcasterObserver);
+        mBroadcaster = new Broadcaster(this.getActivity(), PreferencesManager.APPLICATION_ID, this.mBroadcasterObserver);
         return itemView;
     }
 
@@ -211,13 +213,13 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
         else if (!hasPermission(Manifest.permission.CAMERA))
             ActivityCompat.requestPermissions(this.getActivity(), new String[]{Manifest.permission.CAMERA}, 1);
 
-//        mBroadcaster.onActivityResume();
-//        mBroadcaster.setRotation(this.mDefaultDisplay.getRotation());
-//        mPreviewSurfaceView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
-//        mBroadcaster.setCameraSurface(mPreviewSurfaceView);
-//        mBroadcaster.setAudioQuality(Broadcaster.AudioSetting.HIGH_QUALITY);
-//        mBroadcaster.setMaxLiveResolution(1080, 1920);
-//        mBroadcaster.setResolution(300, 300);
+        mBroadcaster.onActivityResume();
+        mBroadcaster.setRotation(this.mDefaultDisplay.getRotation());
+        mPreviewSurfaceView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        mBroadcaster.setCameraSurface(mPreviewSurfaceView);
+        mBroadcaster.setAudioQuality(Broadcaster.AudioSetting.HIGH_QUALITY);
+        mBroadcaster.setMaxLiveResolution(1080, 1920);
+        mBroadcaster.setResolution(300, 300);
         retrievePositionGroup();
     }
 
@@ -230,7 +232,7 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
             @Override
             public void onResponse(Call<IrisModel> call, Response<IrisModel> response) {
                 if (response.isSuccessful()) {
-                    IrisModel model = response.body();
+                    final IrisModel model = response.body();
                     for (int i = 0; i < model.getResults().size(); i++) {
                         if (PreferencesManager.getID(mContext).equals(model.getResults().get(i).getAuthor()) && model.getResults().get(i).getType().equals("live")) {
                             Map<String, Object> values = new HashMap<>();
@@ -247,19 +249,44 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
 
                             //mDatabase.child("RoomsOnline").push().setValue(values);
                             mDatabase.child("VideosOffline").child(PreferencesManager.getID(mContext)).push().setValue(values);
-                            GroupInteractionFragment.sendPositionLive(model.getResults().get(i).getResourceUri());
-                        } else {
-                            Log.e("TAG", "Not ok");
+
+                            final String url = model.getResults().get(i).getResourceUri();
+                            //Tìm những chỗ còn trống trong group
+                            mDatabase.child("PositionGroup").child(mIdRoom).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for (DataSnapshot position : dataSnapshot.getChildren()) {
+                                        PositonGroupModel positonGroupModel = position.getValue(PositonGroupModel.class);
+                                        if (!positonGroupModel.isState()) {
+                                            Log.e(TAG, "Key: " + position.getKey() + " live position" + positonGroupModel.getPosition());
+                                            PositonGroupModel modal = new PositonGroupModel();
+                                            PositonGroupModel.Data data = new PositonGroupModel.Data();
+                                            modal.setPosition(positonGroupModel.getPosition());
+                                            modal.setState(true);
+                                            data.setMemberId(PreferencesManager.getID(mContext));
+                                            data.setResourceUrl(url);
+                                            modal.setData(data);
+                                            mDatabase.child("PositionGroup").child(mIdRoom).child(position.getKey()).setValue(modal);
+                                            return;
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
                         }
                     }
                 } else {
-                    Log.e("TAG", "not OK");
+                    Log.e(TAG, "response not success");
                 }
             }
 
             @Override
             public void onFailure(Call<IrisModel> call, Throwable t) {
-                Log.e("TAG", "Not ok" + t);
+                Log.e(TAG, "onFailure " + t);
             }
         });
     }
@@ -280,10 +307,10 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot position : dataSnapshot.getChildren()) {
                     PositonGroupModel positonGroupModel = position.getValue(PositonGroupModel.class);
-                    Log.e("TAG", String.valueOf(positonGroupModel.isState()));
-
                     if (positonGroupModel.isState()) {
-                        bindVideosOnView(positonGroupModel.getPosition(), positonGroupModel.getData().getResourceUrl(), View.VISIBLE);
+                        if (!positonGroupModel.getData().getMemberId().equals(PreferencesManager.getID(mContext))) {
+                            bindVideosOnView(positonGroupModel.getPosition(), positonGroupModel.getData().getResourceUrl(), View.VISIBLE);
+                        }
                     } else {
                         bindVideosOnView(positonGroupModel.getPosition(), "", View.GONE);
                     }
@@ -300,46 +327,130 @@ public class GroupViewFragment extends Fragment implements Broadcaster.ViewerCou
     private void bindVideosOnView(int position, String url, int state) {
         switch (position) {
             case 1:
-                mVideoSurfaceView_1 = mView.findViewById(R.id.VideoSurfaceView_user_1);
-                mVideoSurfaceView_1.setVisibility(state);
-                if (state == View.VISIBLE) new GroupBroadcast(mVideoSurfaceView_1, url, mContext);
+                if (mVideoSurfaceView_1 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_1 = mView.findViewById(R.id.VideoSurfaceView_user_1);
+                    mVideoSurfaceView_1.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_1, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_1 = mView.findViewById(R.id.VideoSurfaceView_user_1);
+                    mVideoSurfaceView_1.setVisibility(state);
+                    mVideoSurfaceView_1 = null;
+                }
                 break;
             case 2:
-                mVideoSurfaceView_2 = mView.findViewById(R.id.VideoSurfaceView_user_2);
-                mVideoSurfaceView_2.setVisibility(state);
-                if (state == View.VISIBLE) new GroupBroadcast(mVideoSurfaceView_2, url, mContext);
+                if (mVideoSurfaceView_2 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_2 = mView.findViewById(R.id.VideoSurfaceView_user_2);
+                    mVideoSurfaceView_2.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_2, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_2 = mView.findViewById(R.id.VideoSurfaceView_user_2);
+                    mVideoSurfaceView_2.setVisibility(state);
+                    mVideoSurfaceView_2 = null;
+                }
                 break;
             case 3:
-                mVideoSurfaceView_3 = mView.findViewById(R.id.VideoSurfaceView_user_3);
-                mVideoSurfaceView_3.setVisibility(state);
-                if (state == View.VISIBLE) new GroupBroadcast(mVideoSurfaceView_3, url, mContext);
+                if (mVideoSurfaceView_3 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_3 = mView.findViewById(R.id.VideoSurfaceView_user_3);
+                    mVideoSurfaceView_3.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_3, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_3 = mView.findViewById(R.id.VideoSurfaceView_user_3);
+                    mVideoSurfaceView_3.setVisibility(state);
+                    mVideoSurfaceView_3 = null;
+                }
                 break;
             case 4:
-                mVideoSurfaceView_4 = mView.findViewById(R.id.VideoSurfaceView_user_4);
-                mVideoSurfaceView_4.setVisibility(state);
-                if (state == View.VISIBLE) new GroupBroadcast(mVideoSurfaceView_4, url, mContext);
+                if (mVideoSurfaceView_4 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_4 = mView.findViewById(R.id.VideoSurfaceView_user_4);
+                    mVideoSurfaceView_4.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_4, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_4 = mView.findViewById(R.id.VideoSurfaceView_user_4);
+                    mVideoSurfaceView_4.setVisibility(state);
+                    mVideoSurfaceView_4 = null;
+                }
                 break;
             case 5:
-                mVideoSurfaceView_5 = mView.findViewById(R.id.VideoSurfaceView_user_5);
-                mVideoSurfaceView_5.setVisibility(state);
-                if (state == View.VISIBLE) new GroupBroadcast(mVideoSurfaceView_5, url, mContext);
+                if (mVideoSurfaceView_5 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_5 = mView.findViewById(R.id.VideoSurfaceView_user_5);
+                    mVideoSurfaceView_5.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_5, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_5 = mView.findViewById(R.id.VideoSurfaceView_user_5);
+                    mVideoSurfaceView_5.setVisibility(state);
+                    mVideoSurfaceView_5 = null;
+                }
                 break;
             case 6:
-                mVideoSurfaceView_6 = mView.findViewById(R.id.VideoSurfaceView_user_6);
-                mVideoSurfaceView_6.setVisibility(state);
-                if (state == View.VISIBLE) new GroupBroadcast(mVideoSurfaceView_6, url, mContext);
+                if (mVideoSurfaceView_6 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_6 = mView.findViewById(R.id.VideoSurfaceView_user_6);
+                    mVideoSurfaceView_6.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_6, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_6 = mView.findViewById(R.id.VideoSurfaceView_user_6);
+                    mVideoSurfaceView_6.setVisibility(state);
+                    mVideoSurfaceView_6 = null;
+                }
                 break;
             case 7:
-                mVideoSurfaceView_7 = mView.findViewById(R.id.VideoSurfaceView_user_7);
-                mVideoSurfaceView_7.setVisibility(state);
-                if (state == View.VISIBLE) new GroupBroadcast(mVideoSurfaceView_7, url, mContext);
+                if (mVideoSurfaceView_7 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_7 = mView.findViewById(R.id.VideoSurfaceView_user_7);
+                    mVideoSurfaceView_7.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_7, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_7 = mView.findViewById(R.id.VideoSurfaceView_user_7);
+                    mVideoSurfaceView_7.setVisibility(state);
+                    mVideoSurfaceView_7 = null;
+                }
                 break;
             case 8:
-                mVideoSurfaceView_8 = mView.findViewById(R.id.VideoSurfaceView_user_8);
-                mVideoSurfaceView_8.setVisibility(state);
-                if (state == View.VISIBLE) new GroupBroadcast(mVideoSurfaceView_8, url, mContext);
+                if (mVideoSurfaceView_8 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_8 = mView.findViewById(R.id.VideoSurfaceView_user_8);
+                    mVideoSurfaceView_8.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_8, url, mContext);
+                }
+                if (state == View.GONE && state == View.VISIBLE) {
+                    mVideoSurfaceView_8 = mView.findViewById(R.id.VideoSurfaceView_user_8);
+                    mVideoSurfaceView_8.setVisibility(state);
+                    mVideoSurfaceView_8 = null;
+                }
                 break;
         }
     }
 
+    public void leaveGroup(){
+        //Tìm những chỗ còn trống trong group
+        mDatabase.child("PositionGroup").child(mIdRoom).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot position : dataSnapshot.getChildren()) {
+                    PositonGroupModel positonGroupModel = position.getValue(PositonGroupModel.class);
+                    if (positonGroupModel.isState() && positonGroupModel.getData().getMemberId().equals(PreferencesManager.getID(mContext))) {
+                        Log.e(TAG, "Key: " + position.getKey() + "leave group" + positonGroupModel.getPosition());
+                        PositonGroupModel modal = new PositonGroupModel();
+                        PositonGroupModel.Data data = new PositonGroupModel.Data();
+                        modal.setPosition(positonGroupModel.getPosition());
+                        modal.setState(false);
+                        data.setMemberId("none");
+                        data.setResourceUrl("none");
+                        modal.setData(data);
+                        mDatabase.child("PositionGroup").child(mIdRoom).child(position.getKey()).setValue(modal);
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

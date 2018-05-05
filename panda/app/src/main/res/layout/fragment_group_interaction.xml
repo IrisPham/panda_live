@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rlmain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/rlmain"
     android:clickable="true"
     android:orientation="vertical">
 
@@ -55,11 +55,11 @@
                 app:border_width="1dp" />
         </RelativeLayout>
 
-        <com.panda.live.pandalive.Utils.HorizontalListView
-            android:id="@+id/hlvaudience"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:layout_marginLeft="10dp"/>
+        <!--<com.panda.live.pandalive.Utils.HorizontalListView-->
+            <!--android:id="@+id/hlvaudience"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="45dp"-->
+            <!--android:layout_marginLeft="10dp" />-->
     </LinearLayout>
 
     <RelativeLayout
@@ -84,41 +84,32 @@
             android:textColor="@android:color/white"
             android:textSize="12sp" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:gravity="center"-->
+            <!--android:orientation="vertical">-->
 
-            <TextView
-                android:id="@+id/tvtime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:00:00"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/tvtime"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="00:00:00"-->
+                <!--android:textColor="@android:color/white"-->
+                <!--android:textSize="12sp" />-->
 
-            <TextView
-                android:id="@+id/tvdate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00/00/00"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/tvdate"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="00/00/00"-->
+                <!--android:textColor="@android:color/white"-->
+                <!--android:textSize="12sp" />-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/imv_gift"
-        android:layout_width="33dp"
-        android:layout_height="33dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/recycler_view"
-        android:layout_marginStart="64dp"
-        android:src="@drawable/ic_switch_camera"
-        android:layout_marginTop="8dp"/>
 
     <LinearLayout
         android:id="@+id/llgiftcontent"
@@ -131,11 +122,19 @@
         android:gravity="top"
         android:orientation="vertical" />
 
-
+    <lib.homhomlib.view2.DivergeView
+        android:id="@+id/divergeViewGroup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/rlsentimenttime"
+        android:layout_marginBottom="50dp"
+        android:layout_toRightOf="@+id/recycler_view" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:layout_width="300dp"
+        android:layout_width="209dp"
         android:layout_height="150dp"
         android:layout_above="@+id/layout_bottom"
         android:layout_marginLeft="10dp"
@@ -144,12 +143,120 @@
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
         android:transcriptMode="normal" />
+
     <FrameLayout
         android:id="@+id/layout_bottom"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:id="@+id/tvChat"
+                android:layout_width="45dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_radius_bottom_white"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="Chat"
+                android:textColor="#333"
+                android:textSize="10sp" />
+
+            <ImageView
+                android:id="@+id/imv_switch_camera"
+                android:layout_width="45dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/tvChat"
+                android:background="@drawable/bg_radius_bottom_white"
+                android:padding="6dp"
+                android:src="@drawable/ic_switch_camera" />
+
+            <ImageView
+                android:id="@+id/imv_join_group"
+                android:layout_width="45dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/imv_switch_camera"
+                android:background="@drawable/bg_radius_bottom_white"
+                android:padding="6dp"
+                android:src="@drawable/ic_connected_user" />
+
+            <ImageView
+                android:id="@+id/imv_chooser_gift"
+                android:layout_width="45dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/imv_join_group"
+                android:background="@drawable/bg_radius_bottom_white"
+                android:padding="6dp"
+                android:src="@drawable/ic_gift" />
+
+            <ImageView
+                android:id="@+id/imv_heart"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="35dp"
+                android:background="@drawable/bg_radius_bottom_white"
+                android:padding="6dp"
+                android:src="@drawable/ic_heart_red" />
+
+            <!--<TextView-->
+            <!--android:id="@+id/tvSendtwo"-->
+            <!--android:layout_width="45dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginRight="5dp"-->
+            <!--android:layout_toLeftOf="@+id/imv_heart"-->
+            <!--android:background="@drawable/bg_radius_bottom_white"-->
+            <!--android:gravity="center"-->
+            <!--android:text="@string/tvGift"-->
+            <!--android:textColor="#333"-->
+            <!--android:textSize="10sp" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/tvSendthree"-->
+            <!--android:layout_width="45dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginRight="5dp"-->
+            <!--android:layout_toLeftOf="@+id/tvSendtwo"-->
+            <!--android:background="@drawable/bg_radius_bottom_white"-->
+            <!--android:gravity="center"-->
+            <!--android:text="@string/tvGift"-->
+            <!--android:textColor="#333"-->
+            <!--android:textSize="10sp" />-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/tvSendfor"-->
+            <!--android:layout_width="45dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginRight="5dp"-->
+            <!--android:layout_toLeftOf="@+id/tvSendthree"-->
+            <!--android:background="@drawable/bg_radius_bottom_white"-->
+            <!--android:gravity="center"-->
+            <!--android:text="@string/tvGift"-->
+            <!--android:textColor="#333"-->
+            <!--android:textSize="10sp" />-->
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/llinputparent"
@@ -183,12 +290,12 @@
                     android:textSize="12sp" />
 
                 <TextView
-                    android:clickable="false"
                     android:id="@+id/sendInput"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:background="@drawable/custom_chat"
+                    android:clickable="false"
                     android:paddingBottom="5dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
@@ -198,96 +305,5 @@
                     android:textSize="12sp" />
             </LinearLayout>
         </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
-
-            <TextView
-                android:id="@+id/tvChat"
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:layout_centerVertical="true"
-                android:background="@drawable/bg_radius_bottom_white"
-                android:gravity="center"
-                android:text="@string/tvChat"
-                android:textColor="#333"
-                android:textSize="10sp" />
-
-            <TextView
-                android:id="@+id/tvSendone"
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/bg_radius_bottom_white"
-                android:gravity="center"
-                android:text="@string/tvGift"
-                android:textColor="#333"
-                android:textSize="10sp" />
-
-            <TextView
-                android:id="@+id/tvSendtwo"
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/tvSendone"
-                android:background="@drawable/bg_radius_bottom_white"
-                android:gravity="center"
-                android:text="@string/tvGift"
-                android:textColor="#333"
-                android:textSize="10sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tvSendthree"
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/tvSendtwo"
-                android:background="@drawable/bg_radius_bottom_white"
-                android:gravity="center"
-                android:text="@string/tvGift"
-                android:textColor="#333"
-                android:textSize="10sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tvSendfor"
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/tvSendthree"
-                android:background="@drawable/bg_radius_bottom_white"
-                android:gravity="center"
-                android:text="@string/tvGift"
-                android:textColor="#333"
-                android:textSize="10sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tv_join_group"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/tvSendfor"
-                android:background="@drawable/bg_radius_bottom_white"
-                android:gravity="center"
-                android:text="Tham gia"
-                android:textColor="#333"
-                android:textSize="10sp" />
-        </RelativeLayout>
     </FrameLayout>
 </RelativeLayout>

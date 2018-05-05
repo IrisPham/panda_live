@@ -4,18 +4,21 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -30,7 +33,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bambuser.broadcaster.SurfaceViewWithAutoAR;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -48,13 +50,14 @@ import com.panda.live.pandalive.Utils.MagicTextView;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
-import com.panda.live.pandalive.data.model.GroupBroadcast;
 import com.panda.live.pandalive.data.model.PositonGroupModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import lib.homhomlib.view2.DivergeView;
 
 
 public class GroupInteractionFragment extends Fragment implements View.OnClickListener {
@@ -63,8 +66,11 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
     private static int WAIT_GROUP = 1;
     private static int LEAVE_GROUP = 2;
     private static RecyclerView mRecyclerView;
-    private int mJoinCodeState = 0;
     private static int mPosition = 1;
+    private static TextView mID;
+    private static DatabaseReference mRef;
+    private static Context mContext;
+    private int mJoinCodeState = 0;
     private LinearLayout llpicimage;
     private RelativeLayout rlsentimenttime;
     private HorizontalListView hlvaudience;
@@ -80,24 +86,21 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
     private EditText etInput;
     private TextView tvChat;
     private TextView sendInput;
-    private TextView tvJoinGroup;
+    private ImageView mImvJoinGroup;
     private LinearLayout llInputParent;
     private EditText mMessage;
-    private static TextView mID;
     private TextView mName;
     private CustomRoundView mAvatar;
     private ImageView mImvSwitchCamera;
     private FirebaseDatabase mFirebaseDatabase;
-    private static DatabaseReference mRef;
     private FirebaseStorage mStorage;
     private StorageReference mStorageReference;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<DataChat> mData;
     private ChatAdapter mAdapter;
-    private String mUrl ="";
-    private String mIdRoom="";
-    private ImageView mGift;
-
+    private String mUrl = "";
+    private String mIdRoom = "";
+    private ImageView mImvChooserGift;
     private BottomSheetBehavior mBottomSheetBehavior;
     private BottomSheetDialog mBottomSheetDialog;
     private View mBottomSheetView;
@@ -115,9 +118,12 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
     private List<View> giftViewCollection = new ArrayList<View>();
     private Timer timer;
 
-    private static Context mContext;
-
-
+    //Khai báo hiệu ứng trái tim
+    private DivergeView mDivergeView;
+    private ImageView mImvSentHeart;
+    private ArrayList<Bitmap> mList;
+    private int mIndex = 0;
+    private Thread mThreadHeart;
 
     public GroupInteractionFragment() {
         // Required empty public constructor
@@ -168,18 +174,19 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         llgiftcontent = (LinearLayout) view.findViewById(R.id.llgiftcontent);
         lvmessage = (ListView) view.findViewById(R.id.lvmessage);
         tvChat = (TextView) view.findViewById(R.id.tvChat);
-        tvSendone = (TextView) view.findViewById(R.id.tvSendone);
-        tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);
-        tvSendthree = (TextView) view.findViewById(R.id.tvSendthree);
-        tvSendfor = (TextView) view.findViewById(R.id.tvSendfor);
-        tvJoinGroup = view.findViewById(R.id.tv_join_group);
+//        tvSendone = (TextView) view.findViewById(R.id.tvSendone);
+//        tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);
+//        tvSendthree = (TextView) view.findViewById(R.id.tvSendthree);
+//        tvSendfor = (TextView) view.findViewById(R.id.tvSendfor);
+        mImvJoinGroup = view.findViewById(R.id.imv_join_group);
+        mImvSwitchCamera = view.findViewById(R.id.imv_switch_camera);
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
         rlMain = view.findViewById(R.id.rlmain);
 
         mID = view.findViewById(R.id.tv_id);
-        mGift = view.findViewById(R.id.imv_gift);
+        mImvChooserGift = view.findViewById(R.id.imv_chooser_gift);
 
         mName = view.findViewById(R.id.tv_name);
         mName.setText(PreferencesManager.getName(this.getContext()));
@@ -201,18 +208,24 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         inAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_in);
         outAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_out);
 
+        mImvSentHeart = view.findViewById(R.id.imv_heart);
+        mDivergeView = view.findViewById(R.id.divergeViewGroup);
+        mList = new ArrayList<>();
+
         tvChat.setOnClickListener(this);
-        tvSendone.setOnClickListener(this);
-        tvSendtwo.setOnClickListener(this);
-        tvSendthree.setOnClickListener(this);
-        tvSendfor.setOnClickListener(this);
-        tvJoinGroup.setOnClickListener(this);
+//        tvSendone.setOnClickListener(this);
+//        tvSendtwo.setOnClickListener(this);
+//        tvSendthree.setOnClickListener(this);
+//        tvSendfor.setOnClickListener(this);
+        mImvJoinGroup.setOnClickListener(this);
         sendInput.setOnClickListener(this);
         mImvSwitchCamera.setOnClickListener(this);
         rlMain.setOnClickListener(this);
-        mGift.setOnClickListener(this);
+        mImvChooserGift.setOnClickListener(this);
+        mImvSentHeart.setOnClickListener(this);
         clearTiming();
         binData();
+        addResourceHeart();
         return view;
     }
 
@@ -241,20 +254,35 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
             case R.id.rlmain:
                 hideKeyboard();
                 break;
-            case R.id.tv_join_group:
+            case R.id.imv_join_group:
                 handlButtonJoinGroup();
                 break;
             case R.id.imv_switch_camera:
                 GroupViewFragment.switchCamera();
                 break;
-            case R.id.imv_gift:
+            case R.id.imv_chooser_gift:
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 mBottomSheetDialog.show();
+                break;
+            case R.id.imv_heart:
+                handleHeartAnimation();
+                break;
 
         }
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mList != null) {
+            mList.clear();
+            mList = null;
+        }
+        if (mThreadHeart != null) {
+            mThreadHeart.interrupt();
+        }
+    }
 
     /**
      * Hiển thị khung bình luận
@@ -272,20 +300,6 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         llInputParent.requestFocus();
     }
 
-    /**
-     * Gửi bình luận
-     */
-    private void sendText() {
-//        if (!etInput.getText().toString().trim().isEmpty()) {
-//            messageData.add("Johnny: " + etInput.getText().toString().trim());
-//            etInput.setText("");
-//            messageAdapter.NotifyAdapter(messageData);
-//            lvmessage.setSelection(messageData.size());
-//            hideKeyboard();
-//        } else
-//            hideKeyboard();
-    }
-
 //    /**
 //     * Hiển thị bàn phím mềm và do đó bố trí đầu
 //     */
@@ -299,6 +313,20 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
 //            }
 //        }, 100);
 //    }
+
+    /**
+     * Gửi bình luận
+     */
+    private void sendText() {
+//        if (!etInput.getText().toString().trim().isEmpty()) {
+//            messageData.add("Johnny: " + etInput.getText().toString().trim());
+//            etInput.setText("");
+//            messageAdapter.NotifyAdapter(messageData);
+//            lvmessage.setSelection(messageData.size());
+//            hideKeyboard();
+//        } else
+//            hideKeyboard();
+    }
 
     /**
      * Hiển thị quà tặng lên màn hình
@@ -386,7 +414,6 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         }
         return view;
     }
-
 
     /**
      * Xóa chế độ xem quà tặng
@@ -496,34 +523,17 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
     private void setSateButtonJoinGroup(int state) {
         switch (state) {
             case 1:
-                tvJoinGroup.setEnabled(false);
-                tvJoinGroup.setText("Chờ xác nhận...");
+//                tvJoinGroup.setEnabled(false);
+//                tvJoinGroup.setText("Chờ xác nhận...");
                 break;
             case 2:
-                tvJoinGroup.setText("Rời phòng");
-                tvJoinGroup.setEnabled(true);
+//                tvJoinGroup.setText("Rời phòng");
+//                tvJoinGroup.setEnabled(true);
                 break;
             default:
                 break;
         }
     }
-
-    public static void sendPositionLive(String resourceUrl) {
-
-//        PositonGroupModel positonGroupModel = new PositonGroupModel();
-//        PositonGroupModel.Data data = new PositonGroupModel.Data();
-//        positonGroupModel.setPosition(pos);
-//        positonGroupModel.setState(false);
-//        data.setMemberId("none");
-//        data.setResourceUrl("none");
-//        positonGroupModel.setData(data);
-//        mDatabase.child("PositionGroup").child(PreferencesManager.getID(mContext)).push().setValue(positonGroupModel);
-//
-    }
-
-
-
-
 
     private void binData() {
         mUrl = getActivity().getIntent().getStringExtra("URL");
@@ -536,6 +546,51 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         }
     }
 
+    private void addResourceHeart() {
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_blue, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_blue_x2, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_green, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_orange, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_pink, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_red, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_yellow, null)).getBitmap());
+
+        mDivergeView.post(new Runnable() {
+            @Override
+            public void run() {
+                mDivergeView.setEndPoint(new PointF(mDivergeView.getMeasuredWidth() / 2, 0));
+                mDivergeView.setDivergeViewProvider(new GroupInteractionFragment.Provider());
+            }
+        });
+
+        autoSendHeartAnimation();
+    }
+
+    private void autoSendHeartAnimation() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        handleHeartAnimation();
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        mThreadHeart = new Thread(runnable);
+        mThreadHeart.start();
+    }
+
+    private void handleHeartAnimation() {
+        if (mIndex == 6) {
+            mIndex = 0;
+        }
+        mDivergeView.startDiverges(mIndex);
+        mIndex++;
+    }
 
     /*
      * Inner class này dùng để tạo hiệu ứng số lần tặng quà từ người dùng
@@ -557,6 +612,14 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
             animSet.setInterpolator(new OvershootInterpolator());
             animSet.playTogether(anim1, anim2);
             animSet.start();
+        }
+    }
+
+    class Provider implements DivergeView.DivergeViewProvider {
+
+        @Override
+        public Bitmap getBitmap(Object obj) {
+            return mList == null ? null : mList.get((int) obj);
         }
     }
 
