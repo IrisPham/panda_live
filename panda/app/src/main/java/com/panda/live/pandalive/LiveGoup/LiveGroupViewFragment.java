@@ -77,7 +77,7 @@ public class LiveGroupViewFragment extends Fragment implements Broadcaster.Viewe
             switch (broadcastStatus) {
                 case FINISHING:
                     removeBroadCast();
-                    removePositionGroup();
+                    //removePositionGroup();
                     break;
                 default:
                     break;
@@ -298,62 +298,122 @@ public class LiveGroupViewFragment extends Fragment implements Broadcaster.Viewe
         mDatabase.child("PositionGroup").child(PreferencesManager.getID(mContext)).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.getChildrenCount() == 1) return;
-
-                //Get infor
-                //for (DataSnapshot data : dataSnapsho));
-
-                bindVideosOnView((int) dataSnapshot.getChildrenCount() - 1);
+                for (DataSnapshot position : dataSnapshot.getChildren()) {
+                    PositonGroupModel positonGroupModel = position.getValue(PositonGroupModel.class);
+                    if (positonGroupModel.isState()) {
+                        if (!positonGroupModel.getData().getMemberId().equals(PreferencesManager.getID(mContext))) {
+                            bindVideosOnView(positonGroupModel.getPosition(), positonGroupModel.getData().getResourceUrl(), View.VISIBLE);
+                        }
+                    } else {
+                        bindVideosOnView(positonGroupModel.getPosition(), "", View.GONE);
+                    }
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e(TAG,databaseError.getMessage());
+                Log.e(TAG, databaseError.getMessage());
             }
         });
     }
 
-    private void bindVideosOnView(int position){
-        switch (position){
+    private void bindVideosOnView(int position, String url, int state) {
+        switch (position) {
             case 1:
-                mVideoSurfaceView_1 = mView.findViewById(R.id.VideoSurfaceView_user_1);
-                mVideoSurfaceView_1.setVisibility(View.VISIBLE);
-                listMembers.put(String.valueOf(position),new GroupBroadcast(mVideoSurfaceView_1,"https://cdn.bambuser.net/broadcasts/13fe5714-cf72-48e4-85b1-9339cb9aa5fe?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1524189180&da_static=1&da_ttl=0&da_signature=8796f4168938a4afc1463df332daeb83b28842ed23cb596cc0dc11753fe24cb0",mContext));
+                if (mVideoSurfaceView_1 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_1 = mView.findViewById(R.id.VideoSurfaceView_user_1);
+                    mVideoSurfaceView_1.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_1, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_1 = mView.findViewById(R.id.VideoSurfaceView_user_1);
+                    mVideoSurfaceView_1.setVisibility(state);
+                    mVideoSurfaceView_1 = null;
+                }
                 break;
             case 2:
-                mVideoSurfaceView_2 = mView.findViewById(R.id.VideoSurfaceView_user_2);
-                mVideoSurfaceView_2.setVisibility(View.VISIBLE);
-                listMembers.put(String.valueOf(position),new GroupBroadcast((SurfaceView) mView.findViewById(R.id.VideoSurfaceView_user_2),"https://cdn.bambuser.net/broadcasts/13fe5714-cf72-48e4-85b1-9339cb9aa5fe?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1524189180&da_static=1&da_ttl=0&da_signature=8796f4168938a4afc1463df332daeb83b28842ed23cb596cc0dc11753fe24cb0",mContext));
+                if (mVideoSurfaceView_2 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_2 = mView.findViewById(R.id.VideoSurfaceView_user_2);
+                    mVideoSurfaceView_2.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_2, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_2 = mView.findViewById(R.id.VideoSurfaceView_user_2);
+                    mVideoSurfaceView_2.setVisibility(state);
+                    mVideoSurfaceView_2 = null;
+                }
                 break;
             case 3:
-                mVideoSurfaceView_3 = mView.findViewById(R.id.VideoSurfaceView_user_3);
-                mVideoSurfaceView_3.setVisibility(View.VISIBLE);
-                listMembers.put(String.valueOf(position),new GroupBroadcast((SurfaceView) mView.findViewById(R.id.VideoSurfaceView_user_3),"https://cdn.bambuser.net/broadcasts/13fe5714-cf72-48e4-85b1-9339cb9aa5fe?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1524189180&da_static=1&da_ttl=0&da_signature=8796f4168938a4afc1463df332daeb83b28842ed23cb596cc0dc11753fe24cb0",mContext));
+                if (mVideoSurfaceView_3 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_3 = mView.findViewById(R.id.VideoSurfaceView_user_3);
+                    mVideoSurfaceView_3.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_3, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_3 = mView.findViewById(R.id.VideoSurfaceView_user_3);
+                    mVideoSurfaceView_3.setVisibility(state);
+                    mVideoSurfaceView_3 = null;
+                }
                 break;
             case 4:
-                mVideoSurfaceView_4 = mView.findViewById(R.id.VideoSurfaceView_user_4);
-                mVideoSurfaceView_4.setVisibility(View.VISIBLE);
-                listMembers.put(String.valueOf(position),new GroupBroadcast((SurfaceView) mView.findViewById(R.id.VideoSurfaceView_user_4),"https://cdn.bambuser.net/broadcasts/13fe5714-cf72-48e4-85b1-9339cb9aa5fe?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1524189180&da_static=1&da_ttl=0&da_signature=8796f4168938a4afc1463df332daeb83b28842ed23cb596cc0dc11753fe24cb0",mContext));
+                if (mVideoSurfaceView_4 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_4 = mView.findViewById(R.id.VideoSurfaceView_user_4);
+                    mVideoSurfaceView_4.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_4, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_4 = mView.findViewById(R.id.VideoSurfaceView_user_4);
+                    mVideoSurfaceView_4.setVisibility(state);
+                    mVideoSurfaceView_4 = null;
+                }
                 break;
             case 5:
-                mVideoSurfaceView_5 = mView.findViewById(R.id.VideoSurfaceView_user_5);
-                mVideoSurfaceView_5.setVisibility(View.VISIBLE);
-                listMembers.put(String.valueOf(position),new GroupBroadcast((SurfaceView) mView.findViewById(R.id.VideoSurfaceView_user_5),"https://cdn.bambuser.net/broadcasts/13fe5714-cf72-48e4-85b1-9339cb9aa5fe?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1524189180&da_static=1&da_ttl=0&da_signature=8796f4168938a4afc1463df332daeb83b28842ed23cb596cc0dc11753fe24cb0",mContext));
+                if (mVideoSurfaceView_5 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_5 = mView.findViewById(R.id.VideoSurfaceView_user_5);
+                    mVideoSurfaceView_5.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_5, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_5 = mView.findViewById(R.id.VideoSurfaceView_user_5);
+                    mVideoSurfaceView_5.setVisibility(state);
+                    mVideoSurfaceView_5 = null;
+                }
                 break;
             case 6:
-                mVideoSurfaceView_6 = mView.findViewById(R.id.VideoSurfaceView_user_6);
-                mVideoSurfaceView_6.setVisibility(View.VISIBLE);
-                listMembers.put(String.valueOf(position),new GroupBroadcast((SurfaceView) mView.findViewById(R.id.VideoSurfaceView_user_6),"https://cdn.bambuser.net/broadcasts/13fe5714-cf72-48e4-85b1-9339cb9aa5fe?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1524189180&da_static=1&da_ttl=0&da_signature=8796f4168938a4afc1463df332daeb83b28842ed23cb596cc0dc11753fe24cb0",mContext));
+                if (mVideoSurfaceView_6 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_6 = mView.findViewById(R.id.VideoSurfaceView_user_6);
+                    mVideoSurfaceView_6.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_6, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_6 = mView.findViewById(R.id.VideoSurfaceView_user_6);
+                    mVideoSurfaceView_6.setVisibility(state);
+                    mVideoSurfaceView_6 = null;
+                }
                 break;
             case 7:
-                mVideoSurfaceView_7 = mView.findViewById(R.id.VideoSurfaceView_user_7);
-                mVideoSurfaceView_7.setVisibility(View.VISIBLE);
-                listMembers.put(String.valueOf(position),new GroupBroadcast((SurfaceView) mView.findViewById(R.id.VideoSurfaceView_user_7),"https://cdn.bambuser.net/broadcasts/13fe5714-cf72-48e4-85b1-9339cb9aa5fe?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1524189180&da_static=1&da_ttl=0&da_signature=8796f4168938a4afc1463df332daeb83b28842ed23cb596cc0dc11753fe24cb0",mContext));
+                if (mVideoSurfaceView_7 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_7 = mView.findViewById(R.id.VideoSurfaceView_user_7);
+                    mVideoSurfaceView_7.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_7, url, mContext);
+                }
+                if (state == View.GONE) {
+                    mVideoSurfaceView_7 = mView.findViewById(R.id.VideoSurfaceView_user_7);
+                    mVideoSurfaceView_7.setVisibility(state);
+                    mVideoSurfaceView_7 = null;
+                }
                 break;
             case 8:
-                mVideoSurfaceView_8 = mView.findViewById(R.id.VideoSurfaceView_user_8);
-                mVideoSurfaceView_8.setVisibility(View.VISIBLE);
-                listMembers.put(String.valueOf(position),new GroupBroadcast((SurfaceView) mView.findViewById(R.id.VideoSurfaceView_user_8),"https://cdn.bambuser.net/broadcasts/13fe5714-cf72-48e4-85b1-9339cb9aa5fe?da_signature_method=HMAC-SHA256&da_id=9e1b1e83-657d-7c83-b8e7-0b782ac9543a&da_timestamp=1524189180&da_static=1&da_ttl=0&da_signature=8796f4168938a4afc1463df332daeb83b28842ed23cb596cc0dc11753fe24cb0",mContext));
+                if (mVideoSurfaceView_8 == null && state == View.VISIBLE) {
+                    mVideoSurfaceView_8 = mView.findViewById(R.id.VideoSurfaceView_user_8);
+                    mVideoSurfaceView_8.setVisibility(state);
+                    new GroupBroadcast(mVideoSurfaceView_8, url, mContext);
+                }
+                if (state == View.GONE && state == View.VISIBLE) {
+                    mVideoSurfaceView_8 = mView.findViewById(R.id.VideoSurfaceView_user_8);
+                    mVideoSurfaceView_8.setVisibility(state);
+                    mVideoSurfaceView_8 = null;
+                }
                 break;
         }
     }
