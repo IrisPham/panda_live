@@ -3,7 +3,9 @@ package com.panda.live.pandalive.LiveViewer;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
@@ -16,12 +18,15 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -29,12 +34,16 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -53,7 +62,12 @@ import com.panda.live.pandalive.Utils.HorizontalListView;
 import com.panda.live.pandalive.Utils.MagicTextView;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
+import com.panda.live.pandalive.data.adapter.GiftAdapter;
+import com.panda.live.pandalive.data.adapter.PandaAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
+import com.panda.live.pandalive.data.model.GiftModel;
+import com.panda.live.pandalive.data.model.GiftModelFireBase;
+import com.panda.live.pandalive.data.model.PandaModel;
 import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.profile.ProfileActivity;
 import com.panda.live.pandalive.profile.ProfileDetailActivity;
@@ -95,13 +109,13 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private EditText mMessage;
     private RelativeLayout rlMain;
     private ImageView mCamera;
-
+    private TextView mCoinIdol;
     private FirebaseStorage mStorage;
     private StorageReference mStorageReference;
     private CustomRoundView mAvatar;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
-    private static RecyclerView mRecyclerView;
+    private static RecyclerView mRecyclerView, mRecyclerViewGift;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<DataChat> mData;
     private ChatAdapter mAdapter;
@@ -109,7 +123,12 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
 
     private BottomSheetBehavior mBottomSheetBehavior;
     private BottomSheetDialog mBottomSheetDialog;
-    private View mBottomSheetView;
+    private View mBottomSheetView, mView;
+    private Spinner mSpinner;
+    private TextView mSend;
+    private TextView mCoinUser;
+    private ArrayList<GiftModel> mGiftModel;
+    private GiftAdapter mAdapterGift;
 
     /**
      * Khai báo các hiệu ứng
@@ -134,6 +153,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private ImageView mImvSentHeart;
     private ArrayList<Bitmap> mList;
     private int mIndex = 0;
+    private static String mUserIdIdol = "";
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -181,22 +201,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         mStorage = FirebaseStorage.getInstance();
         mStorageReference = mStorage.getReference();
 
-        mBottomSheetView = getLayoutInflater().inflate(R.layout.item_row_gift, null);
-        mBottomSheetDialog = new BottomSheetDialog(this.getContext());
-        mBottomSheetDialog.setContentView(mBottomSheetView);
-        mBottomSheetBehavior = BottomSheetBehavior.from((View) mBottomSheetView.getParent());
-        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                // React to state change
 
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                // React to dragging events
-            }
-        });
     }
 
 
@@ -240,8 +245,43 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         outAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_out);
         mImvSentHeart = view.findViewById(R.id.imv_heart);
         mDivergeView = view.findViewById(R.id.divergeView);
-        mList = new ArrayList<>();
+        mCoinIdol = view.findViewById(R.id.tv_coin_idol);
 
+        mBottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_view_gifts, null);
+        mBottomSheetDialog = new BottomSheetDialog(this.getContext());
+        mBottomSheetDialog.setContentView(mBottomSheetView);
+        mBottomSheetBehavior = BottomSheetBehavior.from((View) mBottomSheetView.getParent());
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                // React to state change
+
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                // React to dragging events
+            }
+        });
+
+        mSend = mBottomSheetView.findViewById(R.id.tv_send_gift);
+        mCoinUser = mBottomSheetView.findViewById(R.id.tv_coin_user);
+        mSpinner = mBottomSheetView.findViewById(R.id.sn_quantity_gift);
+        mRecyclerViewGift = mBottomSheetView.findViewById(R.id.rcv_gift);
+        ArrayAdapter<CharSequence> adapter =
+                ArrayAdapter.createFromResource(getContext(),
+                        R.array.value_gift, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        mGiftModel = new ArrayList<>();
+        mAdapterGift = new GiftAdapter(this.getContext(), mGiftModel);
+
+        mRecyclerViewGift.setLayoutManager(new GridLayoutManager(this.getContext(), 4));
+        mRecyclerViewGift.setHasFixedSize(true);
+        mRecyclerViewGift.setAdapter(mAdapterGift);
+
+        mSpinner.setAdapter(adapter);
+        mList = new ArrayList<>();
         tvChat.setOnClickListener(this);
 //        tvSendone.setOnClickListener(this);
 //        tvSendtwo.setOnClickListener(this);
@@ -252,10 +292,46 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         mCamera.setOnClickListener(this);
         mImvSentHeart.setOnClickListener(this);
         rlMain.setOnClickListener(this);
+        mSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int coinuser = Integer.parseInt(mCoinUser.getText().toString());
+                int quanity = Integer.parseInt( mSpinner.getSelectedItem().toString());
+                int value = mAdapterGift.value;
+
+                if(coinuser >= (quanity*value)){
+                    int coin = coinuser - quanity*value;
+                    updateCoinUser(coin);
+                    updateCoinIdol(quanity*value);
+                }
+                else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage("Xu trong tài khoản không đủ !")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //do things
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+            }
+        });
         clearTiming();
         binData();
+        loadGift();
         addResourceHeart();
         return view;
+    }
+
+
+    public void updateCoinUser(int coin){
+        mRef.child("users").child(PreferencesManager.getUserIdFirebase(getContext())).child("coin").setValue(coin);
+    }
+
+    public void updateCoinIdol( final int coin){
+        mRef.child("users").child(mUserIdIdol).child("coin").setValue(Integer.parseInt(mCoinIdol.getText().toString()) + coin);
     }
 
 
@@ -293,6 +369,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             case R.id.imv_heart:
                 handleHeartAnimation();
                 break;
+
         }
 
     }
@@ -595,10 +672,15 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot idRoomSnapshot: dataSnapshot.getChildren()) {
                     User user = idRoomSnapshot.getValue(User.class);
+
                     if(user.id.equals(mIdRoom)){
                         tvName.setText(user.username);
                         mID.setText(mIdRoom);
-                        break;
+                        mCoinIdol.setText(user.coin+"");
+                        mUserIdIdol = idRoomSnapshot.getKey().toString();
+                    }
+                    if(user.id.equals(PreferencesManager.getID(getContext()))){
+                        mCoinUser.setText(user.coin+"");
                     }
                 }
             }
@@ -690,6 +772,49 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         mDivergeView.startDiverges(mIndex);
         mIndex++;
     }
+
+
+    private void loadGift(){
+        mRef.child("gift").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot gift : dataSnapshot.getChildren()){
+                    GiftModelFireBase model = gift.getValue(GiftModelFireBase.class);
+                    mGiftModel.add(new GiftModel(model.getNameGift(),
+                            model.getValueGift(), setImageGift(model.getNameGift())));
+                    mAdapterGift.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private int setImageGift(String name){
+        switch(name){
+            case "Cỏ ba lá":
+                return R.drawable.lucky_clover;
+            case "Ngọc trai":
+                return R.drawable.ic_nt;
+            case "Ngôi sao":
+                return R.drawable.lucky_star;
+            case "Kim cương":
+                return R.drawable.ic_kimcuong;
+            case "Nhẫn":
+                return R.drawable.ic_nhan;
+            case "Mũ hề":
+                return R.drawable.ic_non;
+            case "Lâu đài":
+                return R.drawable.ic_laudai;
+            case "Bơ":
+                return R.drawable.ic_avocado;
+        }
+        return 0;
+    }
+
 
     class Provider implements DivergeView.DivergeViewProvider{
 
