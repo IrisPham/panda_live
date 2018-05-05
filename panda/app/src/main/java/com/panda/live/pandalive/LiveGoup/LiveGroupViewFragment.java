@@ -302,7 +302,7 @@ public class LiveGroupViewFragment extends Fragment implements Broadcaster.Viewe
                     PositonGroupModel positonGroupModel = position.getValue(PositonGroupModel.class);
                     if (positonGroupModel.isState()) {
                         if (!positonGroupModel.getData().getMemberId().equals(PreferencesManager.getID(mContext))) {
-                            bindVideosOnView(positonGroupModel.getPosition(), positonGroupModel.getData().getResourceUrl(), View.VISIBLE);
+                            bindVideosOnView(positonGroupModel.getPosition()-1, positonGroupModel.getData().getResourceUrl(), View.VISIBLE);
                         }
                     } else {
                         bindVideosOnView(positonGroupModel.getPosition(), "", View.GONE);
