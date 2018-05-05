@@ -11,12 +11,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -48,12 +51,15 @@ public class RankActivity extends AppCompatActivity {
     private String[]mNameArr;
     private String[]mIDArr;
     private StorageReference mStorageReference;
-    private Uri mUri;
+    private View mView;
+    private ImageView mImageList;
     private int i = 0;
+
 
     private static RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<RankModel> mData;
+    private RankModel mModel;
     private RankAdapter mAdapter;
 
     @Override
@@ -74,7 +80,8 @@ public class RankActivity extends AppCompatActivity {
                 onSupportNavigateUp();
             }
         });
-
+        mView = getLayoutInflater().inflate(R.layout.recycler_view_rank, null);
+        mImageList = mView.findViewById(R.id.imgAvatar);
         mStorageReference = FirebaseStorage.getInstance().getReference();
 
         binActivity();
@@ -83,6 +90,7 @@ public class RankActivity extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+        Thread.interrupted();
         onBackPressed();
         return true;
     }
@@ -94,7 +102,6 @@ public class RankActivity extends AppCompatActivity {
                 mCoinArr = new int[10];
                 mNameArr = new String[10];
                 mIDArr = new String[10];
-
                 if(!mData.isEmpty()){
                     mData.clear();
                 }
@@ -139,7 +146,7 @@ public class RankActivity extends AppCompatActivity {
         }
     }
 
-    public void setDataRank(){
+    public void setDataRank() {
         mCoin1.setText(mCoinArr[0]+"");
         mCoin2.setText(mCoinArr[1]+"");
         mCoin3.setText(mCoinArr[2]+"");
@@ -150,8 +157,18 @@ public class RankActivity extends AppCompatActivity {
         downloadImageTop(mIDArr[1], mAvatar2);
         downloadImageTop(mIDArr[2], mAvatar3);
         for(int n=3; n<i; n++){
+            mData.add(new RankModel(n+1+"", null, mNameArr[n], mCoinArr[n]));
+            mAdapter.notifyDataSetChanged();
             setValueToList(mIDArr[n], n);
         }
+        for(int n=3; n<i; n++){
+            mData.add(new RankModel(n+1+"", null, mNameArr[n], mCoinArr[n]));
+            setValueToList(mIDArr[n], n);
+            mAdapter.notifyDataSetChanged();
+
+        }
+
+
         i=0;
 
 
@@ -176,7 +193,6 @@ public class RankActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setHasFixedSize(true);
 
-
     }
     public void downloadImageTop(String id, final RoundedImageView avatar) {
         mStorageReference.child("images/" + id + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -199,8 +215,10 @@ public class RankActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Uri uri) {
                 // Got the download URL for 'users/me/profile.png'
-                mData.add(new RankModel(n+1 + "" , uri , mNameArr[n], mCoinArr[n]));
-                mAdapter.notifyDataSetChanged();
+                mModel = new RankModel();
+                mModel.setUriRank(uri);
+                mData.add(new RankModel());
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -210,5 +228,6 @@ public class RankActivity extends AppCompatActivity {
             }
         });
     }
+
 
 }

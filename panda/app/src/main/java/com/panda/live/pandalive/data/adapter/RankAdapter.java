@@ -63,7 +63,6 @@ public class RankAdapter extends RecyclerView.Adapter<RankAdapter.MyViewHolder> 
         RoundedImageView imageView = holder.imageView;
         TextView textViewName = holder.textViewName;
         TextView textViewCoin = holder.textViewCoin;
-
         textViewNumeric.setText(dataSet.get(listPosition).getNumeric());
         Glide.with(mContext).load(dataSet.get(listPosition).getUri()).into(imageView);
         textViewName.setText(dataSet.get(listPosition).getName());

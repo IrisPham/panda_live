@@ -18,6 +18,22 @@ public class RankModel {
 
     }
 
+    public void setNumericRank(String numeric) {
+        this.numeric = numeric;
+    }
+
+    public void setUriRank(Uri uri) {
+        this.uri = uri;
+    }
+
+    public void setNameRank(String name) {
+        this.name = name;
+    }
+
+    public void setCoinRank(int coin) {
+        this.coin = coin;
+    }
+
     public RankModel(String numeric, Uri uri, String name, int coin){
         this.numeric = numeric;
         this.uri = uri;
