@@ -31,7 +31,6 @@ import com.panda.live.pandalive.data.model.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 
 /**
@@ -42,19 +41,15 @@ public class RankActivity extends AppCompatActivity {
     private static final String TAG = RankActivity.class.getName();
     private RecyclerView mRecyclerView;
     private DatabaseReference mDatabase;
-    private RoundedImageView mAvatar1, mAvatar2, mAvatar3, mAvatar;
-    private TextView mCoin1, mCoin2, mCoin3, mName1, mName2, mName3, mNumeric, mName, mCoin;
-    private int[] mCoinArr;
-    private String[] mNameArr;
-    private String[] mIDArr;
+    private RoundedImageView mAvatar1, mAvatar2, mAvatar3;
+    private TextView mTvCoin1, mTvCoin2, mTvCoin3, mTvName1, mTvName2, mTvName3;
     private StorageReference mStorageReference;
     private View mView;
     private ImageView mImageList;
     private int i = 0;
     private RecyclerView.LayoutManager mLayoutManager;
+    private ArrayList<RankModel> mRankSort;
     private ArrayList<RankModel> mRankData;
-    private int mCountUser;
-    private RankModel mModel;
     private RankAdapter mAdapter;
 
     @Override
@@ -62,6 +57,10 @@ public class RankActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mTvCoin1 = findViewById(R.id.tv_coin1);
+        mTvCoin2 = findViewById(R.id.tv_coin2);
+        mTvCoin3 = findViewById(R.id.tv_coin3);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_profile);
 
         setSupportActionBar(toolbar);
@@ -90,15 +89,37 @@ public class RankActivity extends AppCompatActivity {
         return true;
     }
 
+    private void binActivity() {
+        mTvName1 = findViewById(R.id.tv_name1);
+        mTvName2 = findViewById(R.id.tv_name2);
+        mTvName3 = findViewById(R.id.tv_name3);
+        mAvatar1 = findViewById(R.id.imgAvatar1);
+        mAvatar2 = findViewById(R.id.imgAvatar2);
+        mAvatar3 = findViewById(R.id.imgAvatar3);
+        mRecyclerView = findViewById(R.id.recycler_view_rank_user);
+        mLayoutManager = new LinearLayoutManager(this.getApplicationContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRankData = new ArrayList<>();
+        mRankSort = new ArrayList<>();
+        mAdapter = new RankAdapter(getApplicationContext(), mRankData);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setHasFixedSize(true);
+
+    }
+
     public void binData() {
         mDatabase.child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!mRankData.isEmpty() && !mRankSort.isEmpty()) {
+                    mRankData.clear();
+                    mRankSort.clear();
+                }
                 for (DataSnapshot coin : dataSnapshot.getChildren()) {
                     User user = coin.getValue(User.class);
-                    Log.e(TAG,"Key get image in rank: " + coin.getKey() + " and id: "+ user.getId() );
-                    mCountUser+=mCountUser;
-                    mRankData.add(new RankModel(null,user.getUsername(),user.getCoin()));
+                    Log.e(TAG, "Key get image in rank: " + coin.getKey() + " and id: " + user.getId());
+                    mRankSort.add(new RankModel(null, user.getUsername(), user.getCoin(), user.getId()));
                 }
                 //After get list user then sort list with coin.
                 sortDecreasing();
@@ -111,98 +132,68 @@ public class RankActivity extends AppCompatActivity {
         });
     }
 
-    public void sortDecreasing() {
-        Collections.sort(mRankData);
-        Log.e(TAG,"Mảng sau khi sắp xếp");
-        for(int i= 0; i < mRankData.size() ; i++){
-            Log.e(TAG,mRankData.get(i).getName() + ": " + mRankData.get(i).getCoin());
+    private void sortDecreasing() {
+        Collections.sort(mRankSort);
+        bindDataTop();
+        bindDataToList();
+    }
+
+    private void bindDataTop() {
+        for (int i = 0; i < 3; i++) {
+            final int pos = i;
+            mStorageReference.child("images/" + mRankSort.get(i).getId() + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Log.e(TAG, "Uri image " + uri.toString() + " pos: " + pos);
+                    switch (pos) {
+                        case 0:
+                            Glide.with(getApplicationContext()).load(uri).into(mAvatar1);
+                            mTvName1.setText(mRankSort.get(pos).getName());
+                            mTvCoin1.setText(String.valueOf(mRankSort.get(pos).getCoin()));
+                            break;
+                        case 1:
+                            Glide.with(getApplicationContext()).load(uri).into(mAvatar2);
+                            mTvName2.setText(mRankSort.get(pos).getName());
+                            mTvCoin2.setText(String.valueOf(mRankSort.get(pos).getCoin()));
+                            break;
+                        case 2:
+                            Glide.with(getApplicationContext()).load(uri).into(mAvatar3);
+                            mTvName3.setText(mRankSort.get(pos).getName());
+                            mTvCoin3.setText(String.valueOf(mRankSort.get(pos).getCoin()));
+                            break;
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                    Log.e("Lỗi", exception.getMessage());
+                }
+            });
         }
     }
 
-//    public void setDataRank() {
-//        mCoin1.setText(mCoinArr[0] + "");
-//        mCoin2.setText(mCoinArr[1] + "");
-//        mCoin3.setText(mCoinArr[2] + "");
-//        mName1.setText(mNameArr[0]);
-//        mName2.setText(mNameArr[1]);
-//        mName3.setText(mNameArr[2]);
-//        downloadImageTop(mIDArr[0], mAvatar1);
-//        downloadImageTop(mIDArr[1], mAvatar2);
-//        downloadImageTop(mIDArr[2], mAvatar3);
-//        for (int n = 3; n < i; n++) {
-//            mData.add(new RankModel(n + 1 + "", null, mNameArr[n], mCoinArr[n]));
-//            mAdapter.notifyDataSetChanged();
-//            setValueToList(mIDArr[n], n);
-//        }
-//        for (int n = 3; n < i; n++) {
-//            mData.add(new RankModel(n + 1 + "", null, mNameArr[n], mCoinArr[n]));
-//            setValueToList(mIDArr[n], n);
-//            mAdapter.notifyDataSetChanged();
-//
-//        }
-//
-//
-//        i = 0;
-//
-//
-//    }
+    private void bindDataToList() {
+        //add data rank from mRankSort to mRankData and Remove top for mRankData
+        for (int x = 3; x < mRankSort.size(); x++) {
+            mRankData.add(mRankSort.get(x));
+        }
+        for (int i = 0; i < mRankData.size(); i++) {
+            final int pos = i;
+            mStorageReference.child("images/" + mRankData.get(i).getId() + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    mRankData.get(pos).setUri(uri);
+                    if (pos == mRankData.size() - 1) mAdapter.notifyDataSetChanged();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                    Log.e("Lỗi", exception.getMessage());
+                }
+            });
 
-    public void binActivity() {
-        mCoin1 = findViewById(R.id.tv_coin1);
-        mCoin2 = findViewById(R.id.tv_coin2);
-        mCoin3 = findViewById(R.id.tv_coin3);
-        mName1 = findViewById(R.id.tv_name1);
-        mName2 = findViewById(R.id.tv_name2);
-        mName3 = findViewById(R.id.tv_name3);
-        mAvatar1 = findViewById(R.id.imgAvatar1);
-        mAvatar2 = findViewById(R.id.imgAvatar2);
-        mAvatar3 = findViewById(R.id.imgAvatar3);
-        mRecyclerView = findViewById(R.id.recycler_view_rank_user);
-        mLayoutManager = new LinearLayoutManager(this.getApplicationContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRankData = new ArrayList<>();
-        mAdapter = new RankAdapter(getApplicationContext(), mRankData);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setHasFixedSize(true);
-
+        }
     }
-
-//    public void downloadImageTop(String id, final RoundedImageView avatar) {
-//        mStorageReference.child("images/" + id + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//            @Override
-//            public void onSuccess(Uri uri) {
-//                // Got the download URL for 'users/me/profile.png'
-//                Glide.with(getApplicationContext()).load(uri).into(avatar);
-//
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle any errors
-//                Log.e("Lỗi", exception.getMessage());
-//            }
-//        });
-//    }
-//
-//    public void setValueToList(String id, final int n) {
-//        mStorageReference.child("images/" + id + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//            @Override
-//            public void onSuccess(Uri uri) {
-//                // Got the download URL for 'users/me/profile.png'
-//                mModel = new RankModel();
-//                mModel.setUriRank(uri);
-//                mData.add(new RankModel());
-//
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle any errors
-//                Log.e("LOI", exception.getMessage());
-//            }
-//        });
-//    }
-
-
 }

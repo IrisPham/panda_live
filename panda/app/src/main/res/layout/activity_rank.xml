@@ -26,11 +26,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:weightSum="3">
+
         <android.support.v7.widget.CardView
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_weight="1"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:layout_weight="1">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -42,34 +43,34 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_alignParentTop="true"
+                    android:layout_marginTop="5dp"
                     android:layout_toEndOf="@+id/imv_coin1"
-                    android:background="@drawable/ic_gold_medal"
-                    android:layout_marginTop="5dp"/>
+                    android:background="@drawable/ic_gold_medal" />
 
                 <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/imgAvatar1"
                     android:layout_width="63dp"
                     android:layout_height="63dp"
+                    android:layout_below="@+id/imv_rank1"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/ic_panda_bear"
                     android:scaleType="centerCrop"
                     app:riv_border_color="#B0B0AE"
                     app:riv_corner_radius="30dip"
                     app:riv_mutate_background="true"
-                    app:riv_oval="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/imv_rank1"/>
+                    app:riv_oval="true" />
 
                 <TextView
                     android:id="@+id/tv_name1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/imgAvatar1"
+                    android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="20dp"
-                    android:text="Le Van Nga"
-                    android:textSize="15sp"
-                    android:layout_below="@+id/imgAvatar1"
-                    android:layout_centerHorizontal="true"/>
+                    android:text="---------"
+                    android:textSize="15sp" />
 
                 <ImageView
                     android:id="@+id/imv_coin1"
@@ -80,24 +81,24 @@
                     android:background="@drawable/ic_coin" />
 
                 <TextView
+                    android:id="@+id/tv_coin1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="9999"
-                    android:textSize="15sp"
-                    android:layout_below="@+id/tv_name1"
-                    android:layout_toRightOf="@+id/imv_coin1"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginLeft="5dp"
                     android:layout_alignEnd="@+id/imgAvatar1"
-                    android:id="@+id/tv_coin1" />
+                    android:layout_below="@+id/tv_name1"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@+id/imv_coin1"
+                    android:text="---------"
+                    android:textSize="15sp" />
             </RelativeLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_weight="1"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:layout_weight="1">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -108,35 +109,35 @@
                     android:id="@+id/imv_rank2"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:background="@drawable/ic_silver_medal"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/ic_silver_medal" />
 
                 <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/imgAvatar2"
                     android:layout_width="63dp"
                     android:layout_height="63dp"
+                    android:layout_below="@+id/imv_rank2"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/ic_panda_bear"
                     android:scaleType="centerCrop"
                     app:riv_border_color="#B0B0AE"
                     app:riv_corner_radius="30dip"
                     app:riv_mutate_background="true"
-                    app:riv_oval="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/imv_rank2"/>
+                    app:riv_oval="true" />
 
                 <TextView
                     android:id="@+id/tv_name2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/imgAvatar2"
+                    android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="20dp"
-                    android:text="Le Van Nga"
-                    android:textSize="15sp"
-                    android:layout_below="@+id/imgAvatar2"
-                    android:layout_centerHorizontal="true"/>
+                    android:text="---------"
+                    android:textSize="15sp" />
 
                 <ImageView
                     android:id="@+id/imv_coin2"
@@ -144,28 +145,28 @@
                     android:layout_height="20dp"
                     android:layout_alignStart="@+id/imgAvatar2"
                     android:layout_below="@+id/tv_name2"
-                    android:background="@drawable/ic_coin"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/ic_coin" />
 
                 <TextView
                     android:id="@+id/tv_coin2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="9999"
-                    android:textSize="15sp"
+                    android:layout_alignEnd="@+id/imgAvatar2"
                     android:layout_below="@+id/tv_name2"
-                    android:layout_toRightOf="@+id/imv_coin2"
-                    android:layout_marginTop="5dp"
                     android:layout_marginLeft="5dp"
-                    android:layout_alignEnd="@+id/imgAvatar2"/>
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@+id/imv_coin2"
+                    android:text="---------"
+                    android:textSize="15sp" />
             </RelativeLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_weight="1"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:layout_weight="1">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -176,35 +177,35 @@
                     android:id="@+id/imv_rank3"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:background="@drawable/ic_bronze_medal"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/ic_bronze_medal" />
 
                 <com.makeramen.roundedimageview.RoundedImageView
                     android:id="@+id/imgAvatar3"
                     android:layout_width="63dp"
                     android:layout_height="63dp"
+                    android:layout_below="@+id/imv_rank3"
+                    android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/ic_panda_bear"
                     android:scaleType="centerCrop"
                     app:riv_border_color="#B0B0AE"
                     app:riv_corner_radius="30dip"
                     app:riv_mutate_background="true"
-                    app:riv_oval="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_below="@+id/imv_rank3"/>
+                    app:riv_oval="true" />
 
                 <TextView
                     android:id="@+id/tv_name3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/imgAvatar3"
+                    android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="20dp"
-                    android:text="Le Van Nga"
-                    android:textSize="15sp"
-                    android:layout_below="@+id/imgAvatar3"
-                    android:layout_centerHorizontal="true"/>
+                    android:text="---------"
+                    android:textSize="15sp" />
 
                 <ImageView
                     android:id="@+id/imv_coin3"
@@ -212,20 +213,20 @@
                     android:layout_height="20dp"
                     android:layout_alignStart="@+id/imgAvatar3"
                     android:layout_below="@+id/tv_name3"
-                    android:background="@drawable/ic_coin"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/ic_coin" />
 
                 <TextView
                     android:id="@+id/tv_coin3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="9999"
-                    android:textSize="15sp"
+                    android:layout_alignEnd="@+id/imgAvatar3"
                     android:layout_below="@+id/tv_name3"
-                    android:layout_toRightOf="@+id/imv_coin3"
-                    android:layout_marginTop="5dp"
                     android:layout_marginLeft="5dp"
-                    android:layout_alignEnd="@+id/imgAvatar3"/>
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@+id/imv_coin3"
+                    android:text="---------"
+                    android:textSize="15sp" />
             </RelativeLayout>
         </android.support.v7.widget.CardView>
 
@@ -234,7 +235,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_rank_user"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 
 </LinearLayout>

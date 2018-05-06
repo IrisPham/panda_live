@@ -13,14 +13,16 @@ public class RankModel implements Comparable<RankModel> {
     public Uri uri;
     public String name;
     public int coin;
+    private String id;
 
     public RankModel() {
     }
 
-    public RankModel(Uri uri, String name, int coin) {
+    public RankModel(Uri uri, String name, int coin, String id) {
         this.uri = uri;
         this.name = name;
         this.coin = coin;
+        this.id = id;
     }
 
     public Uri getUri() {
@@ -45,6 +47,14 @@ public class RankModel implements Comparable<RankModel> {
 
     public void setCoin(int coin) {
         this.coin = coin;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
