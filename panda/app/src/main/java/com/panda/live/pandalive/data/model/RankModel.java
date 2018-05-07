@@ -1,6 +1,7 @@
 package com.panda.live.pandalive.data.model;
 
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -8,36 +9,61 @@ import com.makeramen.roundedimageview.RoundedImageView;
  * Created by levan on 25/04/2018.
  */
 
-public class RankModel {
-    public String numeric;
+public class RankModel implements Comparable<RankModel> {
     public Uri uri;
     public String name;
     public int coin;
+    private String id;
 
-    public RankModel(){
-
+    public RankModel() {
     }
 
-    public RankModel(String numeric, Uri uri, String name, int coin){
-        this.numeric = numeric;
+    public RankModel(Uri uri, String name, int coin, String id) {
         this.uri = uri;
         this.name = name;
         this.coin = coin;
+        this.id = id;
     }
 
-    public String getNumeric(){
-        return numeric;
-    }
-
-    public Uri getUri(){
+    public Uri getUri() {
         return uri;
     }
 
-    public String getName(){
+    public void setUri(Uri uri) {
+        this.uri = uri;
+    }
+
+    public String getName() {
         return name;
     }
 
-    public int getCoin(){
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getCoin() {
         return coin;
+    }
+
+    public void setCoin(int coin) {
+        this.coin = coin;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public int compareTo(RankModel comparestu) {
+        int compareage=((RankModel)comparestu).getCoin();
+//        /* For Ascending order*/
+//        return this.coin-compareage;
+
+        /* For Descending order do like this */
+        return compareage-this.coin;
     }
 }
