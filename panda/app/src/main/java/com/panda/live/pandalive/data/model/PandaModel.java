@@ -61,4 +61,5 @@ public class PandaModel {
     public void setData(DataRoom data) {
         this.data = data;
     }
+
 }

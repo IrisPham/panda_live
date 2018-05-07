@@ -37,8 +37,8 @@ public class PreferencesManager {
 
 
     public static final String EXTRA_ACCESS_TOKEN = "accessToken";
-    public static final String APPLICATION_ID = "RHHIRbT6ThrpzbHctZbVIQ";
-    public static final String API_KEY = "1nqdazj6u3lw317m1ra4ubki0";
+    public static final String APPLICATION_ID = "Y4nUwgIJn8V0FynlMvBfMQ";
+    public static final String API_KEY = "0u6u0tpstzsnup2f3chvplyl6";
 
     /**
      * The function is called to set the login accessToken Facebook, Google, Phone.

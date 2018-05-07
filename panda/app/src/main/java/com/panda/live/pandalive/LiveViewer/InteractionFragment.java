@@ -64,7 +64,9 @@ import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
 import com.panda.live.pandalive.data.adapter.GiftAdapter;
 import com.panda.live.pandalive.data.adapter.PandaAdapter;
+import com.panda.live.pandalive.data.model.Data;
 import com.panda.live.pandalive.data.model.DataChat;
+import com.panda.live.pandalive.data.model.FollowModel;
 import com.panda.live.pandalive.data.model.GiftModel;
 import com.panda.live.pandalive.data.model.GiftModelFireBase;
 import com.panda.live.pandalive.data.model.PandaModel;
@@ -120,6 +122,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private ArrayList<DataChat> mData;
     private ChatAdapter mAdapter;
     private Intent mIntentProfileDetail;
+    private ImageView mFollow;
 
     private BottomSheetBehavior mBottomSheetBehavior;
     private BottomSheetDialog mBottomSheetDialog;
@@ -246,7 +249,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         mImvSentHeart = view.findViewById(R.id.imv_heart);
         mDivergeView = view.findViewById(R.id.divergeView);
         mCoinIdol = view.findViewById(R.id.tv_coin_idol);
-
+        mFollow = view.findViewById(R.id.imv_follow);
         mBottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_view_gifts, null);
         mBottomSheetDialog = new BottomSheetDialog(this.getContext());
         mBottomSheetDialog.setContentView(mBottomSheetView);
@@ -292,6 +295,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         mCamera.setOnClickListener(this);
         mImvSentHeart.setOnClickListener(this);
         rlMain.setOnClickListener(this);
+        mFollow.setOnClickListener(this);
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -322,9 +326,28 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         binData();
         loadGift();
         addResourceHeart();
+        setStateFollow();
         return view;
     }
 
+    public void setStateFollow(){
+        mRef.child("MeFollow").child(PreferencesManager.getID(getContext())).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot id : dataSnapshot.getChildren()){
+                    FollowModel follow = id.getValue(FollowModel.class);
+                    if (follow.getId().equals(mID.getText().toString())){
+                        mFollow.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     public void updateCoinUser(int coin){
         mRef.child("users").child(PreferencesManager.getUserIdFirebase(getContext())).child("coin").setValue(coin);
@@ -369,9 +392,22 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             case R.id.imv_heart:
                 handleHeartAnimation();
                 break;
-
+            case R.id.imv_follow:
+                mFollow.setVisibility(View.GONE);
+                followIdol();
+                IdolFollowedById();
         }
 
+    }
+
+    public void followIdol(){
+        mRef.child("MeFollow").child(PreferencesManager.getID(this.getContext()))
+                .push().child("id").setValue(mID.getText().toString());
+    }
+
+    public void IdolFollowedById(){
+        mRef.child("FollowMe").child(mID.getText().toString())
+                .push().child("id").setValue(mID.getText().toString());
     }
 
     @Override

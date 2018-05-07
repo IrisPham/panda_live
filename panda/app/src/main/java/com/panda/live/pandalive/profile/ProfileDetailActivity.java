@@ -159,6 +159,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
         });
         //Đọc thông tin người dùng
         readData();
+        bindData();
     }
 
     private void bindActivity() {
@@ -183,7 +184,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
-        bindData();
+
     }
 
     public void setAvatar(String s){
@@ -496,7 +497,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
     }
 
     public void bindData(){
-        mDatabase.child("RoomsOnline").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("VideosOffline").child(PreferencesManager.getID(getApplicationContext())).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(!mPandaModels.isEmpty()){mPandaModels.clear();}
@@ -512,7 +513,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                databaseError.getMessage();
             }
         });
     }

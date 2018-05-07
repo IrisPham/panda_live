@@ -47,6 +47,8 @@
                     android:text="Android Super"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
+
+
             </LinearLayout>
 
             <com.panda.live.pandalive.Utils.CustomRoundView
@@ -55,6 +57,15 @@
                 android:layout_height="50dp"
                 app:border_color="@color/colorPrimary"
                 app:border_width="1dp" />
+            <ImageView
+                android:id="@+id/imv_follow"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:layout_toRightOf="@id/lnl_info_idol"
+                android:background="@drawable/ic_follow"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+
         </RelativeLayout>
 
         <!--<com.panda.live.pandalive.Utils.HorizontalListView-->
@@ -62,6 +73,7 @@
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="45dp"-->
         <!--android:layout_marginLeft="10dp" />-->
+
     </LinearLayout>
 
     <RelativeLayout
@@ -120,7 +132,9 @@
         <!--android:textSize="12sp" />-->
 
         <!--</LinearLayout>-->
+
     </RelativeLayout>
+
 
 
     <LinearLayout

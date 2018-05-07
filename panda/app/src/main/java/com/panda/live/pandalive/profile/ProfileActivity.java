@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
+import com.firebase.client.Firebase;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -34,10 +36,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -52,8 +57,8 @@ import java.net.URL;
 import java.util.UUID;
 
 public class ProfileActivity extends AppCompatActivity {
-    FirebaseStorage mStorage;
-    StorageReference mStorageReference;
+    private FirebaseStorage mStorage;
+    private StorageReference mStorageReference;
     private static final String TAG = "Profile";
     private RelativeLayout mRlRank;
     private RoundedImageView mAvatar;
@@ -63,6 +68,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Intent mIntentMain;
     private Context mContext;
     private Intent mIntentProfileDetail;
+    private TextView mCountIdol, mCountFollower;
+    private DatabaseReference mDatabase;
 
 
     @Override
@@ -71,6 +78,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
         mContext = this.getApplicationContext();
         mIntentMain = new Intent(this, LoginActivity.class);
+        mIntentProfileDetail = new Intent(ProfileActivity.this, ProfileDetailActivity.class);
         mLogout = findViewById(R.id.tv_logout);
         mID = findViewById(R.id.tv_panda_id);
         String id = PreferencesManager.getID(mContext);
@@ -79,10 +87,13 @@ public class ProfileActivity extends AppCompatActivity {
         filePath = Uri.parse(PreferencesManager.getPhotoUri(mContext));
         mFullName = findViewById(R.id.tv_full_name);
         mRlRank = findViewById(R.id.rl_rank);
+        mCountIdol = findViewById(R.id.tv_idol);
+        mCountFollower = findViewById(R.id.tv_count_folow_me);
         String name = PreferencesManager.getName(mContext);
         mFullName.setText(name);
         mStorage = FirebaseStorage.getInstance();
         mStorageReference = mStorage.getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
@@ -109,12 +120,52 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         setAvatar();
+        countIdols();
+        countFollowers();
 //        setName();
         mRlRank.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ProfileActivity.this, RankActivity.class);
                 startActivity(intent);
+            }
+        });
+    }
+
+    public void countIdols(){
+        mDatabase.child("MeFollow").child(PreferencesManager.getID(mContext)).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot id : dataSnapshot.getChildren()){
+                    long count = id.getChildrenCount();
+                    Log.e("COUNT", count+"");
+                    mCountIdol.setText(count+"");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("LoiFollow", databaseError.getMessage());
+                mCountIdol.setText("0");
+            }
+        });
+    }
+
+    public void countFollowers(){
+        mDatabase.child("FollowMe").child(PreferencesManager.getID(mContext)).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot id : dataSnapshot.getChildren()){
+                    long count = id.getChildrenCount();
+                    Log.e("COUNT", count+"");
+                    mCountFollower.setText(count+"");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("LoiFollow", databaseError.getMessage());
+                mCountFollower.setText("0");
             }
         });
     }
@@ -173,7 +224,7 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_edit_profile:
-                transferData();
+
                 mIntentProfileDetail.putExtra("id", mID.getText().toString());
                 startActivity(mIntentProfileDetail);
                 return true;
@@ -279,10 +330,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
 
-    public void transferData(){
-        mIntentProfileDetail = new Intent(ProfileActivity.this, ProfileDetailActivity.class);
-        mIntentProfileDetail.putExtra("id", mID.getText());
-    }
+
 
     public void setName(){
         int value = PreferencesManager.getValueStateLogin(mContext);
