@@ -13,6 +13,7 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class User {
 
+
     public String id;
     public String pwd;
     public String username;
@@ -20,6 +21,7 @@ public class User {
     public int coin;
     public int hourOnl;
     public int exp;
+
 
 
 

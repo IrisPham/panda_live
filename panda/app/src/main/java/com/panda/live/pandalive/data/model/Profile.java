@@ -8,6 +8,7 @@ import java.util.Map;
  */
 
 public class Profile{
+
     public String nickName;
     public String address;
     public String education;
