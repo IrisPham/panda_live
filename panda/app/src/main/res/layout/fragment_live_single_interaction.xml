@@ -40,6 +40,7 @@
                     android:textSize="12sp" />
 
                 <TextView
+                    android:id="@+id/tv_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Android Super"
@@ -64,50 +65,61 @@
 
     <RelativeLayout
         android:id="@+id/rlsentimenttime"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/llpicimage"
-        android:layout_marginTop="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/bg_radius_top_black">
+
+        <ImageView
+            android:id="@+id/imv_coin_idol"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/ic_coin"
+            android:textColor="#FFFFFF" />
 
         <TextView
-            android:id="@+id/tv_id"
+            android:id="@+id/tv_coin_idol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:background="@drawable/bg_radius_top_black"
+            android:layout_toRightOf="@id/imv_coin_idol"
             android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
+            android:paddingLeft="5dp"
             android:paddingRight="10dp"
             android:paddingTop="5dp"
+            android:text="99999"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:orientation="vertical">
+        <!--<LinearLayout-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="vertical">-->
 
-            <TextView
-                android:id="@+id/tvtime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:00:00"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
+        <!--<TextView-->
+        <!--android:id="@+id/tvtime"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="00:00:00"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:textSize="12sp" />-->
 
-            <TextView
-                android:id="@+id/tvdate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00/00/00"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
+        <!--<TextView-->
+        <!--android:id="@+id/tvdate"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="00/00/00"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:textSize="12sp" />-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
+
     </RelativeLayout>
 
     <ImageView
@@ -169,59 +181,59 @@
                 android:textColor="#333"
                 android:textSize="10sp" />
 
-            <TextView
-                android:id="@+id/tvSendone"
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/bg_radius_bottom_white"
-                android:gravity="center"
-                android:text="@string/tvGift"
-                android:textColor="#333"
-                android:textSize="10sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/tvSendone"-->
+                <!--android:layout_width="45dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:layout_alignParentRight="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:background="@drawable/bg_radius_bottom_white"-->
+                <!--android:gravity="center"-->
+                <!--android:text="@string/tvGift"-->
+                <!--android:textColor="#333"-->
+                <!--android:textSize="10sp" />-->
 
-            <TextView
-                android:id="@+id/tvSendtwo"
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/tvSendone"
-                android:background="@drawable/bg_radius_bottom_white"
-                android:gravity="center"
-                android:text="@string/tvGift"
-                android:textColor="#333"
-                android:textSize="10sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/tvSendtwo"-->
+                <!--android:layout_width="45dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginRight="5dp"-->
+                <!--android:layout_toLeftOf="@+id/tvSendone"-->
+                <!--android:background="@drawable/bg_radius_bottom_white"-->
+                <!--android:gravity="center"-->
+                <!--android:text="@string/tvGift"-->
+                <!--android:textColor="#333"-->
+                <!--android:textSize="10sp" />-->
 
-            <TextView
-                android:id="@+id/tvSendthree"
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/tvSendtwo"
-                android:background="@drawable/bg_radius_bottom_white"
-                android:gravity="center"
-                android:text="@string/tvGift"
-                android:textColor="#333"
-                android:textSize="10sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/tvSendthree"-->
+                <!--android:layout_width="45dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginRight="5dp"-->
+                <!--android:layout_toLeftOf="@+id/tvSendtwo"-->
+                <!--android:background="@drawable/bg_radius_bottom_white"-->
+                <!--android:gravity="center"-->
+                <!--android:text="@string/tvGift"-->
+                <!--android:textColor="#333"-->
+                <!--android:textSize="10sp" />-->
 
-            <TextView
-                android:id="@+id/tvSendfor"
-                android:layout_width="45dp"
-                android:layout_height="40dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="5dp"
-                android:layout_toLeftOf="@+id/tvSendthree"
-                android:background="@drawable/bg_radius_bottom_white"
-                android:gravity="center"
-                android:text="@string/tvGift"
-                android:textColor="#333"
-                android:textSize="10sp" />
+            <!--<TextView-->
+                <!--android:id="@+id/tvSendfor"-->
+                <!--android:layout_width="45dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginRight="5dp"-->
+                <!--android:layout_toLeftOf="@+id/tvSendthree"-->
+                <!--android:background="@drawable/bg_radius_bottom_white"-->
+                <!--android:gravity="center"-->
+                <!--android:text="@string/tvGift"-->
+                <!--android:textColor="#333"-->
+                <!--android:textSize="10sp" />-->
         </RelativeLayout>
 
         <LinearLayout
@@ -232,7 +244,7 @@
             android:background="@android:color/white"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -126,7 +126,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
 
     private BottomSheetBehavior mBottomSheetBehavior;
     private BottomSheetDialog mBottomSheetDialog;
-    private View mBottomSheetView, mView;
+    private View mBottomSheetView;
     private Spinner mSpinner;
     private TextView mSend;
     private TextView mCoinUser;
@@ -216,8 +216,6 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         llpicimage = (LinearLayout) view.findViewById(R.id.llpicimage);
         rlsentimenttime = (RelativeLayout) view.findViewById(R.id.rlsentimenttime);
         hlvaudience = (HorizontalListView) view.findViewById(R.id.hlvaudience);
-        tvtime = (TextView) view.findViewById(R.id.tvtime);
-        tvdate = (TextView) view.findViewById(R.id.tvdate);
         llgiftcontent = (LinearLayout) view.findViewById(R.id.llgiftcontent);
         lvmessage = (ListView) view.findViewById(R.id.lvmessage);
         tvChat = (TextView) view.findViewById(R.id.tvChat);
@@ -364,18 +362,18 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             case R.id.tvChat: // Bình luận
                 showChat();
                 break;
-            case R.id.tvSendone: // Gửi quà tặng
-                showGift("Lê Văn Ngà");
-                break;
-            case R.id.tvSendtwo:
-                showGift("Huỳnh Trọng thành");
-                break;
-            case R.id.tvSendthree:
-                showGift("Nguyễn Đình Trọng");
-                break;
-            case R.id.tvSendfor:
-                showGift("Nguyễn Văn Lộc");
-                break;
+//            case R.id.tvSendone: // Gửi quà tặng
+//                showGift("Lê Văn Ngà");
+//                break;
+//            case R.id.tvSendtwo:
+//                showGift("Huỳnh Trọng thành");
+//                break;
+//            case R.id.tvSendthree:
+//                showGift("Nguyễn Đình Trọng");
+//                break;
+//            case R.id.tvSendfor:
+//                showGift("Nguyễn Văn Lộc");
+//                break;
             case R.id.rlmain:
                 hideKeyboard();
                 break;
