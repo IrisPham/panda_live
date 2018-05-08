@@ -30,7 +30,7 @@
 			"_parent": {
 				"$ref": "AAAAAAFF+h6SjaM2Hec="
 			},
-			"name": "Activity1",
+			"name": "Đăng kí theo số điện thoại",
 			"ownedElements": [
 				{
 					"_type": "UMLActivityDiagram",
@@ -38,7 +38,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFjNsHJFlGbQDg="
 					},
-					"name": "Đăng kí",
+					"name": "Đăng kí theo số điện thoại",
 					"visible": true,
 					"defaultDiagram": false,
 					"ownedViews": [
@@ -69,11 +69,11 @@
 									"containerExtending": false,
 									"left": 178.72998046875,
 									"top": 37,
-									"width": 45.8017578125,
+									"width": 152.048828125,
 									"height": 13,
 									"autoResize": false,
 									"underline": false,
-									"text": "Đăng kí",
+									"text": "Đăng kí theo số điện thoại",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -1050,11 +1050,11 @@
 											"containerExtending": false,
 											"left": -208,
 											"top": 16,
-											"width": 90,
+											"width": 189.31884765625,
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "(from Activity1)",
+											"text": "(from Đăng kí theo số điện thoại)",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -1511,11 +1511,11 @@
 											"containerExtending": false,
 											"left": -64,
 											"top": -32,
-											"width": 91.03173828125,
+											"width": 189.31884765625,
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "(from Activity1)",
+											"text": "(from Đăng kí theo số điện thoại)",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -3426,11 +3426,11 @@
 											"containerExtending": false,
 											"left": -192,
 											"top": -16,
-											"width": 86.6708984375,
+											"width": 189.31884765625,
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "(from Activity1)",
+											"text": "(from Đăng kí theo số điện thoại)",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -5982,11 +5982,11 @@
 											"containerExtending": false,
 											"left": -96,
 											"top": -32,
-											"width": 86.6708984375,
+											"width": 189.31884765625,
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "(from Activity1)",
+											"text": "(from Đăng kí theo số điện thoại)",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -6611,11 +6611,11 @@
 											"containerExtending": false,
 											"left": -32,
 											"top": 0,
-											"width": 86.6708984375,
+											"width": 189.31884765625,
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "(from Activity1)",
+											"text": "(from Đăng kí theo số điện thoại)",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -7448,11 +7448,11 @@
 											"containerExtending": false,
 											"left": -112,
 											"top": -16,
-											"width": 86.6708984375,
+											"width": 189.31884765625,
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "(from Activity1)",
+											"text": "(from Đăng kí theo số điện thoại)",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false

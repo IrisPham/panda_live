@@ -3792,19 +3792,19 @@
 											"showShadow": true,
 											"containerChangeable": false,
 											"containerExtending": false,
-											"left": 647,
+											"left": 616,
 											"top": 696,
-											"width": 26.01904296875,
+											"width": 77.91748046875,
 											"height": 13,
 											"autoResize": false,
-											"alpha": 1.3139699240714386,
-											"distance": 204.71443525066815,
+											"alpha": 1.2858390230585564,
+											"distance": 206.32013958894075,
 											"hostEdge": {
 												"$ref": "AAAAAAFjOfwpMFu9b2o="
 											},
 											"edgePosition": 1,
 											"underline": false,
-											"text": "rỗng",
+											"text": "Không hợp lệ",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -3894,7 +3894,7 @@
 										"$ref": "AAAAAAFjOfJzEFp2wnM="
 									},
 									"lineStyle": 1,
-									"points": "599:721;712:720;712:504;600:504;603:527",
+									"points": "599:721;712:720;712:504;608:504;606:527",
 									"stereotypeDisplay": "label",
 									"showVisibility": true,
 									"showProperty": true,
@@ -3963,19 +3963,19 @@
 											"showShadow": true,
 											"containerChangeable": false,
 											"containerExtending": false,
-											"left": 511,
+											"left": 512,
 											"top": 699,
 											"width": 57.0908203125,
 											"height": 13,
 											"autoResize": false,
-											"alpha": 1.6906580591488203,
-											"distance": 236.21176939348302,
+											"alpha": 1.6935822981336266,
+											"distance": 237.11811402758752,
 											"hostEdge": {
 												"$ref": "AAAAAAFjOf2FbFvhRA4="
 											},
 											"edgePosition": 1,
 											"underline": false,
-											"text": "khác rỗng",
+											"text": "Hợp lệ",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -4393,19 +4393,19 @@
 											"showShadow": true,
 											"containerChangeable": false,
 											"containerExtending": false,
-											"left": 628,
-											"top": 384,
-											"width": 26.01904296875,
+											"left": 624,
+											"top": 376,
+											"width": 31.078125,
 											"height": 13,
 											"autoResize": false,
-											"alpha": 1.2890245080838454,
-											"distance": 197.80040444852483,
+											"alpha": 1.267285922051319,
+											"distance": 190.71706793048176,
 											"hostEdge": {
 												"$ref": "AAAAAAFjOgKCEFxUFX8="
 											},
 											"edgePosition": 1,
 											"underline": false,
-											"text": "rỗng",
+											"text": "Rỗng",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -4537,9 +4537,9 @@
 											"showShadow": true,
 											"containerChangeable": false,
 											"containerExtending": false,
-											"left": 495,
+											"left": 494,
 											"top": 380,
-											"width": 57.0908203125,
+											"width": 59.26171875,
 											"height": 13,
 											"autoResize": false,
 											"alpha": 3.4582324672954137,
@@ -4549,7 +4549,7 @@
 											},
 											"edgePosition": 1,
 											"underline": false,
-											"text": "khác rỗng",
+											"text": "Khác rỗng",
 											"horizontalAlignment": 2,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -5778,7 +5778,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFjOeZtGFjsmcA="
 							},
-							"name": "rỗng",
+							"name": "Không hợp lệ",
 							"source": {
 								"$ref": "AAAAAAFjOfJzEFp0Noc="
 							},
@@ -5793,7 +5793,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFjOeZtGFjsmcA="
 							},
-							"name": "khác rỗng",
+							"name": "Hợp lệ",
 							"source": {
 								"$ref": "AAAAAAFjOfJzEFp0Noc="
 							},
@@ -5836,7 +5836,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFjOeZtGFjsmcA="
 							},
-							"name": "rỗng",
+							"name": "Rỗng",
 							"source": {
 								"$ref": "AAAAAAFjOfbDaFqZoxY="
 							},
@@ -5851,7 +5851,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFjOeZtGFjsmcA="
 							},
-							"name": "khác rỗng",
+							"name": "Khác rỗng",
 							"source": {
 								"$ref": "AAAAAAFjOfbDaFqZoxY="
 							},
