@@ -130,6 +130,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private Spinner mSpinner;
     private TextView mSend;
     private TextView mCoinUser;
+    private TextView mExpIdol;
     private ArrayList<GiftModel> mGiftModel;
     private GiftAdapter mAdapterGift;
 
@@ -157,7 +158,6 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private ArrayList<Bitmap> mList;
     private int mIndex = 0;
     private static String mUserIdIdol = "";
-
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -249,6 +249,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         mImvSentHeart = view.findViewById(R.id.imv_heart);
         mDivergeView = view.findViewById(R.id.divergeView);
         mCoinIdol = view.findViewById(R.id.tv_coin_idol);
+        mExpIdol = view.findViewById(R.id.tv_exp_idol);
         mFollow = view.findViewById(R.id.imv_follow);
         mBottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_view_gifts, null);
         mBottomSheetDialog = new BottomSheetDialog(this.getContext());
@@ -306,7 +307,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
                 if(coinuser >= (quanity*value)){
                     int coin = coinuser - quanity*value;
                     updateCoinUser(coin);
-                    updateCoinIdol(quanity*value);
+                    updateIdol(quanity*value);
                 }
                 else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -353,10 +354,29 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         mRef.child("users").child(PreferencesManager.getUserIdFirebase(getContext())).child("coin").setValue(coin);
     }
 
-    public void updateCoinIdol( final int coin){
+    public void updateIdol( final int coin){
         mRef.child("users").child(mUserIdIdol).child("coin").setValue(Integer.parseInt(mCoinIdol.getText().toString()) + coin);
+        mRef.child("users").child(mUserIdIdol).child("exp").setValue(Integer.parseInt(mExpIdol.getText().toString())+ coin/10);
+        setRankIdol(Integer.parseInt(mExpIdol.getText().toString())+ coin/10);
+        Log.e("EXP",Integer.parseInt(mExpIdol.getText().toString())+ coin/10 + "" );
+
     }
 
+    public void setRankIdol(int exp){
+
+        if(exp >= 100){
+            mRef.child("users").child(mUserIdIdol).child("rank").setValue("Bạc");
+        }
+        if(exp >= 250){
+            mRef.child("users").child(mUserIdIdol).child("rank").setValue("Vàng");
+        }
+        if(exp >= 500){
+            mRef.child("users").child(mUserIdIdol).child("rank").setValue("Bạch kim");
+        }
+        if (exp >= 1000) {
+            mRef.child("users").child(mUserIdIdol).child("rank").setValue("Kim cương");
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -714,6 +734,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
                         mID.setText(mIdRoom);
                         mCoinIdol.setText(user.coin+"");
                         mUserIdIdol = idRoomSnapshot.getKey().toString();
+                        mExpIdol.setText(user.exp+"");
                     }
                     if(user.id.equals(PreferencesManager.getID(getContext()))){
                         mCoinUser.setText(user.coin+"");

@@ -63,6 +63,7 @@
         <activity android:name=".GroupViewer.GroupDasboardActivity" />
         <activity android:name=".LiveGoup.LiveGroupActivity" />
         <activity android:name=".GroupViewer.GroupActivity"></activity>
+        <activity android:name=".profile.RankOfMeActivity" />
     </application>
 
 </manifest>

@@ -418,7 +418,7 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseUser users = mAuth.getCurrentUser();
         userID = users.getUid();
         User user = new User(PreferencesManager.getID(mContext), "NO",
-                PreferencesManager.getName(mContext),"none",1000, 0, 0);
+                PreferencesManager.getName(mContext),"Đồng",1000, 0, 0);
         Profile profile = new Profile("none", "none",
                         "none", "none", "none", "Vui lòng chọn ngày sinh");
         mRef.child("users").child(userID).setValue(user);

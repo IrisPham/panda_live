@@ -117,7 +117,7 @@ public class SetPass extends AppCompatActivity {
 
     public void writeDataTheFirst() {
         User user = new User(PreferencesManager.getID(mContext), pass,
-                "none","none",1000, 0, 0);
+                "none","Đồng",1000, 0, 0);
         Profile profile = new Profile("none", "none",
                             "none", "none", "none", "Vui lòng chọn ngày sinh");
         myRef.child("users").child(userID).setValue(user);

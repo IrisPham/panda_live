@@ -69,8 +69,8 @@ import me.srodrigo.androidhintspinner.HintSpinner;
 
 /**
  * @author Pham Hoai An
- * */
- public class ProfileDetailActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener, View.OnClickListener {
+ */
+public class ProfileDetailActivity extends AppCompatActivity implements AppBarLayout.OnOffsetChangedListener, View.OnClickListener {
     private static final float PERCENTAGE_TO_SHOW_TITLE_AT_TOOLBAR = 0.9f;
     private static final float PERCENTAGE_TO_HIDE_TITLE_DETAILS = 0.3f;
     private static final int ALPHA_ANIMATIONS_DURATION = 200;
@@ -104,6 +104,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
     private FirebaseStorage mStorage;
     private StorageReference mStorageReference;
     private CharSequence colors[] = new CharSequence[]{"Thư viện", "Camera"};
+
     public static void startAlphaAnimation(View v, long duration, int visibility) {
         AlphaAnimation alphaAnimation = (visibility == View.VISIBLE)
                 ? new AlphaAnimation(0f, 1f)
@@ -159,7 +160,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
         });
         //Đọc thông tin người dùng
         readData();
-        bindData();
+
     }
 
     private void bindActivity() {
@@ -187,34 +188,31 @@ import me.srodrigo.androidhintspinner.HintSpinner;
 
     }
 
-    public void setAvatar(String s){
+    public void setAvatar(String s) {
         int value = PreferencesManager.getValueStateLogin(mContext);
         switch (value) {
             case 1: //Login with Facebook
-                if(PreferencesManager.getCheckUpdateAvatarFace(mContext) + 1 == 1){
+                if (PreferencesManager.getCheckUpdateAvatarFace(mContext) + 1 == 1) {
                     Glide.with(mContext).load(mFilePath).into(mAvatar);
                     Glide.with(mContext).load(mFilePath).into(mBackground);
-                }
-                else{
+                } else {
                     downloadImage(s);
                 }
                 break;
 
             case 2: //Login with Google
-                if(PreferencesManager.getCheckUpdateAvatarGoogle(mContext) + 1 == 1){
+                if (PreferencesManager.getCheckUpdateAvatarGoogle(mContext) + 1 == 1) {
                     Glide.with(mContext).load(mFilePath).into(mAvatar);
                     Glide.with(mContext).load(mFilePath).into(mBackground);
-                }
-                else{
+                } else {
                     downloadImage(s);
                 }
                 break;
 
             case 3: //Login with Phone
-                if(PreferencesManager.getCheckUpdateAvatarPhone(mContext) + 1 == 1){
+                if (PreferencesManager.getCheckUpdateAvatarPhone(mContext) + 1 == 1) {
                     return;
-                }
-                else{
+                } else {
                     downloadImage(s);
                 }
 
@@ -300,18 +298,17 @@ import me.srodrigo.androidhintspinner.HintSpinner;
     }
 
     private void saveData() {
-        if(mSelected){
+        if (mSelected) {
             mSelected = false;
-        }
-        else{
+        } else {
             mGender = mProfile.gender;
         }
         mTitle.setText(mName.getText().toString());
         mDatabase.child("users").child(PreferencesManager.getUserIdFirebase(mContext))
                 .child("username").setValue(mName.getText().toString());
         mProfile = new Profile(mNickname.getText().toString(), mAddress.getText().toString(),
-                mEducation.getText().toString(), mJob.getText().toString(),mGender
-                ,mBirthday.getText().toString());
+                mEducation.getText().toString(), mJob.getText().toString(), mGender
+                , mBirthday.getText().toString());
         mDatabase.child("users").child(PreferencesManager
                 .getUserIdFirebase(getApplicationContext())).child("profile").setValue(mProfile);
         setName();
@@ -347,6 +344,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
                 mName.setText(PreferencesManager.getName(getApplicationContext()));
                 mTitle.setText(PreferencesManager.getName(getApplicationContext()));
                 setGender(mProfile.gender);
+                setVideoOffline(PreferencesManager.getID(mContext));
             }
 
             @Override
@@ -376,10 +374,10 @@ import me.srodrigo.androidhintspinner.HintSpinner;
         mDatabase.child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot id : dataSnapshot.getChildren()){
+                for (DataSnapshot id : dataSnapshot.getChildren()) {
 //                    User user = id.getValue(User.class);
                     Post post = id.getValue(Post.class);
-                    if(post.id.equals(mId)){
+                    if (post.id.equals(mId)) {
 //                        mProfile = id.getValue(Profile.class);
                         mID.setText(mId);
                         mAddress.setText(post.profile.address);
@@ -390,6 +388,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
                         mName.setText(post.username);
                         mTitle.setText(post.username);
                         setGender(post.profile.gender);
+                        setVideoOffline(mId);
                         break;
                     }
                 }
@@ -417,7 +416,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
         }
     }
 
-    public void createDatePicker(){
+    public void createDatePicker() {
         mCalendar = Calendar.getInstance();
         mDate = new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -436,7 +435,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
         };
     }
 
-    public void setHintValueSpinner(String s){
+    public void setHintValueSpinner(String s) {
         mHintAdapter = new HintAdapter(this, s, mList);
         HintSpinner<String> spinner = new HintSpinner<>(
                 mSpinner,
@@ -454,8 +453,8 @@ import me.srodrigo.androidhintspinner.HintSpinner;
         spinner.init();
     }
 
-    public void setGender(String s){
-        switch (s){
+    public void setGender(String s) {
+        switch (s) {
             case "none":
                 mList.add("Nam");
                 mList.add("Nữ");
@@ -473,10 +472,9 @@ import me.srodrigo.androidhintspinner.HintSpinner;
 
     }
 
-    public void setGenderSelectedItem(){
+    public void setGenderSelectedItem() {
         mGender = mSpinner.getSelectedItem().toString();
-        switch (mGender)
-        {
+        switch (mGender) {
             case "Nam":
                 removeArray();
                 mList.add("Nữ");
@@ -490,22 +488,32 @@ import me.srodrigo.androidhintspinner.HintSpinner;
         }
     }
 
-    public void removeArray(){
-        for(int i=0; i<mList.size(); i++){
+    public void removeArray() {
+        for (int i = 0; i < mList.size(); i++) {
             mList.remove(i);
         }
     }
 
-    public void bindData(){
-        mDatabase.child("VideosOffline").child(PreferencesManager.getID(getApplicationContext())).addValueEventListener(new ValueEventListener() {
+    public void setVideoOffline(String id) {
+        mDatabase.child("VideosOffline").child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!mPandaModels.isEmpty()){mPandaModels.clear();}
-                for (DataSnapshot idRoomSnapshot: dataSnapshot.getChildren()) {
+                if (!mPandaModels.isEmpty()) {
+                    mPandaModels.clear();
+                }
+                for (DataSnapshot idRoomSnapshot : dataSnapshot.getChildren()) {
                     PandaModel pandaModel = idRoomSnapshot.getValue(PandaModel.class);
-                    if(pandaModel.getIdRoom().equals(mId)){
-                        mPandaModels.add(pandaModel);
-                        mAdapter.notifyDataSetChanged();
+                    if (pandaModel.getIdRoom().equals(mId)) {
+                        if (PreferencesManager.getID(mContext).equals(mId)) {
+                            mPandaModels.add(pandaModel);
+                            mAdapter.notifyDataSetChanged();
+                        } else {
+                            if (pandaModel.getData().channelId == -1) {
+                                mPandaModels.add(pandaModel);
+                                mAdapter.notifyDataSetChanged();
+                            }
+
+                        }
                     }
 
                 }
@@ -580,23 +588,23 @@ import me.srodrigo.androidhintspinner.HintSpinner;
         }
     }
 
-    public void updateValueCheckAvatar(){
+    public void updateValueCheckAvatar() {
         int value = PreferencesManager.getValueStateLogin(getApplicationContext());
 
         switch (value) {
             case 1: //Login with Facebook
                 PreferencesManager.setCheckUpdateAvatarFace(getApplicationContext(),
-                        PreferencesManager.getCheckUpdateAvatarFace(getApplicationContext())+1);
+                        PreferencesManager.getCheckUpdateAvatarFace(getApplicationContext()) + 1);
                 break;
 
             case 2: //Login with Google
                 PreferencesManager.setCheckUpdateAvatarGoogle(getApplicationContext(),
-                        PreferencesManager.getCheckUpdateAvatarGoogle(getApplicationContext())+1);
+                        PreferencesManager.getCheckUpdateAvatarGoogle(getApplicationContext()) + 1);
                 break;
 
             case 3: //Login with Phone
                 PreferencesManager.setCheckUpdateAvatarPhone(getApplicationContext(),
-                        PreferencesManager.getCheckUpdateAvatarPhone(getApplicationContext())+1);
+                        PreferencesManager.getCheckUpdateAvatarPhone(getApplicationContext()) + 1);
                 break;
             default:
                 return;
@@ -639,7 +647,7 @@ import me.srodrigo.androidhintspinner.HintSpinner;
 
     }
 
-    public void setName(){
+    public void setName() {
         int value = PreferencesManager.getValueStateLogin(mContext);
 
         switch (value) {
