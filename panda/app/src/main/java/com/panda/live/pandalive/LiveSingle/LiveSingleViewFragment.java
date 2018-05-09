@@ -57,7 +57,7 @@ public class LiveSingleViewFragment extends Fragment implements Broadcaster.View
             Log.e("TAG", "Received status change: " + broadcastStatus);
             switch (broadcastStatus){
                 case FINISHING:
-                    removeBroadCast();
+                    //removeBroadCast();
                     break;
                  default:
                      break;
