@@ -50,6 +50,7 @@ import com.panda.live.pandalive.Utils.MagicTextView;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
+import com.panda.live.pandalive.data.model.User;
 import com.panda.live.pandalive.profile.ProfileDetailActivity;
 
 import java.util.ArrayList;
@@ -87,6 +88,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private CustomRoundView mAvatar;
     private ImageView mImvSwitchCamera;
     private Uri mFilePath;
+    private TextView mCoinIdol;
 
 
     private FirebaseDatabase mFirebaseDatabase;
@@ -164,28 +166,26 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         llpicimage = (LinearLayout) view.findViewById(R.id.llpicimage);
         rlsentimenttime = (RelativeLayout) view.findViewById(R.id.rlsentimenttime);
         //hlvaudience = (HorizontalListView) view.findViewById(R.id.hlvaudience);
-        tvtime = (TextView) view.findViewById(R.id.tvtime);
-        tvdate = (TextView) view.findViewById(R.id.tvdate);
+//        tvtime = (TextView) view.findViewById(R.id.tvtime);
+//        tvdate = (TextView) view.findViewById(R.id.tvdate);
         llgiftcontent = (LinearLayout) view.findViewById(R.id.llgiftcontent);
         lvmessage = (ListView) view.findViewById(R.id.lvmessage);
         tvChat = (TextView) view.findViewById(R.id.tvChat);
-        tvSendone = (TextView) view.findViewById(R.id.tvSendone);
-        tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);
-        tvSendthree = (TextView) view.findViewById(R.id.tvSendthree);
-        tvSendfor = (TextView) view.findViewById(R.id.tvSendfor);
+//        tvSendone = (TextView) view.findViewById(R.id.tvSendone);
+//        tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);
+//        tvSendthree = (TextView) view.findViewById(R.id.tvSendthree);
+//        tvSendfor = (TextView) view.findViewById(R.id.tvSendfor);
         llInputParent = (LinearLayout) view.findViewById(R.id.llinputparent);
         etInput = (EditText) view.findViewById(R.id.etInput);
         sendInput = (TextView) view.findViewById(R.id.sendInput);
         rlMain = view.findViewById(R.id.rlmain);
+        mCoinIdol = view.findViewById(R.id.tv_coin_idol);
 
         mFilePath = Uri.parse(PreferencesManager.getPhotoUri(getActivity()));
 
         mID = view.findViewById(R.id.tv_id);
-        mID.setText(PreferencesManager.getID(this.getContext()));
         mImvSwitchCamera = view.findViewById(R.id.imv_switch_camera);
-
         mName= view.findViewById(R.id.tv_name);
-        mName.setText(PreferencesManager.getName(this.getContext()));
 
         mAvatar = view.findViewById(R.id.imgAvatar);
 
@@ -206,12 +206,13 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
 
         mAvatar.setOnClickListener(this);
         tvChat.setOnClickListener(this);
-        tvSendone.setOnClickListener(this);
-        tvSendtwo.setOnClickListener(this);
-        tvSendthree.setOnClickListener(this);
-        tvSendfor.setOnClickListener(this);
+//        tvSendone.setOnClickListener(this);
+//        tvSendtwo.setOnClickListener(this);
+//        tvSendthree.setOnClickListener(this);
+//        tvSendfor.setOnClickListener(this);
         sendInput.setOnClickListener(this);
         mImvSwitchCamera.setOnClickListener(this);
+        rlMain.setOnClickListener(this);
 
         downloadImage();
         clearTiming();
@@ -225,18 +226,18 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             case R.id.tvChat: // Bình luận
                 showChat();
                 break;
-            case R.id.tvSendone: // Gửi quà tặng
-                showGift("Lê Văn Ngà");
-                break;
-            case R.id.tvSendtwo:
-                showGift("Huỳnh Trọng thành");
-                break;
-            case R.id.tvSendthree:
-                showGift("Nguyễn Đình Trọng");
-                break;
-            case R.id.tvSendfor:
-                showGift("Nguyễn Văn Lộc");
-                break;
+//            case R.id.tvSendone: // Gửi quà tặng
+//                showGift("Lê Văn Ngà");
+//                break;
+//            case R.id.tvSendtwo:
+//                showGift("Huỳnh Trọng thành");
+//                break;
+//            case R.id.tvSendthree:
+//                showGift("Nguyễn Đình Trọng");
+//                break;
+//            case R.id.tvSendfor:
+//                showGift("Nguyễn Văn Lộc");
+//                break;
             case R.id.sendInput:/*Gửi bình luận*/
                 sendMessage(mMessage.getText().toString());
                 mMessage.setText("");
@@ -489,6 +490,21 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("Error", databaseError.getMessage());
+            }
+        });
+
+        mRef.child("users").child(PreferencesManager.getUserIdFirebase(mContext)).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    mCoinIdol.setText(user.coin+"");
+                    mName.setText(user.username);
+                    mID.setText(user.id);
+                }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }

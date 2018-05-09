@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.drawable.BitmapDrawable;
@@ -14,7 +15,9 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,11 +29,13 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -49,8 +54,12 @@ import com.panda.live.pandalive.Utils.HorizontalListView;
 import com.panda.live.pandalive.Utils.MagicTextView;
 import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
+import com.panda.live.pandalive.data.adapter.GiftAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
+import com.panda.live.pandalive.data.model.GiftModel;
+import com.panda.live.pandalive.data.model.GiftModelFireBase;
 import com.panda.live.pandalive.data.model.PositonGroupModel;
+import com.panda.live.pandalive.data.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +74,7 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
     private static int JOIN_GROUP = 0;
     private static int WAIT_GROUP = 1;
     private static int LEAVE_GROUP = 2;
-    private static RecyclerView mRecyclerView;
+    private static RecyclerView mRecyclerView, mRecyclerViewGift;
     private static int mPosition = 1;
     private static TextView mID;
     private static DatabaseReference mRef;
@@ -101,9 +110,17 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
     private String mUrl = "";
     private String mIdRoom = "";
     private ImageView mImvChooserGift;
+
     private BottomSheetBehavior mBottomSheetBehavior;
     private BottomSheetDialog mBottomSheetDialog;
     private View mBottomSheetView;
+    private Spinner mSpinner;
+    private TextView mSend;
+    private TextView mCoinUser;
+    private ArrayList<GiftModel> mGiftModel;
+    private GiftAdapter mAdapterGift;
+    private TextView mCoinIdol;
+    private static String mUserIdIdol = "";
     /**
      * Khai báo các hiệu ứng
      */
@@ -143,7 +160,7 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         mStorageReference = mStorage.getReference();
         mContext = this.getContext();
 
-        mBottomSheetView = getLayoutInflater().inflate(R.layout.item_row_gift, null);
+        mBottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_view_gifts, null);
         mBottomSheetDialog = new BottomSheetDialog(mContext);
         mBottomSheetDialog.setContentView(mBottomSheetView);
         mBottomSheetBehavior = BottomSheetBehavior.from((View) mBottomSheetView.getParent());
@@ -169,8 +186,8 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         llpicimage = (LinearLayout) view.findViewById(R.id.llpicimage);
         rlsentimenttime = (RelativeLayout) view.findViewById(R.id.rlsentimenttime);
         //hlvaudience = (HorizontalListView) view.findViewById(R.id.hlvaudience);
-        tvtime = (TextView) view.findViewById(R.id.tvtime);
-        tvdate = (TextView) view.findViewById(R.id.tvdate);
+//        tvtime = (TextView) view.findViewById(R.id.tvtime);
+//        tvdate = (TextView) view.findViewById(R.id.tvdate);
         llgiftcontent = (LinearLayout) view.findViewById(R.id.llgiftcontent);
         lvmessage = (ListView) view.findViewById(R.id.lvmessage);
         tvChat = (TextView) view.findViewById(R.id.tvChat);
@@ -187,7 +204,7 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
 
         mID = view.findViewById(R.id.tv_id);
         mImvChooserGift = view.findViewById(R.id.imv_chooser_gift);
-
+        mCoinIdol = view.findViewById(R.id.tv_coin_idol);
         mName = view.findViewById(R.id.tv_name);
         mName.setText(PreferencesManager.getName(this.getContext()));
 
@@ -203,6 +220,25 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
         mRecyclerView.setHasFixedSize(true);
+
+        mSend = mBottomSheetView.findViewById(R.id.tv_send_gift);
+        mCoinUser = mBottomSheetView.findViewById(R.id.tv_coin_user);
+        mSpinner = mBottomSheetView.findViewById(R.id.sn_quantity_gift);
+        mRecyclerViewGift = mBottomSheetView.findViewById(R.id.rcv_gift);
+        ArrayAdapter<CharSequence> adapter =
+                ArrayAdapter.createFromResource(getContext(),
+                        R.array.value_gift, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        mGiftModel = new ArrayList<>();
+        mAdapterGift = new GiftAdapter(this.getContext(), mGiftModel);
+
+        mRecyclerViewGift.setLayoutManager(new GridLayoutManager(this.getContext(), 4));
+        mRecyclerViewGift.setHasFixedSize(true);
+        mRecyclerViewGift.setAdapter(mAdapterGift);
+
+        mSpinner.setAdapter(adapter);
+
 
         giftNumAnim = new NumAnim();
         inAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_in);
@@ -223,11 +259,51 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         rlMain.setOnClickListener(this);
         mImvChooserGift.setOnClickListener(this);
         mImvSentHeart.setOnClickListener(this);
+
+        mSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int coinuser = Integer.parseInt(mCoinUser.getText().toString());
+                int quanity = Integer.parseInt( mSpinner.getSelectedItem().toString());
+                int value = mAdapterGift.value;
+
+                if(coinuser >= (quanity*value)){
+                    int coin = coinuser - quanity*value;
+                    updateCoinUser(coin);
+                    updateCoinIdol(quanity*value);
+                }
+                else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage("Xu trong tài khoản không đủ !")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //do things
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+            }
+        });
+
+
+
         clearTiming();
         binData();
         addResourceHeart();
+        loadGift();
         return view;
     }
+
+    public void updateCoinUser(int coin){
+        mRef.child("users").child(PreferencesManager.getUserIdFirebase(getContext())).child("coin").setValue(coin);
+    }
+
+    public void updateCoinIdol( final int coin){
+        mRef.child("users").child(mUserIdIdol).child("coin").setValue(Integer.parseInt(mCoinIdol.getText().toString()) + coin);
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -235,18 +311,18 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
             case R.id.tvChat: // Bình luận
                 showChat();
                 break;
-            case R.id.tvSendone: // Gửi quà tặng
-                showGift("Lê Văn Ngà");
-                break;
-            case R.id.tvSendtwo:
-                showGift("Huỳnh Trọng thành");
-                break;
-            case R.id.tvSendthree:
-                showGift("Nguyễn Đình Trọng");
-                break;
-            case R.id.tvSendfor:
-                showGift("Nguyễn Văn Lộc");
-                break;
+//            case R.id.tvSendone: // Gửi quà tặng
+//                showGift("Lê Văn Ngà");
+//                break;
+//            case R.id.tvSendtwo:
+//                showGift("Huỳnh Trọng thành");
+//                break;
+//            case R.id.tvSendthree:
+//                showGift("Nguyễn Đình Trọng");
+//                break;
+//            case R.id.tvSendfor:
+//                showGift("Nguyễn Văn Lộc");
+//                break;
             case R.id.sendInput:/*Gửi bình luận*/
                 sendMessage(mMessage.getText().toString());
                 mMessage.setText("");
@@ -298,6 +374,47 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         tvChat.setVisibility(View.VISIBLE);
         llInputParent.setVisibility(View.GONE);
         llInputParent.requestFocus();
+    }
+
+    private void loadGift(){
+        mRef.child("gift").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot gift : dataSnapshot.getChildren()){
+                    GiftModelFireBase model = gift.getValue(GiftModelFireBase.class);
+                    mGiftModel.add(new GiftModel(model.getNameGift(),
+                            model.getValueGift(), setImageGift(model.getNameGift())));
+                    mAdapterGift.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private int setImageGift(String name){
+        switch(name){
+            case "Cỏ ba lá":
+                return R.drawable.lucky_clover;
+            case "Ngọc trai":
+                return R.drawable.ic_nt;
+            case "Ngôi sao":
+                return R.drawable.lucky_star;
+            case "Kim cương":
+                return R.drawable.ic_kimcuong;
+            case "Nhẫn":
+                return R.drawable.ic_nhan;
+            case "Mũ hề":
+                return R.drawable.ic_non;
+            case "Lâu đài":
+                return R.drawable.ic_laudai;
+            case "Bơ":
+                return R.drawable.ic_avocado;
+        }
+        return 0;
     }
 
 //    /**
@@ -495,6 +612,30 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("Error", databaseError.getMessage());
+            }
+        });
+
+        mRef.child("users").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot idRoomSnapshot: dataSnapshot.getChildren()) {
+                    User user = idRoomSnapshot.getValue(User.class);
+
+                    if(user.id.equals(mIdRoom)){
+                        mName.setText(user.username);
+                        mID.setText(mIdRoom);
+                        mCoinIdol.setText(user.coin+"");
+                        mUserIdIdol = idRoomSnapshot.getKey().toString();
+                    }
+                    if(user.id.equals(PreferencesManager.getID(getContext()))){
+                        mCoinUser.setText(user.coin+"");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
