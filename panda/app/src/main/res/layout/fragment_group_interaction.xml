@@ -43,7 +43,6 @@
                     android:id="@+id/tv_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Android Super"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -91,7 +90,7 @@
             android:paddingLeft="5dp"
             android:paddingRight="10dp"
             android:paddingTop="5dp"
-            android:text="99999"
+            android:text="0"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
 
