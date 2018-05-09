@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.andexert.library.RippleView;
 import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.panda.live.pandalive.R;
@@ -33,30 +34,19 @@ public class GiftAdapter extends RecyclerView.Adapter<GiftAdapter.MyViewHolder> 
     public static int value = 0;
 
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class MyViewHolder extends RecyclerView.ViewHolder{
         ImageView imageView;
         TextView textViewName;
         TextView textViewCoin;
-        public ItemClickListener itemClickListener;
+        public RippleView rippleView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             this.imageView = itemView.findViewById(R.id.imv_gift);
             this.textViewName = itemView.findViewById(R.id.tv_name_gift);
             this.textViewCoin = itemView.findViewById(R.id.tv_coin_gift);
-            itemView.setOnClickListener(this);
-
+            this.rippleView = itemView.findViewById(R.id.rippleView);
         }
-
-        @Override
-        public void onClick(View v) {
-            itemClickListener.onClick(v, getAdapterPosition(), false);
-        }
-
-        public void setItemClickListener(ItemClickListener itemClickListener) {
-            this.itemClickListener = itemClickListener;
-        }
-
     }
 
     public GiftAdapter(Context mContext, ArrayList<GiftModel> data) {
@@ -80,12 +70,16 @@ public class GiftAdapter extends RecyclerView.Adapter<GiftAdapter.MyViewHolder> 
         holder.textViewName.setText(dataSet.get(listPosition).getNameGift());
         holder.textViewCoin.setText(dataSet.get(listPosition).getCoinGift() + "");
 
-        holder.setItemClickListener(new ItemClickListener() {
+
+        holder.rippleView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view, int position, boolean isLongClick) {
-                value = dataSet.get(position).getCoinGift();
+            public void onClick(View v) {
+                value = Integer.parseInt(holder.textViewCoin.getText().toString());
             }
         });
+
+
+
 
     }
 

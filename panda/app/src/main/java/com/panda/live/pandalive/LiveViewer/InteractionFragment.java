@@ -149,7 +149,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
     private List<View> giftViewCollection = new ArrayList<View>();
     private List<String> messageData = new LinkedList<>();
     private MessageAdapter messageAdapter;
-
+    private static String ID = "";
     private Timer timer;
 
     //Khai báo hiệu ứng trái tim
@@ -198,6 +198,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        ID = PreferencesManager.getID(getContext());
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRef = mFirebaseDatabase.getReference();
 
@@ -299,17 +300,30 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
             @Override
             public void onClick(View v) {
                 int coinuser = Integer.parseInt(mCoinUser.getText().toString());
-                int quanity = Integer.parseInt( mSpinner.getSelectedItem().toString());
+                int quantity = Integer.parseInt( mSpinner.getSelectedItem().toString());
                 int value = mAdapterGift.value;
-
-                if(coinuser >= (quanity*value)){
-                    int coin = coinuser - quanity*value;
-                    updateCoinUser(coin);
-                    updateIdol(quanity*value);
+                if(value != 0){
+                    if(coinuser >= (quantity*value)){
+                        int coin = coinuser - quantity*value;
+                        updateCoinUser(coin);
+                        updateIdol(quantity*value);
+                    }
+                    else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("Xu trong tài khoản không đủ !")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //do things
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
                 }
                 else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage("Xu trong tài khoản không đủ !")
+                    builder.setMessage("Vui lòng chọn quà tặng !")
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -319,6 +333,9 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
                     AlertDialog alert = builder.create();
                     alert.show();
                 }
+
+
+
             }
         });
         clearTiming();
@@ -727,14 +744,14 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
                 for (DataSnapshot idRoomSnapshot: dataSnapshot.getChildren()) {
                     User user = idRoomSnapshot.getValue(User.class);
 
-                    if(user.id.equals(mIdRoom)){
+                    if(mIdRoom.equals(user.id)){
                         tvName.setText(user.username);
                         mID.setText(mIdRoom);
                         mCoinIdol.setText(user.coin+"");
                         mUserIdIdol = idRoomSnapshot.getKey().toString();
                         mExpIdol.setText(user.exp+"");
                     }
-                    if(user.id.equals(PreferencesManager.getID(getContext()))){
+                    if(ID.equals(user.id)){
                         mCoinUser.setText(user.coin+"");
                     }
                 }

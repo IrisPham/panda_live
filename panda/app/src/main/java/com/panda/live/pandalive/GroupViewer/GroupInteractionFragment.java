@@ -110,6 +110,7 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
     private String mUrl = "";
     private String mIdRoom = "";
     private ImageView mImvChooserGift;
+    private TextView mExpIdol;
 
     private BottomSheetBehavior mBottomSheetBehavior;
     private BottomSheetDialog mBottomSheetDialog;
@@ -141,6 +142,7 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
     private ArrayList<Bitmap> mList;
     private int mIndex = 0;
     private Thread mThreadHeart;
+    private static String ID = "";
 
     public GroupInteractionFragment() {
         // Required empty public constructor
@@ -176,6 +178,7 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
                 // React to dragging events
             }
         });
+        ID = PreferencesManager.getID(mContext);
     }
 
     @Override
@@ -220,7 +223,7 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
         mRecyclerView.setHasFixedSize(true);
-
+        mExpIdol = view.findViewById(R.id.tv_exp_idol);
         mSend = mBottomSheetView.findViewById(R.id.tv_send_gift);
         mCoinUser = mBottomSheetView.findViewById(R.id.tv_coin_user);
         mSpinner = mBottomSheetView.findViewById(R.id.sn_quantity_gift);
@@ -264,17 +267,31 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 int coinuser = Integer.parseInt(mCoinUser.getText().toString());
-                int quanity = Integer.parseInt( mSpinner.getSelectedItem().toString());
+                int quantity = Integer.parseInt( mSpinner.getSelectedItem().toString());
                 int value = mAdapterGift.value;
 
-                if(coinuser >= (quanity*value)){
-                    int coin = coinuser - quanity*value;
-                    updateCoinUser(coin);
-                    updateCoinIdol(quanity*value);
+                if(value != 0){
+                    if(coinuser >= (quantity*value)){
+                        int coin = coinuser - quantity*value;
+                        updateCoinUser(coin);
+                        updateIdol(quantity*value);
+                    }
+                    else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("Xu trong tài khoản không đủ !")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //do things
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
                 }
                 else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage("Xu trong tài khoản không đủ !")
+                    builder.setMessage("Vui lòng chọn quà tặng !")
                             .setCancelable(false)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -300,8 +317,28 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
         mRef.child("users").child(PreferencesManager.getUserIdFirebase(getContext())).child("coin").setValue(coin);
     }
 
-    public void updateCoinIdol( final int coin){
+    public void updateIdol( final int coin){
         mRef.child("users").child(mUserIdIdol).child("coin").setValue(Integer.parseInt(mCoinIdol.getText().toString()) + coin);
+        mRef.child("users").child(mUserIdIdol).child("exp").setValue(Integer.parseInt(mExpIdol.getText().toString())+ coin/10);
+        setRankIdol(Integer.parseInt(mExpIdol.getText().toString())+ coin/10);
+        Log.e("EXP",Integer.parseInt(mExpIdol.getText().toString())+ coin/10 + "" );
+
+    }
+
+    public void setRankIdol(int exp){
+
+        if(exp >= 100){
+            mRef.child("users").child(mUserIdIdol).child("rank").setValue("Bạc");
+        }
+        if(exp >= 250){
+            mRef.child("users").child(mUserIdIdol).child("rank").setValue("Vàng");
+        }
+        if(exp >= 500){
+            mRef.child("users").child(mUserIdIdol).child("rank").setValue("Bạch kim");
+        }
+        if (exp >= 1000) {
+            mRef.child("users").child(mUserIdIdol).child("rank").setValue("Kim cương");
+        }
     }
 
 
@@ -621,13 +658,14 @@ public class GroupInteractionFragment extends Fragment implements View.OnClickLi
                 for (DataSnapshot idRoomSnapshot: dataSnapshot.getChildren()) {
                     User user = idRoomSnapshot.getValue(User.class);
 
-                    if(user.id.equals(mIdRoom)){
+                    if(mIdRoom.equals(user.id)){
                         mName.setText(user.username);
                         mID.setText(mIdRoom);
                         mCoinIdol.setText(user.coin+"");
                         mUserIdIdol = idRoomSnapshot.getKey().toString();
+                        mExpIdol.setText(user.exp+"");
                     }
-                    if(user.id.equals(PreferencesManager.getID(getContext()))){
+                    if(ID.equals(user.id)){
                         mCoinUser.setText(user.coin+"");
                     }
                 }

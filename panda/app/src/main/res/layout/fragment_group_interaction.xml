@@ -121,13 +121,17 @@
         <!--</LinearLayout>-->
 
     </RelativeLayout>
-
+    <TextView
+        android:id="@+id/tv_exp_idol"
+        android:visibility="gone"
+        android:layout_below="@+id/rlsentimenttime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:id="@+id/llgiftcontent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/lvmessage"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
         android:animateLayoutChanges="true"

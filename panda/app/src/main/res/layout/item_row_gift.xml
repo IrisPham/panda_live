@@ -2,54 +2,62 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="102dp"
     android:layout_height="102dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_radius_gift_black"
     android:orientation="vertical"
     android:padding="5dp">
 
-
-    <ImageView
-        android:id="@+id/imv_gift"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/lucky_clover" />
-
-    <TextView
-        android:id="@+id/tv_name_gift"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/imv_gift"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:text="Cỏ ba lá"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp" />
-
-    <LinearLayout
-        android:layout_below="@id/tv_name_gift"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
-
+    <com.andexert.library.RippleView
+        android:id="@+id/rippleView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:rv_color = "@android:color/white"
+        rv_centered="true">
         <ImageView
-            android:id="@+id/imv_coin"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_alignStart="@+id/imv_gift"
-            android:layout_below="@+id/tv_name_gift"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/ic_coin" />
+            android:id="@+id/imv_gift"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/lucky_clover" />
 
         <TextView
-            android:id="@+id/tv_coin_gift"
+            android:id="@+id/tv_name_gift"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="5dp"
-            android:text="9"
+            android:layout_below="@id/imv_gift"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:text="Cỏ ba lá"
             android:textColor="#FFFFFF"
             android:textSize="12sp" />
-    </LinearLayout>
+
+        <LinearLayout
+            android:layout_below="@id/tv_name_gift"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imv_coin"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_alignStart="@+id/imv_gift"
+                android:layout_below="@+id/tv_name_gift"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ic_coin" />
+
+            <TextView
+                android:id="@+id/tv_coin_gift"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="5dp"
+                android:text="9"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </com.andexert.library.RippleView>
+
 </RelativeLayout>
