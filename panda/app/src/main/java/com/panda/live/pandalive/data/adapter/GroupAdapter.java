@@ -44,6 +44,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+        holder.mTvNameChannel.setText(pandaModels.get(position).getTitle());
         Glide.with(mContext).load(pandaModels.get(position).getData().getAvatarLink()).into(holder.mImvIconChannel);
     }
 
@@ -96,6 +97,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder
         public MyViewHolder(View itemView) {
             super(itemView);
             mImvIconChannel = itemView.findViewById(R.id.imv_item_channel);
+            mTvNameChannel = itemView.findViewById(R.id.tv_live_content);
             mImvIconChannel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
