@@ -169,7 +169,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
 //        tvtime = (TextView) view.findViewById(R.id.tvtime);
 //        tvdate = (TextView) view.findViewById(R.id.tvdate);
         llgiftcontent = (LinearLayout) view.findViewById(R.id.llgiftcontent);
-        lvmessage = (ListView) view.findViewById(R.id.lvmessage);
+//        lvmessage = (ListView) view.findViewById(R.id.lvmessage);
         tvChat = (TextView) view.findViewById(R.id.tvChat);
 //        tvSendone = (TextView) view.findViewById(R.id.tvSendone);
 //        tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);
