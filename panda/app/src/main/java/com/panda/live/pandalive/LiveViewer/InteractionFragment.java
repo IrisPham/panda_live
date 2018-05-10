@@ -218,7 +218,7 @@ public class InteractionFragment extends Fragment implements View.OnClickListene
         rlsentimenttime = (RelativeLayout) view.findViewById(R.id.rlsentimenttime);
         hlvaudience = (HorizontalListView) view.findViewById(R.id.hlvaudience);
         llgiftcontent = (LinearLayout) view.findViewById(R.id.llgiftcontent);
-        lvmessage = (ListView) view.findViewById(R.id.lvmessage);
+//        lvmessage = (ListView) view.findViewById(R.id.lvmessage);
         tvChat = (TextView) view.findViewById(R.id.tvChat);
 //        tvSendone = (TextView) view.findViewById(R.id.tvSendone);
 //        tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);

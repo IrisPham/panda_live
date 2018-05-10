@@ -3,20 +3,19 @@ package com.panda.live.pandalive.LiveSingle;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.app.Application;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.PointF;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.panda.live.pandalive.LiveViewer.InteractionFragment;
 import com.panda.live.pandalive.R;
 import com.panda.live.pandalive.Utils.CustomRoundView;
 import com.panda.live.pandalive.Utils.HorizontalListView;
@@ -51,13 +49,13 @@ import com.panda.live.pandalive.Utils.PreferencesManager;
 import com.panda.live.pandalive.data.adapter.ChatAdapter;
 import com.panda.live.pandalive.data.model.DataChat;
 import com.panda.live.pandalive.data.model.User;
-import com.panda.live.pandalive.profile.ProfileDetailActivity;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import lib.homhomlib.view2.DivergeView;
 
 
 public class LiveSingleInteractionFragment extends Fragment implements View.OnClickListener {
@@ -66,6 +64,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static RecyclerView mRecyclerView;
     private LinearLayout llpicimage;
     private RelativeLayout rlsentimenttime;
     private HorizontalListView hlvaudience;
@@ -89,15 +88,10 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     private ImageView mImvSwitchCamera;
     private Uri mFilePath;
     private TextView mCoinIdol;
-
-
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mRef;
-
     private FirebaseStorage mStorage;
     private StorageReference mStorageReference;
-
-    private static RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<DataChat> mData;
     private ChatAdapter mAdapter;
@@ -116,6 +110,12 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
      */
     private List<View> giftViewCollection = new ArrayList<View>();
 
+    //Khai báo hiệu ứng trái tim
+    private DivergeView mDivergeView;
+    private ImageView mImvSentHeart;
+    private ArrayList<Bitmap> mList;
+    private int mIndex = 0;
+    private Thread mThreadHeart;
 
     private Timer timer;
     // TODO: Rename and change types of parameters
@@ -169,7 +169,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
 //        tvtime = (TextView) view.findViewById(R.id.tvtime);
 //        tvdate = (TextView) view.findViewById(R.id.tvdate);
         llgiftcontent = (LinearLayout) view.findViewById(R.id.llgiftcontent);
-        lvmessage = (ListView) view.findViewById(R.id.lvmessage);
+//        lvmessage = (ListView) view.findViewById(R.id.lvmessage);
         tvChat = (TextView) view.findViewById(R.id.tvChat);
 //        tvSendone = (TextView) view.findViewById(R.id.tvSendone);
 //        tvSendtwo = (TextView) view.findViewById(R.id.tvSendtwo);
@@ -185,7 +185,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
 
         mID = view.findViewById(R.id.tv_id);
         mImvSwitchCamera = view.findViewById(R.id.imv_switch_camera);
-        mName= view.findViewById(R.id.tv_name);
+        mName = view.findViewById(R.id.tv_name);
 
         mAvatar = view.findViewById(R.id.imgAvatar);
 
@@ -204,6 +204,10 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         inAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_in);
         outAnim = (TranslateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.gift_out);
 
+        mImvSentHeart = view.findViewById(R.id.imv_heart);
+        mDivergeView = view.findViewById(R.id.divergeView_single_live);
+        mList = new ArrayList<>();
+
         mAvatar.setOnClickListener(this);
         tvChat.setOnClickListener(this);
 //        tvSendone.setOnClickListener(this);
@@ -213,10 +217,10 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         sendInput.setOnClickListener(this);
         mImvSwitchCamera.setOnClickListener(this);
         rlMain.setOnClickListener(this);
-
+        mImvSentHeart.setOnClickListener(this);
         downloadImage();
         clearTiming();
-
+        addResourceHeart();
         return view;
     }
 
@@ -248,12 +252,24 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
             case R.id.imv_switch_camera:
                 LiveSingleViewFragment.switchCamera();
                 break;
-
-
+            case R.id.imv_heart:
+                handleHeartAnimation();
+                break;
         }
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mList != null) {
+            mList.clear();
+            mList = null;
+        }
+        if (mThreadHeart != null) {
+            mThreadHeart.interrupt();
+        }
+    }
 
     /**
      * Hiển thị khung bình luận
@@ -265,7 +281,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         //showKeyboard();
     }
 
-    private void hideChat(){
+    private void hideChat() {
         tvChat.setVisibility(View.VISIBLE);
         llInputParent.setVisibility(View.GONE);
         llInputParent.requestFocus();
@@ -447,29 +463,6 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         imm.hideSoftInputFromWindow(etInput.getWindowToken(), 0);
     }
 
-    /*
-    * Inner class này dùng để tạo hiệu ứng số lần tặng quà từ người dùng
-    * */
-    public class NumAnim {
-        private Animator lastAnimator = null;
-
-        public void start(View view) {
-            if (lastAnimator != null) {
-                lastAnimator.removeAllListeners();
-                lastAnimator.end();
-                lastAnimator.cancel();
-            }
-            ObjectAnimator anim1 = ObjectAnimator.ofFloat(view, "scaleX", 1.3f, 1.0f);
-            ObjectAnimator anim2 = ObjectAnimator.ofFloat(view, "scaleY", 1.3f, 1.0f);
-            AnimatorSet animSet = new AnimatorSet();
-            lastAnimator = animSet;
-            animSet.setDuration(200);
-            animSet.setInterpolator(new OvershootInterpolator());
-            animSet.playTogether(anim1, anim2);
-            animSet.start();
-        }
-    }
-
     public void sendMessage(String s) {
         DataChat datachat = new DataChat(PreferencesManager.getName(this.getContext()), s);
         mRef.child("chat").child(PreferencesManager.getID(this.getContext())).setValue(datachat);
@@ -496,11 +489,11 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         mRef.child("users").child(PreferencesManager.getUserIdFirebase(mContext)).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                    User user = dataSnapshot.getValue(User.class);
-                    mCoinIdol.setText(user.coin+"");
-                    mName.setText(user.username);
-                    mID.setText(user.id);
-                }
+                User user = dataSnapshot.getValue(User.class);
+                mCoinIdol.setText(user.coin + "");
+                mName.setText(user.username);
+                mID.setText(user.id);
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -509,32 +502,29 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         });
     }
 
-    public void setAvatar(){
+    public void setAvatar() {
         int value = PreferencesManager.getValueStateLogin(mContext);
         switch (value) {
             case 1: //Login with Facebook
-                if(PreferencesManager.getCheckUpdateAvatarFace(mContext) + 1 == 1){
+                if (PreferencesManager.getCheckUpdateAvatarFace(mContext) + 1 == 1) {
                     Glide.with(mContext).load(Uri.parse(PreferencesManager.getPhotoUri(mContext))).into(mAvatar);
-                }
-                else{
+                } else {
                     downloadImageProfile();
                 }
                 break;
 
             case 2: //Login with Google
-                if(PreferencesManager.getCheckUpdateAvatarGoogle(mContext) + 1 == 1){
+                if (PreferencesManager.getCheckUpdateAvatarGoogle(mContext) + 1 == 1) {
                     Glide.with(mContext).load(PreferencesManager.getPhotoUri(mContext)).into(mAvatar);
-                }
-                else{
+                } else {
                     downloadImageProfile();
                 }
                 break;
 
             case 3: //Login with Phone
-                if(PreferencesManager.getCheckUpdateAvatarPhone(mContext) + 1 == 1){
+                if (PreferencesManager.getCheckUpdateAvatarPhone(mContext) + 1 == 1) {
                     return;
-                }
-                else{
+                } else {
                     downloadImageProfile();
                 }
 
@@ -544,13 +534,13 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
         }
     }
 
-    public void downloadImage(){
+    public void downloadImage() {
         setAvatar();
-        mStorageReference.child("images/"+PreferencesManager
-                .getID(getContext())+"/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        mStorageReference.child("images/" + PreferencesManager
+                .getID(getContext()) + "/avatarLive").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                if(uri != null){
+                if (uri != null) {
                     Glide.with(getActivity()).load(uri).into(mAvatar);
                 }
                 // Got the download URL for 'users/me/profile.png'
@@ -564,7 +554,7 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
     }
 
     public void downloadImageProfile() {
-        mStorageReference.child("images/" + PreferencesManager.getID(mContext)+ "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        mStorageReference.child("images/" + PreferencesManager.getID(mContext) + "/avatarProfile").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 // Got the download URL for 'users/me/profile.png'
@@ -576,6 +566,83 @@ public class LiveSingleInteractionFragment extends Fragment implements View.OnCl
                 // Handle any errors
             }
         });
+    }
+
+    private void addResourceHeart() {
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_blue, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_blue_x2, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_green, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_orange, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_pink, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_red, null)).getBitmap());
+        mList.add(((BitmapDrawable) ResourcesCompat.getDrawable(getResources(), R.drawable.ic_heart_yellow, null)).getBitmap());
+
+        mDivergeView.post(new Runnable() {
+            @Override
+            public void run() {
+                mDivergeView.setEndPoint(new PointF(mDivergeView.getMeasuredWidth() / 2, 0));
+                mDivergeView.setDivergeViewProvider(new LiveSingleInteractionFragment.Provider());
+            }
+        });
+
+        autoSendHeartAnimation();
+    }
+
+    private void autoSendHeartAnimation() {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        handleHeartAnimation();
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        mThreadHeart = new Thread(runnable);
+        mThreadHeart.start();
+    }
+
+    private void handleHeartAnimation() {
+        if (mIndex == 6) {
+            mIndex = 0;
+        }
+        mDivergeView.startDiverges(mIndex);
+        mIndex++;
+    }
+
+    /*
+     * Inner class này dùng để tạo hiệu ứng số lần tặng quà từ người dùng
+     * */
+    public class NumAnim {
+        private Animator lastAnimator = null;
+
+        public void start(View view) {
+            if (lastAnimator != null) {
+                lastAnimator.removeAllListeners();
+                lastAnimator.end();
+                lastAnimator.cancel();
+            }
+            ObjectAnimator anim1 = ObjectAnimator.ofFloat(view, "scaleX", 1.3f, 1.0f);
+            ObjectAnimator anim2 = ObjectAnimator.ofFloat(view, "scaleY", 1.3f, 1.0f);
+            AnimatorSet animSet = new AnimatorSet();
+            lastAnimator = animSet;
+            animSet.setDuration(200);
+            animSet.setInterpolator(new OvershootInterpolator());
+            animSet.playTogether(anim1, anim2);
+            animSet.start();
+        }
+    }
+
+    class Provider implements DivergeView.DivergeViewProvider {
+
+        @Override
+        public Bitmap getBitmap(Object obj) {
+            return mList == null ? null : mList.get((int) obj);
+        }
     }
 
 }
